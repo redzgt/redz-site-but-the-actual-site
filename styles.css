@@ -1,105 +1,138 @@
-/* General styles */
+/* General Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
+    background: linear-gradient(135deg, #8B0000, #4B0082); /* Example gradient background */
+    background-size: 400% 400%; /* Adjust size of the gradient for more movement */
+    animation: gradientMove 15s ease infinite; /* Animation to move the gradient */
     color: #fff;
-    background: linear-gradient(135deg, #2c001e, #440033);
-    animation: backgroundMove 10s infinite alternate;
+    line-height: 1.6;
+    overflow-x: hidden;
 }
 
-@keyframes backgroundMove {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 100% 50%; }
+/* Keyframes for the animation */
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 0%;
+    }
+    50% {
+        background-position: 100% 100%;
+    }
+    100% {
+        background-position: 0% 0%;
+    }
 }
 
-.container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
+/* Header Section */
+header {
+    padding: 60px 20px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 4em;
+    letter-spacing: 2px;
+    color: #FF0000; /* Red color for the name */
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+header p {
+    font-size: 1.3em;
+    margin-top: 10px;
+    color: #FF0000; /* Red color for the text */
+    letter-spacing: 1px;
+}
+
+/* Content Section */
+.content {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
     text-align: center;
 }
 
-/* Header */
-header {
-    margin-bottom: 40px;
-}
-
-.name {
-    font-size: 3em;
-    color: crimson;
-    text-transform: lowercase;
-}
-
-.subtitle {
-    font-size: 1.5em;
-    color: #ff7070;
-}
-
-/* About Section */
-.about h2, .games h2, .contact h2 {
-    margin-bottom: 20px;
-    font-size: 2em;
-    text-decoration: underline;
-}
-
-.about p {
-    font-size: 1.2em;
-    line-height: 1.6;
+.content h2 {
+    font-size: 2.5em;
     margin-bottom: 30px;
+    color: #FF0000; /* Red color for game title */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* Games Section */
+/* Game Cards */
 .game {
-    margin: 30px 0;
-}
-
-/* Gallery styles */
-.gallery {
-    position: relative;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto 20px;
+    background-color: rgba(0, 0, 0, 0.85);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     overflow: hidden;
-    border: 5px solid crimson;
-    border-radius: 10px;
+    margin-bottom: 40px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-.gallery img {
+.game:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+}
+
+.game img {
     width: 100%;
     height: auto;
-    display: block;
+    border-bottom: 5px solid #FF0000; /* Red border for images */
+    transition: opacity 0.3s ease;
 }
 
-/* Arrow buttons */
-.arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    z-index: 2;
-    font-size: 1.5em;
-    transition: background-color 0.3s ease;
+.game img:hover {
+    opacity: 0.8;
 }
 
-.arrow:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-}
-
-.arrow.prev {
-    left: 10px;
-}
-
-.arrow.next {
-    right: 10px;
-}
-
-/* Game title and description */
 .game h3 {
-    margin: 10px 0;
-    font-size: 1.8em;
-    color: crimso
+    font-size: 2em;
+    margin: 20px;
+    color: #FF0000; /* Red color for game name */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.game p {
+    font-size: 1.1em;
+    color: #ddd;
+    padding: 0 20px 20px;
+    text-align: justify;
+}
+
+/* Footer Section */
+footer {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #FF0000; /* Red color for footer text */
+    text-align: center;
+    padding: 20px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+footer p {
+    font-size: 1.1em;
+    letter-spacing: 1px;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2.8em;
+    }
+
+    .game h3 {
+        font-size: 1.5em;
+    }
+
+    .game p {
+        font-size: 1em;
+    }
+}
