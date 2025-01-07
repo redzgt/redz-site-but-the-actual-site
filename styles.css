@@ -7,6 +7,21 @@ body {
     color: #fff;
     line-height: 1.6;
     overflow-x: hidden;
+    background-size: 400% 400%; /* Adjust size of the gradient for more movement */
+    animation: gradientMove 15s ease infinite; /* Animation to move the gradient */
+}
+
+/* Keyframes for the animation */
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 0%;
+    }
+    50% {
+        background-position: 100% 100%;
+    }
+    100% {
+        background-position: 0% 0%;
+    }
 }
 
 /* Header Section */
