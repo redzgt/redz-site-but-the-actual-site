@@ -28,7 +28,7 @@ header {
 .name {
     font-size: 3em;
     color: crimson;
-    text-transform: uppercase;
+    text-transform: lowercase;
 }
 
 .subtitle {
@@ -36,14 +36,20 @@ header {
     color: #ff7070;
 }
 
-/* Games Section */
-.games h2 {
+/* About Section */
+.about h2, .games h2, .contact h2 {
     margin-bottom: 20px;
     font-size: 2em;
     text-decoration: underline;
 }
 
-/* Game card */
+.about p {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+/* Games Section */
 .game {
     margin: 30px 0;
 }
@@ -96,12 +102,4 @@ header {
 .game h3 {
     margin: 10px 0;
     font-size: 1.8em;
-    color: crimson;
-}
-
-.game p {
-    font-size: 1.2em;
-    line-height: 1.6;
-    margin: 0 auto;
-    max-width: 600px;
-}
+    color: crimso
