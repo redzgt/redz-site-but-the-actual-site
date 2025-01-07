@@ -1,0 +1,123 @@
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #8B0000, #4B0082);
+    color: #fff;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Header Section */
+header {
+    padding: 60px 20px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 4em;
+    letter-spacing: 2px;
+    color: #FFD700;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+header p {
+    font-size: 1.3em;
+    margin-top: 10px;
+    color: #ffcc00;
+    letter-spacing: 1px;
+}
+
+/* Content Section */
+.content {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.content h2 {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    color: #FFD700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Game Cards */
+.game {
+    background-color: rgba(0, 0, 0, 0.85);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    margin-bottom: 40px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.game:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+}
+
+.game img {
+    width: 100%;
+    height: auto;
+    border-bottom: 5px solid #FFD700;
+    transition: opacity 0.3s ease;
+}
+
+.game img:hover {
+    opacity: 0.8;
+}
+
+.game h3 {
+    font-size: 2em;
+    margin: 20px;
+    color: #FFD700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.game p {
+    font-size: 1.1em;
+    color: #ddd;
+    padding: 0 20px 20px;
+    text-align: justify;
+}
+
+/* Footer Section */
+footer {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #FFD700;
+    text-align: center;
+    padding: 20px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+footer p {
+    font-size: 1.1em;
+    letter-spacing: 1px;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2.8em;
+    }
+
+    .game h3 {
+        font-size: 1.5em;
+    }
+
+    .game p {
+        font-size: 1em;
+    }
+}
