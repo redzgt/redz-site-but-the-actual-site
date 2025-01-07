@@ -5,25 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>redzgt</title>
     <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
-    <header>
-        <h1>redzgt</h1>
-        <p>VR Developer</p>
-    </header>
+    <div class="container">
+        <header>
+            <h1 class="name">redzgt</h1>
+            <p class="subtitle">VR Developer</p>
+        </header>
 
-    <div class="content">
-        <h2>Games</h2>
-
-        <div class="game">
-            <img src="banana-brawl.png" alt="Banana Brawl">
-            <h3>Banana Brawl</h3>
-            <p>Banana Brawl is a survival game where you play as a chimp. It takes place on an island where the only weapon you have is bananas! Fight other chimps to be the last one standing on the island! </p>
-        </div>
+        <main>
+            <section class="games">
+                <h2>Games I've Made</h2>
+                <div class="game">
+                    <div class="gallery">
+                        <button class="arrow prev" onclick="changeImage(-1)">&#10094;</button>
+                        <img id="galleryImage" src="images/banana_brawl_1.jpg" alt="Banana Brawl">
+                        <button class="arrow next" onclick="changeImage(1)">&#10095;</button>
+                    </div>
+                    <h3>Banana Brawl</h3>
+                    <p>Banana Brawl is a survival game where you play as a chimp. It takes place on an island where the only weapon you have is bananas! Fight other chimps to be the last one standing on the island!</p>
+                </div>
+            </section>
+        </main>
     </div>
-
-    <footer>
-        <p>&copy; 2025 redzgt</p>
-    </footer>
 </body>
 </html>
