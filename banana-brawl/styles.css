@@ -13,8 +13,18 @@ body {
 
 /* Centering Header Text */
 header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
+    width: 100%;
     padding: 20px 0;
+}
+
+header h1 {
+    margin: 0;
+    text-align: center;
+    width: 100%;
 }
 
 /* Section 1: Game Image */
@@ -63,3 +73,15 @@ header {
 /* Footer Section */
 footer {
     background-color: rgba(0, 0, 0, 0.8);
+    color: #FF0000; /* Red footer text */
+    text-align: center;
+    padding: 20px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+footer p {
+    font-size: 1.1em;
+    letter-spacing: 1px;
+}
