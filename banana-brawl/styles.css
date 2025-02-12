@@ -11,6 +11,12 @@ body {
     overflow-x: hidden;
 }
 
+/* Centering Header Text */
+header {
+    text-align: center;
+    padding: 20px 0;
+}
+
 /* Section 1: Game Image */
 .game-image {
     padding: 40px 0;
@@ -57,15 +63,3 @@ body {
 /* Footer Section */
 footer {
     background-color: rgba(0, 0, 0, 0.8);
-    color: #FF0000; /* Red footer text */
-    text-align: center;
-    padding: 20px 0;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-}
-
-footer p {
-    font-size: 1.1em;
-    letter-spacing: 1px;
-}
