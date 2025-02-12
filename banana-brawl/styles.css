@@ -1,0 +1,71 @@
+/* General Styles for the page */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #8B0000, #4B0082); /* Gradient background */
+    background-size: 400% 400%; /* Gradient movement */
+    animation: gradientMove 15s ease infinite; /* Animation for gradient */
+    color: #fff;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Section 1: Game Image */
+.game-image {
+    padding: 40px 0;
+    text-align: center;
+}
+
+.game-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Section 2: Buttons */
+.buttons-section {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #FF0000; /* Red background */
+    color: white;
+    font-size: 1.2em;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.btn:hover {
+    background-color: #FF4C4C; /* Lighter red on hover */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+}
+
+/* Footer Section */
+footer {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #FF0000; /* Red footer text */
+    text-align: center;
+    padding: 20px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+footer p {
+    font-size: 1.1em;
+    letter-spacing: 1px;
+}
