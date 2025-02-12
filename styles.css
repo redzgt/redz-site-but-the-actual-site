@@ -135,4 +135,14 @@ footer p {
     .game p {
         font-size: 1em;
     }
+    /* Remove underline and make the whole block clickable */
+.game-link {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Keep the text color */
+}
+.game-link:hover .game {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+}
+
 }
