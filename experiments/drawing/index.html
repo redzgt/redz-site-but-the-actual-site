@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI-Powered Drawing App</title>
+  <title>Drawing App</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,29 +12,37 @@
       align-items: center;
       height: 100vh;
       flex-direction: column;
+      margin: 0;
       background-color: #f0f0f0;
     }
     canvas {
       border: 1px solid #ccc;
       background-color: white;
     }
-    #buttons {
+    #controls {
       margin-top: 20px;
     }
-    button {
+    button, input {
       padding: 10px;
       margin: 5px;
       cursor: pointer;
     }
+    input[type="color"] {
+      width: 50px;
+      height: 30px;
+      border: none;
+    }
   </style>
 </head>
 <body>
-  <h1>AI Drawing App</h1>
+
+  <h1>Drawing App</h1>
   <canvas id="drawingCanvas" width="500" height="500"></canvas>
-  
-  <div id="buttons">
-    <button onclick="clearCanvas()">Clear Canvas</button>
-    <button onclick="generateAIArt()">Generate AI Art</button>
+
+  <div id="controls">
+    <input type="color" id="colorPicker" value="#000000">
+    <input type="number" id="brushSize" value="5" min="1" max="50" step="1">
+    <button id="clearBtn">Clear Canvas</button>
   </div>
 
   <script src="script.js"></script>
