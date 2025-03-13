@@ -8,20 +8,15 @@ let shape = "free";
 let startX, startY, snapshot;
 let undoStack = [];
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight - 50;
+resizeCanvas();
 
 // Resize canvas on window resize
-window.addEventListener("resize", () => {
-  let temp = document.createElement("canvas");
-  temp.width = canvas.width;
-  temp.height = canvas.height;
-  temp.getContext("2d").drawImage(canvas, 0, 0);
-  
+window.addEventListener("resize", resizeCanvas);
+
+function resizeCanvas() {
   canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight - 50;
-  ctx.drawImage(temp, 0, 0);
-});
+  canvas.height = window.innerHeight - document.getElementById("toolbar").offsetHeight;
+}
 
 // Event Listeners
 canvas.addEventListener("mousedown", startDrawing);
@@ -39,10 +34,18 @@ document.getElementById("colorPicker").addEventListener("input", (e) => color = 
 document.getElementById("brushSize").addEventListener("input", (e) => brushSize = parseInt(e.target.value));
 document.getElementById("shapeSelector").addEventListener("change", (e) => shape = e.target.value);
 
-function startDrawing(event) {
+function getMousePos(event) {
   const rect = canvas.getBoundingClientRect();
-  startX = event.clientX - rect.left;
-  startY = event.clientY - rect.top;
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top
+  };
+}
+
+function startDrawing(event) {
+  const pos = getMousePos(event);
+  startX = pos.x;
+  startY = pos.y;
   drawing = true;
 
   ctx.beginPath();
@@ -59,9 +62,9 @@ function startDrawing(event) {
 function draw(event) {
   if (!drawing) return;
 
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
+  const pos = getMousePos(event);
+  const x = pos.x;
+  const y = pos.y;
 
   if (shape === "free") {
     ctx.strokeStyle = color;
