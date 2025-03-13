@@ -55,7 +55,10 @@ header p {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     overflow: hidden;
     margin-bottom: 30px;
+    padding: 10px; /* Reduced padding to make it smaller */
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    max-width: 400px; /* Set max width for the whole game section */
+    margin: 0 auto; /* Center align the game section */
 }
 
 .game:hover {
@@ -68,26 +71,22 @@ header p {
     height: auto;
     max-width: 300px; /* Reduced image size */
     margin: 0 auto;
-    border-bottom: 5px solid #FF0000; /* Red border */
+    border-bottom: 5px solid #FF0000;
     transition: opacity 0.3s ease;
 }
 
-.game img:hover {
-    opacity: 0.8;
-}
-
 .game h3 {
-    font-size: 1.6em; /* Reduced font size */
-    margin: 20px;
+    font-size: 1.4em; /* Reduced font size to match image */
+    margin: 10px 0;
     color: #FF0000;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 .game p {
-    font-size: 1.1em;
+    font-size: 0.95em; /* Reduced font size for the paragraph */
     color: #ddd;
-    padding: 0 20px 20px;
+    padding: 10px;
     text-align: justify;
 }
 
