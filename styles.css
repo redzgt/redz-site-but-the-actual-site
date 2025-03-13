@@ -145,4 +145,21 @@ footer p {
     .game:hover {
         background-color: #f5f5f5;
     }
+    /* Experiments Link */
+.experiments-link {
+    margin-top: 20px;
+}
+
+.experiments-link a {
+    font-size: 1.2em;
+    color: #FF0000;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.experiments-link a:hover {
+    color: #ff4444;
+}
+
 }
