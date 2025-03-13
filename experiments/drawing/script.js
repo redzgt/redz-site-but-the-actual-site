@@ -4,8 +4,7 @@ const ctx = canvas.getContext("2d");
 let drawing = false;
 let color = "#000000";
 let brushSize = 5;
-let shape = "free";
-let isEraser = false;
+let shape = "free"; // Default to free drawing
 let startX, startY, snapshot;
 let undoStack = [];
 let redoStack = [];
@@ -40,11 +39,14 @@ canvas.addEventListener("touchend", stopDrawing);
 
 document.getElementById("colorPicker").addEventListener("input", (e) => {
     color = e.target.value;
-    isEraser = false;
 });
 
 document.getElementById("brushSize").addEventListener("input", (e) => brushSize = parseInt(e.target.value));
-document.getElementById("shapeSelector").addEventListener("change", (e) => shape = e.target.value);
+document.getElementById("shapeSelector").addEventListener("change", (e) => {
+    shape = e.target.value;
+    // Disable color picker if eraser is selected
+    document.getElementById("colorPicker").disabled = shape === "eraser";
+});
 
 function startDrawing(event) {
     const pos = getMousePos(event);
@@ -54,7 +56,7 @@ function startDrawing(event) {
     ctx.beginPath();
     ctx.moveTo(startX, startY);
 
-    if (shape !== "free") {
+    if (shape !== "free" && shape !== "eraser") {
         snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
     }
 
@@ -68,23 +70,17 @@ function draw(event) {
     const x = pos.x;
     const y = pos.y;
 
-    if (isEraser) {
-        ctx.globalCompositeOperation = "destination-out"; // Erases instead of drawing
-        ctx.strokeStyle = "rgba(0,0,0,1)";
-    } else {
-        ctx.globalCompositeOperation = "source-over";
-        ctx.strokeStyle = color;
-    }
+    ctx.lineWidth = brushSize;
 
-    if (shape === "free") {
-        ctx.lineWidth = brushSize;
+    if (shape === "free" || shape === "eraser") {
+        // Use eraser tool when "eraser" shape is selected
+        ctx.strokeStyle = shape === "eraser" ? "rgba(255,255,255,1)" : color;
         ctx.lineCap = "round";
         ctx.lineTo(x, y);
         ctx.stroke();
     } else {
         ctx.putImageData(snapshot, 0, 0);
-        ctx.lineWidth = brushSize;
-
+        ctx.strokeStyle = color;
         if (shape === "line") {
             ctx.beginPath();
             ctx.moveTo(startX, startY);
@@ -104,12 +100,6 @@ function draw(event) {
 function stopDrawing() {
     if (drawing) saveState();
     drawing = false;
-}
-
-// ✅ Eraser Tool
-function toggleEraser() {
-    isEraser = !isEraser;
-    document.getElementById("colorPicker").disabled = isEraser;
 }
 
 // ✅ Undo Function (Fix: Only saves after drawing is finished)
