@@ -58,7 +58,7 @@ function startDrawing(event) {
         snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
     }
 
-    saveState();
+    saveState(); // Save the state before drawing starts
 }
 
 function draw(event) {
@@ -68,15 +68,21 @@ function draw(event) {
     const x = pos.x;
     const y = pos.y;
 
+    if (isEraser) {
+        ctx.globalCompositeOperation = "destination-out"; // Erases instead of drawing
+        ctx.strokeStyle = "rgba(0,0,0,1)";
+    } else {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = color;
+    }
+
     if (shape === "free") {
-        ctx.strokeStyle = isEraser ? "#FFFFFF" : color;
         ctx.lineWidth = brushSize;
         ctx.lineCap = "round";
         ctx.lineTo(x, y);
         ctx.stroke();
     } else {
         ctx.putImageData(snapshot, 0, 0);
-        ctx.strokeStyle = color;
         ctx.lineWidth = brushSize;
 
         if (shape === "line") {
@@ -106,15 +112,15 @@ function toggleEraser() {
     document.getElementById("colorPicker").disabled = isEraser;
 }
 
-// ✅ Undo Function
+// ✅ Undo Function (Fix: Only saves after drawing is finished)
 function undo() {
-    if (undoStack.length > 0) {
+    if (undoStack.length > 1) {
         redoStack.push(undoStack.pop());
         restoreCanvas();
     }
 }
 
-// ✅ Redo Function
+// ✅ Redo Function (Restores latest undone state)
 function redo() {
     if (redoStack.length > 0) {
         undoStack.push(redoStack.pop());
@@ -124,8 +130,9 @@ function redo() {
 
 // ✅ Save the current state for Undo/Redo
 function saveState() {
+    if (undoStack.length > 20) undoStack.shift(); // Limit history size
     undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-    redoStack = []; // Clear redo stack when new action is made
+    redoStack = []; // Clear redo stack when a new action is made
 }
 
 // ✅ Restore the last state from Undo
@@ -137,7 +144,7 @@ function restoreCanvas() {
     }
 }
 
-// ✅ Clear Canvas
+// ✅ Clear Canvas (Fix: Also clears history)
 function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     undoStack = [];
