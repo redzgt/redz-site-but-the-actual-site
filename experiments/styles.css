@@ -1,0 +1,47 @@
+/* Experiment Section (Same as Games but without description) */
+.experiment {
+    background-color: rgba(0, 0, 0, 0.85);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    margin-bottom: 30px;
+    padding: 10px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.experiment:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+}
+
+.experiment img {
+    width: 100%;
+    height: auto;
+    max-width: 300px;
+    border-bottom: 5px solid #FF0000;
+    transition: opacity 0.3s ease;
+}
+
+.experiment img:hover {
+    opacity: 0.8;
+}
+
+.experiment h3 {
+    font-size: 1.4em;
+    margin: 10px 0;
+    color: #FF0000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Remove underline on hover for the experiment link */
+.experiment-link {
+    text-decoration: none;
+}
+
+.experiment-link:hover {
+    text-decoration: none;
+}
