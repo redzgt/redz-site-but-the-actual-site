@@ -1,56 +1,40 @@
 /* General Styles */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Courier New', Courier, monospace; /* Changed to a code font */
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, #8B0000, #4B0082); /* Example gradient background */
-    background-size: 400% 400%; /* Adjust size of the gradient for more movement */
-    animation: gradientMove 15s ease infinite; /* Animation to move the gradient */
+    background-color: #000; /* Black background */
     color: #fff;
     line-height: 1.6;
     overflow-x: hidden;
 }
 
-/* Keyframes for the animation */
-@keyframes gradientMove {
-    0% {
-        background-position: 0% 0%;
-    }
-    50% {
-        background-position: 100% 100%;
-    }
-    100% {
-        background-position: 0% 0%;
-    }
-}
-
 /* Header Section */
 header {
-    padding: 60px 20px;
+    padding: 40px 20px; /* Reduced padding for a cleaner look */
     text-align: center;
-    background: rgba(0, 0, 0, 0.8);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.9); /* Darker background */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
 }
 
 header h1 {
     margin: 0;
-    font-size: 4em;
-    letter-spacing: 2px;
+    font-size: 3em; /* Reduced font size */
     color: #FF0000; /* Red color for the name */
     text-transform: uppercase;
+    letter-spacing: 2px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 header p {
-    font-size: 1.3em;
+    font-size: 1.2em; /* Reduced font size */
     margin-top: 10px;
-    color: #FF0000; /* Red color for the text */
-    letter-spacing: 1px;
+    color: #FF0000;
 }
 
 /* Content Section */
 .content {
-    max-width: 1200px;
+    max-width: 1100px; /* Reduced width for a more compact look */
     margin: 40px auto;
     padding: 0 20px;
     text-align: center;
@@ -58,20 +42,19 @@ header p {
 
 .content h2 {
     font-size: 2.5em;
-    margin-bottom: 30px;
-    color: #FF0000; /* Red color for game title */
+    margin-bottom: 20px; /* Reduced margin for a cleaner layout */
+    color: #FF0000;
     text-transform: uppercase;
     letter-spacing: 2px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 /* Game Cards */
 .game {
     background-color: rgba(0, 0, 0, 0.85);
-    border-radius: 15px;
+    border-radius: 12px; /* Slightly smaller border radius */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     overflow: hidden;
-    margin-bottom: 40px;
+    margin-bottom: 30px; /* Reduced bottom margin */
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
@@ -83,7 +66,9 @@ header p {
 .game img {
     width: 100%;
     height: auto;
-    border-bottom: 5px solid #FF0000; /* Red border for images */
+    max-width: 350px; /* Reduced image size */
+    margin: 0 auto;
+    border-bottom: 5px solid #FF0000;
     transition: opacity 0.3s ease;
 }
 
@@ -92,9 +77,9 @@ header p {
 }
 
 .game h3 {
-    font-size: 2em;
+    font-size: 1.8em; /* Slightly smaller font size */
     margin: 20px;
-    color: #FF0000; /* Red color for game name */
+    color: #FF0000;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -108,8 +93,8 @@ header p {
 
 /* Footer Section */
 footer {
-    background-color: rgba(0, 0, 0, 0.8);
-    color: #FF0000; /* Red color for footer text */
+    background-color: rgba(0, 0, 0, 0.9);
+    color: #FF0000;
     text-align: center;
     padding: 20px 0;
     position: relative;
@@ -125,7 +110,7 @@ footer p {
 /* Media Queries */
 @media (max-width: 768px) {
     header h1 {
-        font-size: 2.8em;
+        font-size: 2.5em;
     }
 
     .game h3 {
@@ -135,21 +120,21 @@ footer p {
     .game p {
         font-size: 1em;
     }
+
     .game-link {
-    display: block; /* Makes the entire link clickable */
-    text-decoration: none; /* Removes underline */
-    color: inherit; /* Keeps text color the same */
-}
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
 
-.game {
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 8px;
-    transition: 0.3s;
-}
+    .game {
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 8px;
+        transition: 0.3s;
+    }
 
-.game:hover {
-    background-color: #f5f5f5;
-}
-
+    .game:hover {
+        background-color: #f5f5f5;
+    }
 }
