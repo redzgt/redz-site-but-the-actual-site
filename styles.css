@@ -90,6 +90,15 @@ header p {
     text-align: justify;
 }
 
+/* Remove underline on hover for the game link */
+.game-link {
+    text-decoration: none; /* Remove the underline */
+}
+
+.game-link:hover {
+    text-decoration: none; /* Ensure underline is removed on hover */
+}
+
 /* Footer Section */
 footer {
     background-color: rgba(0, 0, 0, 0.9);
