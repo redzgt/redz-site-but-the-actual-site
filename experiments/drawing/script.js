@@ -58,8 +58,9 @@ function startDrawing(event) {
 function draw(event) {
   if (!drawing) return;
 
-  const x = event.clientX;
-  const y = event.clientY;
+const rect = canvas.getBoundingClientRect();
+const x = event.clientX - rect.left;
+const y = event.clientY - rect.top;
   
   if (shape === "free") {
     ctx.strokeStyle = color;
