@@ -5,45 +5,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Drawing App</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
       background-color: #f0f0f0;
     }
-    canvas {
-      border: 1px solid #ccc;
-      background-color: white;
-    }
-    #controls {
-      margin-top: 20px;
-    }
-    button, input {
+    #toolbar {
+      display: flex;
       padding: 10px;
+      background: #333;
+      color: white;
+      align-items: center;
+      justify-content: space-between;
+    }
+    button, input, select {
       margin: 5px;
+      padding: 8px;
+      border: none;
       cursor: pointer;
     }
+    button {
+      background: #555;
+      color: white;
+      border-radius: 4px;
+    }
+    button:hover {
+      background: #777;
+    }
     input[type="color"] {
-      width: 50px;
+      width: 40px;
       height: 30px;
-      border: none;
+      border-radius: 4px;
+      padding: 0;
+    }
+    canvas {
+      flex-grow: 1;
+      display: block;
+      background-color: white;
     }
   </style>
 </head>
 <body>
 
-  <h1>Drawing App</h1>
-  <canvas id="drawingCanvas" width="500" height="500"></canvas>
-
-  <div id="controls">
+  <!-- Controls -->
+  <div id="toolbar">
+    <button onclick="undo()">Undo</button>
+    <button onclick="clearCanvas()">Clear</button>
+    <select id="shapeSelector">
+      <option value="free">Free Draw</option>
+      <option value="line">Line</option>
+      <option value="rectangle">Rectangle</option>
+      <option value="circle">Circle</option>
+    </select>
     <input type="color" id="colorPicker" value="#000000">
-    <input type="number" id="brushSize" value="5" min="1" max="50" step="1">
-    <button id="clearBtn">Clear Canvas</button>
+    <input type="number" id="brushSize" value="5" min="1" max="50">
+    <button onclick="saveDrawing()">Save</button>
   </div>
+
+  <!-- Canvas -->
+  <canvas id="drawingCanvas"></canvas>
 
   <script src="script.js"></script>
 </body>
