@@ -9,30 +9,13 @@ let startX, startY, snapshot;
 let undoStack = [];
 
 resizeCanvas();
-
-// Resize canvas on window resize
 window.addEventListener("resize", resizeCanvas);
 
 function resizeCanvas() {
+  const toolbarHeight = document.getElementById("toolbar").offsetHeight;
   canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight - document.getElementById("toolbar").offsetHeight;
+  canvas.height = window.innerHeight - toolbarHeight;
 }
-
-// Event Listeners
-canvas.addEventListener("mousedown", startDrawing);
-canvas.addEventListener("mousemove", draw);
-canvas.addEventListener("mouseup", stopDrawing);
-canvas.addEventListener("mouseleave", stopDrawing);
-
-// Mobile Touch Support
-canvas.addEventListener("touchstart", (e) => startDrawing(e.touches[0]));
-canvas.addEventListener("touchmove", (e) => draw(e.touches[0]));
-canvas.addEventListener("touchend", stopDrawing);
-
-// Update tools
-document.getElementById("colorPicker").addEventListener("input", (e) => color = e.target.value);
-document.getElementById("brushSize").addEventListener("input", (e) => brushSize = parseInt(e.target.value));
-document.getElementById("shapeSelector").addEventListener("change", (e) => shape = e.target.value);
 
 function getMousePos(event) {
   const rect = canvas.getBoundingClientRect();
@@ -41,6 +24,19 @@ function getMousePos(event) {
     y: event.clientY - rect.top
   };
 }
+
+canvas.addEventListener("mousedown", startDrawing);
+canvas.addEventListener("mousemove", draw);
+canvas.addEventListener("mouseup", stopDrawing);
+canvas.addEventListener("mouseleave", stopDrawing);
+
+canvas.addEventListener("touchstart", (e) => startDrawing(e.touches[0]));
+canvas.addEventListener("touchmove", (e) => draw(e.touches[0]));
+canvas.addEventListener("touchend", stopDrawing);
+
+document.getElementById("colorPicker").addEventListener("input", (e) => color = e.target.value);
+document.getElementById("brushSize").addEventListener("input", (e) => brushSize = parseInt(e.target.value));
+document.getElementById("shapeSelector").addEventListener("change", (e) => shape = e.target.value);
 
 function startDrawing(event) {
   const pos = getMousePos(event);
@@ -51,7 +47,6 @@ function startDrawing(event) {
   ctx.beginPath();
   ctx.moveTo(startX, startY);
   
-  // Save snapshot before drawing a shape
   if (shape !== "free") {
     snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
   }
@@ -98,7 +93,6 @@ function stopDrawing() {
   drawing = false;
 }
 
-// Undo Function
 function undo() {
   if (undoStack.length > 0) {
     const lastState = undoStack.pop();
@@ -106,18 +100,15 @@ function undo() {
   }
 }
 
-// Save the current state for undo
 function saveState() {
   undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
 }
 
-// Clear Canvas
 function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   undoStack = [];
 }
 
-// Save Drawing as an Image
 function saveDrawing() {
   const link = document.createElement("a");
   link.download = "drawing.png";
