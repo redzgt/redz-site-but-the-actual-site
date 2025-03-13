@@ -40,10 +40,11 @@ document.getElementById("brushSize").addEventListener("input", (e) => brushSize 
 document.getElementById("shapeSelector").addEventListener("change", (e) => shape = e.target.value);
 
 function startDrawing(event) {
+  const rect = canvas.getBoundingClientRect();
+  startX = event.clientX - rect.left;
+  startY = event.clientY - rect.top;
   drawing = true;
-  startX = event.clientX;
-  startY = event.clientY;
-  
+
   ctx.beginPath();
   ctx.moveTo(startX, startY);
   
@@ -58,10 +59,10 @@ function startDrawing(event) {
 function draw(event) {
   if (!drawing) return;
 
-const rect = canvas.getBoundingClientRect();
-const x = event.clientX - rect.left;
-const y = event.clientY - rect.top;
-  
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+
   if (shape === "free") {
     ctx.strokeStyle = color;
     ctx.lineWidth = brushSize;
