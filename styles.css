@@ -3,7 +3,7 @@ body {
     font-family: 'Courier New', Courier, monospace; /* Changed to a code font */
     margin: 0;
     padding: 0;
-    background-color: #000; /* Black background */
+    background-color: #000; /* Set background to black */
     color: #fff;
     line-height: 1.6;
     overflow-x: hidden;
@@ -11,9 +11,9 @@ body {
 
 /* Header Section */
 header {
-    padding: 40px 20px; /* Reduced padding for a cleaner look */
+    padding: 40px 20px; /* Adjusted padding */
     text-align: center;
-    background: rgba(0, 0, 0, 0.9); /* Darker background */
+    background: rgba(0, 0, 0, 0.9); /* Darker background for header */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
 }
 
@@ -34,7 +34,7 @@ header p {
 
 /* Content Section */
 .content {
-    max-width: 1100px; /* Reduced width for a more compact look */
+    max-width: 1100px; /* Adjusted width */
     margin: 40px auto;
     padding: 0 20px;
     text-align: center;
@@ -42,7 +42,7 @@ header p {
 
 .content h2 {
     font-size: 2.5em;
-    margin-bottom: 20px; /* Reduced margin for a cleaner layout */
+    margin-bottom: 20px;
     color: #FF0000;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -51,10 +51,10 @@ header p {
 /* Game Cards */
 .game {
     background-color: rgba(0, 0, 0, 0.85);
-    border-radius: 12px; /* Slightly smaller border radius */
+    border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     overflow: hidden;
-    margin-bottom: 30px; /* Reduced bottom margin */
+    margin-bottom: 30px;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
@@ -66,9 +66,9 @@ header p {
 .game img {
     width: 100%;
     height: auto;
-    max-width: 350px; /* Reduced image size */
+    max-width: 300px; /* Reduced image size */
     margin: 0 auto;
-    border-bottom: 5px solid #FF0000;
+    border-bottom: 5px solid #FF0000; /* Red border */
     transition: opacity 0.3s ease;
 }
 
@@ -77,7 +77,7 @@ header p {
 }
 
 .game h3 {
-    font-size: 1.8em; /* Slightly smaller font size */
+    font-size: 1.6em; /* Reduced font size */
     margin: 20px;
     color: #FF0000;
     text-transform: uppercase;
