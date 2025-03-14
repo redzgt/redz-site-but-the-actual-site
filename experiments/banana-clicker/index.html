@@ -3,24 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banana Clicker 🍌</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>Banana Clicker</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="game-container">
-        <h1>Banana Clicker 🍌</h1>
-        <p>Bananas: <span id="bananaCount">0</span></p>
-        <div id="clickArea">
+        <!-- Left side with banana -->
+        <div id="left-side">
             <img src="banana.png" id="banana" onclick="clickBanana()">
+            <p>Bananas: <span id="bananaCount">0</span></p>
+            <p>Bananas per second: <span id="bps">0</span></p>
         </div>
-        <p>Bananas per second: <span id="bps">0</span></p>
-        <div id="shop">
+
+        <!-- Right side with upgrades -->
+        <div id="right-side">
             <h2>Upgrades</h2>
-            <button onclick="buyUpgrade(1)">🍌 Banana Hands (Cost: <span id="cost1">10</span>)</button>
-            <button onclick="buyUpgrade(2)">🤖 Auto Clicker (Cost: <span id="cost2">50</span>)</button>
-            <button onclick="buyUpgrade(3)">⚡ Super Clicker (Cost: <span id="cost3">250</span>)</button>
+            <div class="upgrade" id="upgrade1">
+                <p>Banana Hands</p>
+                <p>Cost: <span id="cost1">10</span> bananas</p>
+                <button onclick="buyUpgrade(1)">Buy</button>
+            </div>
+            <div class="upgrade" id="upgrade2">
+                <p>Auto Clicker</p>
+                <p>Cost: <span id="cost2">50</span> bananas</p>
+                <button onclick="buyUpgrade(2)">Buy</button>
+            </div>
+            <div class="upgrade" id="upgrade3">
+                <p>Super Clicker</p>
+                <p>Cost: <span id="cost3">250</span> bananas</p>
+                <button onclick="buyUpgrade(3)">Buy</button>
+            </div>
+            <div class="upgrade" id="upgrade4">
+                <p>Banana Farm</p>
+                <p>Cost: <span id="cost4">1000</span> bananas</p>
+                <button onclick="buyUpgrade(4)">Buy</button>
+            </div>
+            <div class="upgrade" id="upgrade5">
+                <p>Banana Factory</p>
+                <p>Cost: <span id="cost5">5000</span> bananas</p>
+                <button onclick="buyUpgrade(5)">Buy</button>
+            </div>
+            <div class="upgrade" id="upgrade6">
+                <p>Golden Bananas</p>
+                <p>Cost: <span id="cost6">10000</span> bananas</p>
+                <button onclick="buyUpgrade(6)">Buy</button>
+            </div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
