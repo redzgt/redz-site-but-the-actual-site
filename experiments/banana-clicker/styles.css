@@ -1,0 +1,71 @@
+let bananaCount = 0;
+let bananasPerSecond = 0;
+let upgrades = {
+    1: { cost: 10, bps: 0.1, level: 0 },
+    2: { cost: 50, bps: 1, level: 0 },
+    3: { cost: 250, bps: 5, level: 0 }
+};
+
+// Load game progress from local storage
+function loadGame() {
+    let savedGame = localStorage.getItem("bananaClickerSave");
+    if (savedGame) {
+        let data = JSON.parse(savedGame);
+        bananaCount = data.bananaCount;
+        bananasPerSecond = data.bananasPerSecond;
+        upgrades = data.upgrades;
+        updateUI();
+    }
+}
+
+// Save game progress
+function saveGame() {
+    localStorage.setItem("bananaClickerSave", JSON.stringify({
+        bananaCount,
+        bananasPerSecond,
+        upgrades
+    }));
+}
+
+// Update UI elements
+function updateUI() {
+    document.getElementById("bananaCount").textContent = Math.floor(bananaCount);
+    document.getElementById("bps").textContent = bananasPerSecond.toFixed(1);
+    Object.keys(upgrades).forEach(id => {
+        document.getElementById(`cost${id}`).textContent = upgrades[id].cost;
+    });
+}
+
+// Banana click effect
+function clickBanana() {
+    bananaCount++;
+    updateUI();
+    saveGame();
+
+    // Click effect: Pop animation
+    let banana = document.getElementById("banana");
+    banana.classList.add("pop");
+    setTimeout(() => banana.classList.remove("pop"), 100);
+}
+
+// Buy upgrades
+function buyUpgrade(id) {
+    if (bananaCount >= upgrades[id].cost) {
+        bananaCount -= upgrades[id].cost;
+        upgrades[id].level++;
+        bananasPerSecond += upgrades[id].bps;
+        upgrades[id].cost = Math.floor(upgrades[id].cost * 1.5);
+        updateUI();
+        saveGame();
+    }
+}
+
+// Auto banana production
+setInterval(() => {
+    bananaCount += bananasPerSecond / 10;
+    updateUI();
+    saveGame();
+}, 100);
+
+// Load the game on startup
+loadGame();
