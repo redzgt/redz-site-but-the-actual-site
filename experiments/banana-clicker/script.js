@@ -27,7 +27,10 @@ function saveProgress() {
 let upgrades = [
     { name: "Banana Hands", cost: 10, bpsIncrease: 1 },
     { name: "Auto Clicker", cost: 50, bpsIncrease: 5 },
-    { name: "Super Clicker", cost: 250, bpsIncrease: 20 }
+    { name: "Super Clicker", cost: 250, bpsIncrease: 20 },
+    { name: "Banana Farm", cost: 1000, bpsIncrease: 50 },
+    { name: "Banana Factory", cost: 5000, bpsIncrease: 100 },
+    { name: "Golden Bananas", cost: 10000, bpsIncrease: 200 }
 ];
 
 function buyUpgrade(index) {
