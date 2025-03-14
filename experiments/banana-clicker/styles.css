@@ -1,71 +1,67 @@
-let bananaCount = 0;
-let bananasPerSecond = 0;
-let upgrades = {
-    1: { cost: 10, bps: 0.1, level: 0 },
-    2: { cost: 50, bps: 1, level: 0 },
-    3: { cost: 250, bps: 5, level: 0 }
-};
-
-// Load game progress from local storage
-function loadGame() {
-    let savedGame = localStorage.getItem("bananaClickerSave");
-    if (savedGame) {
-        let data = JSON.parse(savedGame);
-        bananaCount = data.bananaCount;
-        bananasPerSecond = data.bananasPerSecond;
-        upgrades = data.upgrades;
-        updateUI();
-    }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-// Save game progress
-function saveGame() {
-    localStorage.setItem("bananaClickerSave", JSON.stringify({
-        bananaCount,
-        bananasPerSecond,
-        upgrades
-    }));
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #fef4c5;
+    color: #333;
+    padding-top: 20px;
 }
 
-// Update UI elements
-function updateUI() {
-    document.getElementById("bananaCount").textContent = Math.floor(bananaCount);
-    document.getElementById("bps").textContent = bananasPerSecond.toFixed(1);
-    Object.keys(upgrades).forEach(id => {
-        document.getElementById(`cost${id}`).textContent = upgrades[id].cost;
-    });
+#game-container {
+    width: 90%;
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
 }
 
-// Banana click effect
-function clickBanana() {
-    bananaCount++;
-    updateUI();
-    saveGame();
-
-    // Click effect: Pop animation
-    let banana = document.getElementById("banana");
-    banana.classList.add("pop");
-    setTimeout(() => banana.classList.remove("pop"), 100);
+h1 {
+    color: #d4a017;
 }
 
-// Buy upgrades
-function buyUpgrade(id) {
-    if (bananaCount >= upgrades[id].cost) {
-        bananaCount -= upgrades[id].cost;
-        upgrades[id].level++;
-        bananasPerSecond += upgrades[id].bps;
-        upgrades[id].cost = Math.floor(upgrades[id].cost * 1.5);
-        updateUI();
-        saveGame();
-    }
+#clickArea {
+    position: relative;
+    display: inline-block;
+    margin: 20px 0;
 }
 
-// Auto banana production
-setInterval(() => {
-    bananaCount += bananasPerSecond / 10;
-    updateUI();
-    saveGame();
-}, 100);
+#banana {
+    width: 150px;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
 
-// Load the game on startup
-loadGame();
+.pop {
+    transform: scale(1.2);
+}
+
+#shop {
+    margin-top: 20px;
+}
+
+button {
+    background: #ffdb58;
+    border: none;
+    padding: 10px 15px;
+    margin: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #e6c34a;
+}
+
+button:disabled {
+    background: gray;
+    cursor: not-allowed;
+}
