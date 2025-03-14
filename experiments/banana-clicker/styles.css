@@ -6,62 +6,85 @@
 
 body {
     font-family: Arial, sans-serif;
-    text-align: center;
-    background: #fef4c5;
-    color: #333;
-    padding-top: 20px;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 #game-container {
+    display: flex;
     width: 90%;
-    max-width: 600px;
-    margin: auto;
-    background: white;
-    padding: 20px;
+    max-width: 1200px;
+    justify-content: space-between;
+    background-color: #fff;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
-h1 {
-    color: #d4a017;
-}
-
-#clickArea {
-    position: relative;
-    display: inline-block;
-    margin: 20px 0;
+#left-side {
+    width: 50%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffee58;
 }
 
 #banana {
     width: 150px;
+    height: auto;
     cursor: pointer;
-    transition: transform 0.1s ease;
 }
 
-.pop {
-    transform: scale(1.2);
+#right-side {
+    width: 50%;
+    padding: 20px;
+    background-color: #ffeb3b;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-#shop {
-    margin-top: 20px;
+h2 {
+    margin-bottom: 20px;
+}
+
+.upgrade {
+    background-color: #fff;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
 }
 
 button {
-    background: #ffdb58;
+    padding: 5px 10px;
+    background-color: #fbc02d;
     border: none;
-    padding: 10px 15px;
-    margin: 5px;
-    cursor: pointer;
-    font-size: 16px;
     border-radius: 5px;
-    transition: 0.2s;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 button:hover {
-    background: #e6c34a;
+    background-color: #f57c00;
 }
 
-button:disabled {
-    background: gray;
-    cursor: not-allowed;
+button:active {
+    transform: scale(0.98);
+}
+
+/* Click effect */
+.pop {
+    animation: pop 0.1s ease-out;
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
 }
