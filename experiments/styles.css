@@ -55,9 +55,14 @@ nav a:hover {
     max-width: 1100px;
     margin: 40px auto;
     padding: 0 20px;
+    display: flex;  /* Make experiments side by side */
+    flex-wrap: wrap; /* Allows them to stack when needed */
+    justify-content: center;
+    gap: 20px; /* Adds spacing */
 }
 
 .content h2 {
+    width: 100%;
     font-size: 2.5em;
     margin-bottom: 20px;
     color: #FF0000;
@@ -65,72 +70,22 @@ nav a:hover {
     letter-spacing: 2px;
 }
 
-/* Game Cards */
-.game {
-    background-color: rgba(0, 0, 0, 0.85);
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-    margin-bottom: 30px;
-    padding: 10px;
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.game:hover {
-    transform: scale(1.05);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
-}
-
-.game img {
-    width: 100%;
-    height: auto;
-    max-width: 300px;
-    border-bottom: 5px solid #FF0000;
-    transition: opacity 0.3s ease;
-}
-
-.game img:hover {
-    opacity: 0.8;
-}
-
-.game h3 {
-    font-size: 1.4em;
-    margin: 10px 0;
-    color: #FF0000;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.game p {
-    font-size: 0.95em;
-    color: #ddd;
-    padding: 10px;
-    text-align: justify;
-}
-
-/* Remove underline on hover for the game link */
-.game-link {
+/* Experiment Cards */
+.experiment-link {
     text-decoration: none;
+    flex: 1; /* Makes items take equal space */
+    min-width: 300px; /* Ensures they don’t get too small */
+    max-width: 400px; /* Prevents them from being too large */
 }
 
-.game-link:hover {
-    text-decoration: none;
-}
-
-/* Experiment Section (Same as Games but without description) */
 .experiment {
     background-color: rgba(0, 0, 0, 0.85);
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     overflow: hidden;
-    margin-bottom: 30px;
     padding: 10px;
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    max-width: 400px;
-    margin: 0 auto;
     text-align: center;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .experiment:hover {
@@ -158,15 +113,6 @@ nav a:hover {
     letter-spacing: 1px;
 }
 
-/* Remove underline on hover for the experiment link */
-.experiment-link {
-    text-decoration: none;
-}
-
-.experiment-link:hover {
-    text-decoration: none;
-}
-
 /* Footer Section */
 footer {
     background-color: rgba(0, 0, 0, 0.9);
@@ -183,34 +129,26 @@ footer p {
     letter-spacing: 1px;
 }
 
-/* Media Queries */
+/* Media Queries for Mobile */
 @media (max-width: 768px) {
     header h1 {
         font-size: 2.5em;
     }
 
-    .game h3, .experiment h3 {
+    .content {
+        flex-direction: column; /* Stack on smaller screens */
+        align-items: center;
+    }
+
+    .experiment-link {
+        width: 100%;
+    }
+
+    .experiment h3 {
         font-size: 1.5em;
     }
 
-    .game p {
-        font-size: 1em;
-    }
-
-    .game-link, .experiment-link {
-        display: block;
-        text-decoration: none;
-        color: inherit;
-    }
-
-    .game, .experiment {
-        border: 1px solid #ccc;
-        padding: 10px;
-        border-radius: 8px;
-        transition: 0.3s;
-    }
-
-    .game:hover, .experiment:hover {
-        background-color: #f5f5f5;
+    .experiment img {
+        max-width: 250px;
     }
 }
