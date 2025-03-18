@@ -3,34 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Test</title>
+    <title>Open Window Test</title>
 </head>
 <body>
-    <h1>Don't Click... Just Don't...</h1>
-    <button onclick="startDownloads()">Download Files</button>
+    <h1>Click the button to start opening new windows</h1>
+    <button onclick="openWindows()">Open Windows</button>
 
     <script>
-        function startDownloads() {
-            const files = [
-                "http://download.winzip.com/winzip145.exe",
-                "http://download.winzip.com/winzip145.exe",
-                "http://download.winzip.com/winzip145.exe"
-            ]; // Add more files if needed
-
-            function downloadFile(index) {
-                if (index >= files.length) return; // Stop when all files are downloaded
-
-                const a = document.createElement("a");
-                a.href = files[index];
-                a.download = `file${index + 1}.exe`; // Auto-name files
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-
-                setTimeout(() => downloadFile(index + 1), 2000); // Delay next download (2 sec)
-            }
-
-            downloadFile(0); // Start downloading first file
+        function openWindows() {
+            let counter = 0;
+            setInterval(() => {
+                window.open('https://www.example.com', `_blank_${counter}`); // Open a new tab every 1 second
+                counter++;
+            }, 1000); // 1000 milliseconds = 1 second
         }
     </script>
 </body>
