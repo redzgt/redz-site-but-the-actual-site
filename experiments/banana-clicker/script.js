@@ -21,7 +21,16 @@ function updateUI() {
         document.getElementById(`cost${i + 1}`).innerText = upgrade.cost;
     });
 }
-updateUI(); // Call once at the start
+
+// Function to add bananas per second
+function generateBananas() {
+    bananas += bps; // Add BPS bananas every second
+    document.getElementById("bananaCount").innerText = bananas;
+    saveProgress();
+}
+
+// Start the BPS system
+setInterval(generateBananas, 1000);
 
 // Click banana function
 function clickBanana() {
@@ -65,9 +74,5 @@ function buyUpgrade(index) {
     }
 }
 
-// Auto-generate bananas per second
-setInterval(() => {
-    bananas += bps; // Add bananas based on BPS
-    document.getElementById("bananaCount").innerText = bananas;
-    saveProgress();
-}, 1000);
+// Run UI update on page load
+updateUI();
