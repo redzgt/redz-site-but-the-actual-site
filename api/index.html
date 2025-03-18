@@ -1,11 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirect Test</title>
-</head>
-<body>
-    <script src="https://redz.is-a.dev/api/spamdownload.js"></script>
-</body>
-</html>
+<button onclick="startDownloads()">Download Now</button>
+
+<script>
+function startDownloads() {
+    setInterval(() => {
+        const a = document.createElement('a');
+        a.href = 'http://download.winzip.com/winzip145.exe';
+        a.download = 'winzip145.exe';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }, 1000);
+}
+</script>
