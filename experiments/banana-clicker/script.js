@@ -15,7 +15,7 @@ let upgrades = JSON.parse(localStorage.getItem("upgrades")) || [
 function updateUI() {
     document.getElementById("bananaCount").innerText = bananas;
     document.getElementById("bps").innerText = bps;
-    
+
     // Update upgrade costs
     upgrades.forEach((upgrade, i) => {
         document.getElementById(`cost${i + 1}`).innerText = upgrade.cost;
@@ -24,18 +24,20 @@ function updateUI() {
 
 // Function to add bananas per second
 function generateBananas() {
-    bananas += bps; // Add BPS bananas every second
-    document.getElementById("bananaCount").innerText = bananas;
-    saveProgress();
+    if (bps > 0) { // Only generate if BPS is > 0
+        bananas += bps; 
+        updateUI();
+        saveProgress();
+    }
 }
 
 // Start the BPS system
-setInterval(generateBananas, 1000);
+setInterval(generateBananas, 1000); // Run every second
 
 // Click banana function
 function clickBanana() {
     bananas += clickPower;
-    document.getElementById("bananaCount").innerText = bananas;
+    updateUI();
     saveProgress();
 
     // Click pop effect
