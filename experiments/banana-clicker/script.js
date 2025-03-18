@@ -23,16 +23,16 @@ function updateUI() {
 
 // Function to generate bananas per second
 function generateBananas() {
-    bananas += bps; // Now it ACTUALLY adds bananas per second
-    updateUI();
-    saveProgress();
+    bananas += bps; // Add bananas based on BPS
+    updateUI(); // Update the UI
+    saveProgress(); // Save progress
 }
 
 // Click banana function
 function clickBanana() {
-    bananas += clickPower;
-    updateUI();
-    saveProgress();
+    bananas += clickPower; // Add click power to bananas
+    updateUI(); // Update the UI
+    saveProgress(); // Save progress
 
     // Click pop effect
     let banana = document.getElementById("banana");
@@ -63,10 +63,12 @@ function buyUpgrade(index) {
         }
 
         upgrade.owned++; // Track amount owned
-        upgrade.cost = Math.floor(upgrade.cost * 1.5); // Increase cost after purchase
+        upgrade.cost = Math.ceil(upgrade.cost * 1.5); // Increase cost after purchase
 
-        updateUI();
-        saveProgress();
+        updateUI(); // Update UI after purchase
+        saveProgress(); // Save progress
+    } else {
+        console.log("Not enough bananas to buy this upgrade.");
     }
 }
 
