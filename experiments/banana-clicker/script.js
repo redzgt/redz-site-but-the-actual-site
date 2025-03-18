@@ -3,12 +3,12 @@ let bananas = parseInt(localStorage.getItem("bananas")) || 0;
 let bps = parseInt(localStorage.getItem("bps")) || 0;
 let clickPower = parseInt(localStorage.getItem("clickPower")) || 1;
 let upgrades = JSON.parse(localStorage.getItem("upgrades")) || [
-    { name: "Banana Hands", cost: 10, bpsIncrease: 1, owned: 0 },
-    { name: "Auto Clicker", cost: 50, bpsIncrease: 5, owned: 0 },
-    { name: "Super Clicker", cost: 250, clickIncrease: 1, owned: 0 },
-    { name: "Banana Farm", cost: 1000, bpsIncrease: 50, owned: 0 },
-    { name: "Banana Factory", cost: 5000, bpsIncrease: 100, owned: 0 },
-    { name: "Golden Bananas", cost: 10000, bpsIncrease: 200, owned: 0 }
+    { name: "Banana Hands", cost: 10, bpsIncrease: 1, clickIncrease: 0, owned: 0 },
+    { name: "Auto Clicker", cost: 50, bpsIncrease: 5, clickIncrease: 0, owned: 0 },
+    { name: "Super Clicker", cost: 250, bpsIncrease: 0, clickIncrease: 1, owned: 0 },
+    { name: "Banana Farm", cost: 1000, bpsIncrease: 50, clickIncrease: 0, owned: 0 },
+    { name: "Banana Factory", cost: 5000, bpsIncrease: 100, clickIncrease: 0, owned: 0 },
+    { name: "Golden Bananas", cost: 10000, bpsIncrease: 200, clickIncrease: 0, owned: 0 }
 ];
 
 // Update UI on page load
@@ -48,11 +48,11 @@ function buyUpgrade(index) {
     if (bananas >= upgrade.cost) {
         bananas -= upgrade.cost;
         
-        if (upgrade.bpsIncrease) {
-            bps += upgrade.bpsIncrease; // Fix BPS not increasing
+        if (upgrade.bpsIncrease > 0) {
+            bps += upgrade.bpsIncrease; // Increases BPS
         } 
-        if (upgrade.clickIncrease) {
-            clickPower += upgrade.clickIncrease; // Fix click power upgrades
+        if (upgrade.clickIncrease > 0) {
+            clickPower += upgrade.clickIncrease; // Increases click power
         }
 
         upgrade.owned++;
