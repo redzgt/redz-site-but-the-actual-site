@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+        .container {
+            width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .text {
+            font-size: 24px;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        .input {
+            font-size: 24px;
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+        .correct { color: black; }
+        .incorrect { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p class="text" id="text"></p>
+        <input type="text" class="input" id="input" autofocus>
+        <p id="wpm">WPM: 0</p>
+    </div>
+    
+    <script>
+        const sentences = [
+            "The quick brown fox jumps over the lazy dog.",
+            "Typing tests help improve your speed and accuracy.",
+            "Practice makes perfect in every aspect of life.",
+            "JavaScript is a powerful and flexible programming language."
+        ];
+
+        let currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
+        document.getElementById("text").innerHTML = currentSentence
+            .split("")
+            .map(char => `<span>${char}</span>`)
+            .join("");
+
+        let inputField = document.getElementById("input");
+        let textSpans = document.querySelectorAll("#text span");
+        let startTime;
+
+        inputField.addEventListener("input", function() {
+            if (!startTime) startTime = new Date();
+            let inputText = inputField.value.split("");
+            let correctChars = 0;
+            textSpans.forEach((span, index) => {
+                if (inputText[index] === undefined) {
+                    span.className = "";
+                } else if (inputText[index] === span.innerText) {
+                    span.className = "correct";
+                    correctChars++;
+                } else {
+                    span.className = "incorrect";
+                }
+            });
+            
+            let elapsedTime = (new Date() - startTime) / 1000 / 60; // minutes
+            let wpm = Math.round((correctChars / 5) / elapsedTime) || 0;
+            document.getElementById("wpm").innerText = `WPM: ${wpm}`;
+        });
+    </script>
+</body>
+</html>
