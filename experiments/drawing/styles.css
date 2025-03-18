@@ -1,23 +1,80 @@
 body, html {
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
 }
 
 #toolbar {
     display: flex;
-    gap: 10px;
-    background: #ddd;
-    padding: 10px;
+    justify-content: space-between;
+    align-items: center;
+    background: #444;
+    padding: 15px 20px;
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    right: 0;
+    z-index: 10;
+}
+
+#toolbar button, #toolbar select, #toolbar input {
+    font-size: 16px;
+    padding: 8px 12px;
+    margin: 0;
+    border: none;
+    border-radius: 5px;
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#toolbar button:hover, #toolbar select:hover, #toolbar input:hover {
+    background: #f5f5f5;
+    transform: scale(1.05);
+}
+
+#toolbar button:active, #toolbar select:active, #toolbar input:active {
+    background: #e1e1e1;
+}
+
+#toolbar select {
+    width: 150px;
+}
+
+#toolbar input[type="color"] {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#toolbar input[type="number"] {
+    width: 70px;
 }
 
 canvas {
     display: block;
+    width: 100%;
+    height: calc(100% - 60px);
+    background-color: white;
     position: absolute;
-    top: 50px;
+    top: 60px;
     left: 0;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    #toolbar {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+    #toolbar button, #toolbar select, #toolbar input {
+        width: 100%;
+    }
 }
