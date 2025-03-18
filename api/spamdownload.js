@@ -1,1 +1,3 @@
-setInterval(function(){window.location = '/announcement'}, 1000);
+setTimeout(function() {
+    window.location.href = '/api/announcement';
+}, 1000);
