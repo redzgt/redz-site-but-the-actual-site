@@ -77,5 +77,7 @@ function buyUpgrade(index) {
 // Run UI update on page load
 updateUI();
 
-// Start BPS generation every second
-setInterval(generateBananas, 1000);
+// Ensure BPS starts running immediately on page load
+setTimeout(() => {
+    setInterval(generateBananas, 1000);
+}, 100);
