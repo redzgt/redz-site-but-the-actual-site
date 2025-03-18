@@ -1,4 +1,4 @@
-// Load saved progress
+// Load saved progress from local storage
 let bananas = parseInt(localStorage.getItem("bananas")) || 0;
 let bps = parseInt(localStorage.getItem("bps")) || 0;
 let clickPower = parseInt(localStorage.getItem("clickPower")) || 1;
@@ -11,15 +11,17 @@ let upgrades = JSON.parse(localStorage.getItem("upgrades")) || [
     { name: "Golden Bananas", cost: 10000, bpsIncrease: 200, clickIncrease: 0, owned: 0 }
 ];
 
-// Update UI on page load
+// Update UI function
 function updateUI() {
     document.getElementById("bananaCount").innerText = bananas;
     document.getElementById("bps").innerText = bps;
+    
+    // Update upgrade costs
     upgrades.forEach((upgrade, i) => {
         document.getElementById(`cost${i + 1}`).innerText = upgrade.cost;
     });
 }
-updateUI(); // Ensure values update when loading the game
+updateUI(); // Call once at the start
 
 // Click banana function
 function clickBanana() {
@@ -41,21 +43,21 @@ function saveProgress() {
     localStorage.setItem("upgrades", JSON.stringify(upgrades));
 }
 
-// Upgrade system
+// Buy Upgrade function
 function buyUpgrade(index) {
     let upgrade = upgrades[index - 1];
 
     if (bananas >= upgrade.cost) {
-        bananas -= upgrade.cost;
-        
+        bananas -= upgrade.cost; // Spend bananas
+
         if (upgrade.bpsIncrease > 0) {
-            bps += upgrade.bpsIncrease; // Increases BPS
+            bps += upgrade.bpsIncrease; // Increase BPS
         } 
         if (upgrade.clickIncrease > 0) {
-            clickPower += upgrade.clickIncrease; // Increases click power
+            clickPower += upgrade.clickIncrease; // Increase click power
         }
 
-        upgrade.owned++;
+        upgrade.owned++; // Track amount owned
         upgrade.cost = Math.floor(upgrade.cost * 1.5); // Increase cost after purchase
 
         updateUI();
@@ -63,11 +65,9 @@ function buyUpgrade(index) {
     }
 }
 
-// Auto-generate bananas per second (BPS Fix)
+// Auto-generate bananas per second
 setInterval(() => {
-    if (bps > 0) {
-        bananas += bps;
-        document.getElementById("bananaCount").innerText = bananas;
-        saveProgress();
-    }
+    bananas += bps; // Add bananas based on BPS
+    document.getElementById("bananaCount").innerText = bananas;
+    saveProgress();
 }, 1000);
