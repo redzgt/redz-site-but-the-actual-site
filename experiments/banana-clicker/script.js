@@ -11,28 +11,22 @@ let upgrades = JSON.parse(localStorage.getItem("upgrades")) || [
     { name: "Golden Bananas", cost: 10000, bpsIncrease: 200, clickIncrease: 0, owned: 0 }
 ];
 
-// Update UI function
+// Function to update the UI
 function updateUI() {
     document.getElementById("bananaCount").innerText = bananas;
     document.getElementById("bps").innerText = bps;
 
-    // Update upgrade costs
     upgrades.forEach((upgrade, i) => {
         document.getElementById(`cost${i + 1}`).innerText = upgrade.cost;
     });
 }
 
-// Function to add bananas per second
+// Function to generate bananas per second
 function generateBananas() {
-    if (bps > 0) { // Only generate if BPS is > 0
-        bananas += bps; 
-        updateUI();
-        saveProgress();
-    }
+    bananas += bps; // Now it ACTUALLY adds bananas per second
+    updateUI();
+    saveProgress();
 }
-
-// Start the BPS system
-setInterval(generateBananas, 1000); // Run every second
 
 // Click banana function
 function clickBanana() {
@@ -78,3 +72,6 @@ function buyUpgrade(index) {
 
 // Run UI update on page load
 updateUI();
+
+// Start BPS generation every second
+setInterval(generateBananas, 1000);
