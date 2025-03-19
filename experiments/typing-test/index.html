@@ -36,13 +36,24 @@
         }
         .correct { color: black; }
         .incorrect { color: red; }
+        .button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <p class="text" id="text"></p>
         <input type="text" class="input" id="input" autofocus>
-        <p id="stats">WPM: 0 | Accuracy: 100%</p>
+        <p id="stats">WPM: Not Done | Accuracy: Not Done</p>
+        <button class="button" id="restart">Repeat Test</button>
     </div>
     
     <script>
@@ -54,15 +65,27 @@
             "Consistent practice leads to mastery in any skill. Stay patient and persistent on your journey to improvement."
         ];
 
-        let currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
-        document.getElementById("text").innerHTML = currentSentence
-            .split("")
-            .map(char => `<span>${char}</span>`)
-            .join("");
-
+        let textElement = document.getElementById("text");
         let inputField = document.getElementById("input");
-        let textSpans = document.querySelectorAll("#text span");
-        let startTime, totalChars = currentSentence.length, correctChars = 0;
+        let statsElement = document.getElementById("stats");
+        let restartButton = document.getElementById("restart");
+        let currentSentence, textSpans, startTime, totalChars, correctChars;
+
+        function loadNewSentence() {
+            currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
+            textElement.innerHTML = currentSentence
+                .split("")
+                .map(char => `<span>${char}</span>`)
+                .join("");
+            textSpans = document.querySelectorAll("#text span");
+            inputField.value = "";
+            inputField.disabled = false;
+            statsElement.innerText = "WPM: Not Done | Accuracy: Not Done";
+            startTime = null;
+            totalChars = currentSentence.length;
+            correctChars = 0;
+            inputField.focus();
+        }
 
         inputField.addEventListener("input", function() {
             if (!startTime) startTime = new Date();
@@ -86,10 +109,14 @@
                 let elapsedTime = (new Date() - startTime) / 1000 / 60; // minutes
                 let wpm = Math.round((correctChars / 5) / elapsedTime) || 0;
                 let accuracy = ((correctChars / totalChars) * 100).toFixed(2);
-                document.getElementById("stats").innerText = `WPM: ${wpm} | Accuracy: ${accuracy}%`;
+                statsElement.innerText = `WPM: ${wpm} | Accuracy: ${accuracy}%`;
                 inputField.disabled = true;
             }
         });
+
+        restartButton.addEventListener("click", loadNewSentence);
+
+        loadNewSentence();
     </script>
 </body>
 </html>
