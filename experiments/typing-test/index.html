@@ -11,14 +11,15 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f5f5f5;
+            background-color: #1e1e1e;
+            color: #ffffff;
         }
         .container {
             width: 600px;
-            background: white;
+            background: #2c2c2c;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
             text-align: center;
         }
         .text {
@@ -30,11 +31,13 @@
             font-size: 24px;
             width: 100%;
             padding: 10px;
-            border: 2px solid #ddd;
+            border: 2px solid #444;
             border-radius: 5px;
             outline: none;
+            background: #3a3a3a;
+            color: #ffffff;
         }
-        .correct { color: black; }
+        .correct { color: #ffffff; }
         .incorrect { color: red; }
         .button {
             margin-top: 10px;
@@ -57,13 +60,11 @@
     </div>
     
     <script>
-        const sentences = [
-            "The quick brown fox jumps over the lazy dog. Practice makes perfect in every aspect of life.",
-            "Typing tests help improve your speed and accuracy. Focus on precision before increasing speed.",
-            "JavaScript is a powerful and flexible programming language. It is widely used for web development.",
-            "Reading books can improve your vocabulary and comprehension. Knowledge is a treasure that grows over time.",
-            "Consistent practice leads to mastery in any skill. Stay patient and persistent on your journey to improvement."
-        ];
+        const wordList = ["apple", "banana", "cherry", "grape", "orange", "lemon", "melon", "kiwi", "plum", "peach", "pear", "mango", "berry", "lime", "coconut", "fig", "papaya", "guava", "apricot", "date", "lychee", "blueberry", "strawberry", "raspberry", "blackberry"];
+
+        function generateRandomSentence() {
+            return new Array(12).fill(null).map(() => wordList[Math.floor(Math.random() * wordList.length)]).join(" ");
+        }
 
         let textElement = document.getElementById("text");
         let inputField = document.getElementById("input");
@@ -72,7 +73,7 @@
         let currentSentence, textSpans, startTime, totalChars, correctChars;
 
         function loadNewSentence() {
-            currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
+            currentSentence = generateRandomSentence();
             textElement.innerHTML = currentSentence
                 .split("")
                 .map(char => `<span>${char}</span>`)
