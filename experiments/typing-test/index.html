@@ -146,12 +146,16 @@
         });
 
         function moveCaret(position) {
-            if (position >= textSpans.length) return;
-            let target = textSpans[position];
-            let rect = target.getBoundingClientRect();
-            let containerRect = textElement.getBoundingClientRect();
-            caret.style.left = (rect.left - containerRect.left) + "px";
-        }
+    if (position >= textSpans.length) return;
+    let target = textSpans[position];
+    let rect = target.getBoundingClientRect();
+    let containerRect = textElement.getBoundingClientRect();
+
+    // Adjusting the caret's top position relative to the text line
+    caret.style.left = (rect.left - containerRect.left) + "px";
+    caret.style.top = (rect.top - containerRect.top) + "px"; // Add this line to adjust vertical alignment
+}
+
 
         function focusInput() {
             hiddenInput.focus();
