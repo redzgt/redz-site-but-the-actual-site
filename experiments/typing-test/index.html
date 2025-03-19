@@ -21,21 +21,20 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
             text-align: center;
+            position: relative;
         }
         .text {
             font-size: 24px;
             letter-spacing: 1px;
             margin-bottom: 20px;
+            text-align: left;
+            word-wrap: break-word;
+            user-select: none; /* Prevent selection */
         }
-        .input {
-            font-size: 24px;
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #444;
-            border-radius: 5px;
-            outline: none;
-            background: #3a3a3a;
-            color: #ffffff;
+        .hidden-input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
         }
         .correct { color: #00ff00; } /* Green for correct */
         .incorrect { color: red; } /* Red for incorrect */
@@ -53,9 +52,9 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" onclick="focusInput()">
         <p class="text" id="text"></p>
-        <input type="text" class="input" id="input" autofocus>
+        <input type="text" class="hidden-input" id="hidden-input" autofocus>
         <p id="stats">WPM: Not Done | Accuracy: Not Done</p>
         <button class="button" id="restart">Repeat Test</button>
     </div>
@@ -74,7 +73,7 @@
         }
 
         let textElement = document.getElementById("text");
-        let inputField = document.getElementById("input");
+        let hiddenInput = document.getElementById("hidden-input");
         let statsElement = document.getElementById("stats");
         let restartButton = document.getElementById("restart");
         let currentSentence, textSpans, startTime, totalChars, correctChars, totalMistakes;
@@ -86,22 +85,20 @@
                 .map(char => `<span>${char}</span>`)
                 .join("");
             textSpans = document.querySelectorAll("#text span");
-            inputField.value = "";
-            inputField.disabled = false;
+            hiddenInput.value = "";
             statsElement.innerText = "WPM: Not Done | Accuracy: Not Done";
             restartButton.style.display = "none"; // Hide button at start
             startTime = null;
             totalChars = currentSentence.length;
             correctChars = 0;
             totalMistakes = 0;
-            inputField.focus();
         }
 
-        inputField.addEventListener("input", function(event) {
+        hiddenInput.addEventListener("input", function(event) {
             if (!startTime) startTime = new Date();
-            let inputText = inputField.value.split("");
+            let inputText = hiddenInput.value.split("");
             correctChars = 0;
-            
+
             textSpans.forEach((span, index) => {
                 if (inputText[index] === undefined) {
                     span.className = "";
@@ -110,7 +107,7 @@
                     correctChars++;
                 } else {
                     if (!span.classList.contains("incorrect")) {
-                        totalMistakes++; // Only count first mistake, not corrections
+                        totalMistakes++; // Count first mistake only
                     }
                     span.className = "incorrect";
                 }
@@ -121,10 +118,14 @@
                 let wpm = Math.round((correctChars / 5) / elapsedTime) || 0;
                 let accuracy = ((1 - totalMistakes / totalChars) * 100).toFixed(2);
                 statsElement.innerText = `WPM: ${wpm} | Accuracy: ${accuracy}%`;
-                inputField.disabled = true;
+                hiddenInput.blur();
                 restartButton.style.display = "block"; // Show restart button
             }
         });
+
+        function focusInput() {
+            hiddenInput.focus();
+        }
 
         restartButton.addEventListener("click", loadNewSentence);
 
