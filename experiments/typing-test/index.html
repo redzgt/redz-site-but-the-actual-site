@@ -22,6 +22,7 @@
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
             text-align: center;
             position: relative;
+            cursor: text;
         }
         .text {
             font-size: 24px;
@@ -29,7 +30,9 @@
             margin-bottom: 20px;
             text-align: left;
             word-wrap: break-word;
-            user-select: none; /* Prevent selection */
+            user-select: none;
+            display: inline-block;
+            position: relative;
         }
         .hidden-input {
             position: absolute;
@@ -49,11 +52,25 @@
             cursor: pointer;
             display: none; /* Initially hidden */
         }
+        /* Caret styles */
+        .caret {
+            display: inline-block;
+            width: 2px;
+            height: 24px;
+            background: white;
+            position: absolute;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
     <div class="container" onclick="focusInput()">
-        <p class="text" id="text"></p>
+        <p class="text" id="text"><span class="caret" id="caret"></span></p>
         <input type="text" class="hidden-input" id="hidden-input" autofocus>
         <p id="stats">WPM: Not Done | Accuracy: Not Done</p>
         <button class="button" id="restart">Repeat Test</button>
@@ -76,6 +93,7 @@
         let hiddenInput = document.getElementById("hidden-input");
         let statsElement = document.getElementById("stats");
         let restartButton = document.getElementById("restart");
+        let caret = document.getElementById("caret");
         let currentSentence, textSpans, startTime, totalChars, correctChars, totalMistakes;
 
         function loadNewSentence() {
@@ -83,8 +101,9 @@
             textElement.innerHTML = currentSentence
                 .split("")
                 .map(char => `<span>${char}</span>`)
-                .join("");
-            textSpans = document.querySelectorAll("#text span");
+                .join("") + `<span class="caret" id="caret"></span>`;
+            textSpans = document.querySelectorAll("#text span:not(.caret)");
+            caret = document.getElementById("caret");
             hiddenInput.value = "";
             statsElement.innerText = "WPM: Not Done | Accuracy: Not Done";
             restartButton.style.display = "none"; // Hide button at start
@@ -92,6 +111,7 @@
             totalChars = currentSentence.length;
             correctChars = 0;
             totalMistakes = 0;
+            moveCaret(0);
         }
 
         hiddenInput.addEventListener("input", function(event) {
@@ -113,6 +133,8 @@
                 }
             });
 
+            moveCaret(inputText.length);
+
             if (inputText.length >= totalChars) {
                 let elapsedTime = (new Date() - startTime) / 1000 / 60; // minutes
                 let wpm = Math.round((correctChars / 5) / elapsedTime) || 0;
@@ -122,6 +144,14 @@
                 restartButton.style.display = "block"; // Show restart button
             }
         });
+
+        function moveCaret(position) {
+            if (position >= textSpans.length) return;
+            let target = textSpans[position];
+            let rect = target.getBoundingClientRect();
+            let containerRect = textElement.getBoundingClientRect();
+            caret.style.left = (rect.left - containerRect.left) + "px";
+        }
 
         function focusInput() {
             hiddenInput.focus();
