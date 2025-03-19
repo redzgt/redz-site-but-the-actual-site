@@ -77,7 +77,7 @@
         let inputField = document.getElementById("input");
         let statsElement = document.getElementById("stats");
         let restartButton = document.getElementById("restart");
-        let currentSentence, textSpans, startTime, totalChars, correctChars;
+        let currentSentence, textSpans, startTime, totalChars, correctChars, totalMistakes;
 
         function loadNewSentence() {
             currentSentence = generateRandomSentence();
@@ -93,14 +93,14 @@
             startTime = null;
             totalChars = currentSentence.length;
             correctChars = 0;
+            totalMistakes = 0;
             inputField.focus();
         }
 
-        inputField.addEventListener("input", function() {
+        inputField.addEventListener("input", function(event) {
             if (!startTime) startTime = new Date();
             let inputText = inputField.value.split("");
             correctChars = 0;
-            let incorrectCount = 0;
             
             textSpans.forEach((span, index) => {
                 if (inputText[index] === undefined) {
@@ -109,15 +109,17 @@
                     span.className = "correct";
                     correctChars++;
                 } else {
+                    if (!span.classList.contains("incorrect")) {
+                        totalMistakes++; // Only count first mistake, not corrections
+                    }
                     span.className = "incorrect";
-                    incorrectCount++;
                 }
             });
-            
+
             if (inputText.length >= totalChars) {
                 let elapsedTime = (new Date() - startTime) / 1000 / 60; // minutes
                 let wpm = Math.round((correctChars / 5) / elapsedTime) || 0;
-                let accuracy = ((correctChars / totalChars) * 100).toFixed(2);
+                let accuracy = ((1 - totalMistakes / totalChars) * 100).toFixed(2);
                 statsElement.innerText = `WPM: ${wpm} | Accuracy: ${accuracy}%`;
                 inputField.disabled = true;
                 restartButton.style.display = "block"; // Show restart button
