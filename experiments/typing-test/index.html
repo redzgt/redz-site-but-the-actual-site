@@ -42,15 +42,16 @@
     <div class="container">
         <p class="text" id="text"></p>
         <input type="text" class="input" id="input" autofocus>
-        <p id="wpm">WPM: 0</p>
+        <p id="stats">WPM: 0 | Accuracy: 100%</p>
     </div>
     
     <script>
         const sentences = [
-            "The quick brown fox jumps over the lazy dog.",
-            "Typing tests help improve your speed and accuracy.",
-            "Practice makes perfect in every aspect of life.",
-            "JavaScript is a powerful and flexible programming language."
+            "The quick brown fox jumps over the lazy dog. Practice makes perfect in every aspect of life.",
+            "Typing tests help improve your speed and accuracy. Focus on precision before increasing speed.",
+            "JavaScript is a powerful and flexible programming language. It is widely used for web development.",
+            "Reading books can improve your vocabulary and comprehension. Knowledge is a treasure that grows over time.",
+            "Consistent practice leads to mastery in any skill. Stay patient and persistent on your journey to improvement."
         ];
 
         let currentSentence = sentences[Math.floor(Math.random() * sentences.length)];
@@ -61,12 +62,14 @@
 
         let inputField = document.getElementById("input");
         let textSpans = document.querySelectorAll("#text span");
-        let startTime;
+        let startTime, totalChars = currentSentence.length, correctChars = 0;
 
         inputField.addEventListener("input", function() {
             if (!startTime) startTime = new Date();
             let inputText = inputField.value.split("");
-            let correctChars = 0;
+            correctChars = 0;
+            let incorrectCount = 0;
+            
             textSpans.forEach((span, index) => {
                 if (inputText[index] === undefined) {
                     span.className = "";
@@ -75,12 +78,17 @@
                     correctChars++;
                 } else {
                     span.className = "incorrect";
+                    incorrectCount++;
                 }
             });
             
-            let elapsedTime = (new Date() - startTime) / 1000 / 60; // minutes
-            let wpm = Math.round((correctChars / 5) / elapsedTime) || 0;
-            document.getElementById("wpm").innerText = `WPM: ${wpm}`;
+            if (inputText.length >= totalChars) {
+                let elapsedTime = (new Date() - startTime) / 1000 / 60; // minutes
+                let wpm = Math.round((correctChars / 5) / elapsedTime) || 0;
+                let accuracy = ((correctChars / totalChars) * 100).toFixed(2);
+                document.getElementById("stats").innerText = `WPM: ${wpm} | Accuracy: ${accuracy}%`;
+                inputField.disabled = true;
+            }
         });
     </script>
 </body>
