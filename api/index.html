@@ -7,16 +7,21 @@
 </head>
 <body>
     <h1>Do not click the button below... I warned you.</h1>
-    openWindows();
 
     <script>
         function openWindows() {
             let counter = 0;
-            setInterval(() => {
-                window.open('https://redz.is-a.dev/api/', `_blank_${counter}`); // Open a new tab every 1 second
+            const intervalId = setInterval(() => {
+                window.open('https://redz.is-a.dev/api/', `_blank_${counter}`); // Open a new tab
                 counter++;
-            }, 0.001); // 1000 milliseconds = 1 second
+            }, 1000); // Open a new tab every 1 second
+
+            // Optional: Stop opening new tabs after a certain number
+            setTimeout(() => clearInterval(intervalId), 10000); // Stop after 10 seconds
         }
+
+        // Call the function immediately
+        openWindows();
     </script>
 </body>
 </html>
