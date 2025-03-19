@@ -37,8 +37,8 @@
             background: #3a3a3a;
             color: #ffffff;
         }
-        .correct { color: #ffffff; }
-        .incorrect { color: red; }
+        .correct { color: #00ff00; } /* Green for correct */
+        .incorrect { color: red; } /* Red for incorrect */
         .button {
             margin-top: 10px;
             padding: 10px 20px;
@@ -48,6 +48,7 @@
             color: white;
             border-radius: 5px;
             cursor: pointer;
+            display: none; /* Initially hidden */
         }
     </style>
 </head>
@@ -60,7 +61,13 @@
     </div>
     
     <script>
-        const wordList = ["apple", "banana", "cherry", "grape", "orange", "lemon", "melon", "kiwi", "plum", "peach", "pear", "mango", "berry", "lime", "coconut", "fig", "papaya", "guava", "apricot", "date", "lychee", "blueberry", "strawberry", "raspberry", "blackberry"];
+        const wordList = [
+            "apple", "banana", "cherry", "grape", "orange", "lemon", "melon", "kiwi", "plum", "peach",
+            "pear", "mango", "berry", "lime", "coconut", "fig", "papaya", "guava", "apricot", "date",
+            "run", "jump", "walk", "sit", "stand", "laugh", "cry", "smile", "frown", "play", "read", 
+            "write", "draw", "paint", "build", "fix", "move", "sleep", "dream", "think", "blink", 
+            "clap", "wave", "shine", "dance", "sing", "hum", "rest", "wait", "look", "stare", "glance"
+        ];
 
         function generateRandomSentence() {
             return new Array(12).fill(null).map(() => wordList[Math.floor(Math.random() * wordList.length)]).join(" ");
@@ -82,6 +89,7 @@
             inputField.value = "";
             inputField.disabled = false;
             statsElement.innerText = "WPM: Not Done | Accuracy: Not Done";
+            restartButton.style.display = "none"; // Hide button at start
             startTime = null;
             totalChars = currentSentence.length;
             correctChars = 0;
@@ -112,6 +120,7 @@
                 let accuracy = ((correctChars / totalChars) * 100).toFixed(2);
                 statsElement.innerText = `WPM: ${wpm} | Accuracy: ${accuracy}%`;
                 inputField.disabled = true;
+                restartButton.style.display = "block"; // Show restart button
             }
         });
 
