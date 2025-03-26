@@ -19,10 +19,31 @@
         #searchBar {
             padding: 10px;
             width: 300px;
-            margin: 20px auto;
-            display: block;
+            margin: 20px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0 20px;
+        }
+        .update-log-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .update-log {
+            background-color: white;
+            padding: 10px;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            color: #333;
+            font-size: 14px;
+            text-align: left;
         }
         .game-container {
             display: flex;
@@ -62,10 +83,20 @@
     </script>
 </head>
 <body>
-    <h1>Universe Remake</h1>
-    <input type="text" id="searchBar" onkeyup="searchGames()" placeholder="Search games...">
+    <div class="header-container">
+        <h1>Universe Remake</h1>
+        <input type="text" id="searchBar" onkeyup="searchGames()" placeholder="Search games...">
+    </div>
+
+    <div class="update-log-container">
+        <div class="update-log">
+            <h3>Update Log</h3>
+            <p>Version BETA: Setting up the site.</p>
+        </div>
+    </div>
+
     <div class="game-container">
-        <div class="game" data-title="Game 1" onclick="openGame('banana-clicker.html')">
+        <div class="game" data-title="Banana Clicker" onclick="openGame('banana-clicker.html')">
             <img src="https://lh6.googleusercontent.com/S8gP4zguyOBytamEwhcp3WbffVGYwbrUrY3aiRfKj7It1oCdt6XAA0jbNQMcqwPP-0XJP_IoUxQZGTN3TSK3BLw=w1280" alt="Game 1">
         </div>
         <div class="game" data-title="Game 2" onclick="openGame('game2.html')">
