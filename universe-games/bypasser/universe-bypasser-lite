@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Embed</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            font-weight: bold;
+        }
+        #urlForm {
+            margin-bottom: 20px;
+        }
+        #urlInput {
+            width: 300px;
+            padding: 10px;
+        }
+        #openButton {
+            padding: 10px;
+        }
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+        }
+        .instructions {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Universe Bypasser</h1>
+    <div class="instructions">THIS ONLY BYPASSES TEACHER GOGUARDIAN (So If a website is blocked for a specific teacher it unblocks) Make sure to include https://</div>
+    
+    <div id="urlForm">
+        <input type="text" id="urlInput" placeholder="Enter a URL" />
+        <button id="openButton">Open</button>
+    </div>
+    <iframe id="webFrame" src="" frameborder="0"></iframe>
+
+    <script>
+        document.getElementById('openButton').addEventListener('click', function() {
+            var url = document.getElementById('urlInput').value;
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'http://' + url; // Prepend http:// if missing
+            }
+            document.getElementById('webFrame').src = url;
+        });
+    </script>
+
+</body>
+</html>
