@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Made by Universe</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #1e1a3d; /* Dark purple background */
+            color: #ffffff;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        #background {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: 0;
+            background: radial-gradient(circle, rgba(54, 0, 129, 0.8), rgba(39, 0, 29, 1));
+        }
+
+        .star {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8); /* Star color */
+            border-radius: 50%;
+            animation: drift linear infinite;
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translate(0, 0);
+            }
+            50% {
+                transform: translate(20px, -20px); /* Adjust distance */
+            }
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+            text-align: center;
+            flex-direction: column;
+            padding: 50px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            color: #e2a6ff; /* Light purple */
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="text"]:hover {
+            background-color: #444; /* Slightly lighter on hover */
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #9b59b6; /* Purple button */
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #a78bca; /* Lighter button on hover */
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background-color: rgba(255, 255, 255, 0.15); 
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0
+                    .menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background-color: rgba(255, 255, 255, 0.15); 
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .close-button {
+            float: right;
+            cursor: pointer;
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="background"></div>
+    <div class="container">
+        <h1>Made by Universe</h1>
+        <input type="text" id="urlInput" placeholder="Enter URL to browse..." />
+        <button id="launchButton">Launch</button>
+    </div>
+    
+    <div class="footer">
+        bradperbs
+    </div>
+
+    <div class="menu">
+        <span class="close-button" onclick="this.parentElement.remove();">×</span>
+        <span>Drag to Move</span>
+    </div>
+
+    <script>
+        // Generate stars for the background
+        const numStars = 300;
+        const background = document.getElementById('background');
+
+        for (let i = 0; i < numStars; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 3 + 2; // Star size
+            star.style.width = `${size}px`;
+            star.style.height = star.style.width;
+            star.style.left = `${Math.random() * 100}vw`;
+            star.style.top = `${Math.random() * 100}vh`;
+            star.style.animationDuration = `${Math.random() * 10 + 5}s`; // Random duration between 5s and 15s
+            background.appendChild(star);
+        }
+
+        // Adding event listener to the launch button
+        document.getElementById('launchButton').addEventListener('click', () => {
+            const link = document.getElementById('urlInput').value;
+            if (!link) {
+                alert("Please enter a valid URL.");
+                return;
+            }
+            const proxy = 'https://api.cors.lol/?url=';
+            fetch(proxy + link)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    document.open();
+                    document.write(text);
+                    document.close();
+                })
+                .catch(err => alert("Error fetching URL: " + err));
+        });
+    </script>
+</body>
+</html>
