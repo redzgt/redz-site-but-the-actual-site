@@ -59,6 +59,7 @@
             margin-top: 30px;
             display: flex;
             justify-content: center;
+            position: relative;
         }
         .video-wrapper {
             position: relative;
@@ -75,6 +76,20 @@
             height: 100%;
             border-radius: 12px;
             box-shadow: 0 0 20px rgba(216, 150, 255, 0.3);
+        }
+        .fullscreen-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #d896ff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px 10px;
+            box-shadow: 0 0 10px rgba(216, 150, 255, 0.7);
+            display: none;
         }
         #historyContainer {
             margin-top: 30px;
@@ -107,7 +122,7 @@
     </div>
     <div id="videoContainer">
         <div class="video-wrapper">
-            <!-- Embedded YouTube video will appear here -->
+            <button class="fullscreen-button" onclick="toggleFullscreen()">&#x26F6;</button>
         </div>
     </div>
     <div id="historyContainer">
@@ -119,6 +134,7 @@
     <p id="credits">Credits to KnightOChaos</p>
     <script>
         var currentIframe = null;
+        var fullscreenButton = document.querySelector(".fullscreen-button");
         function embedVideo() {
             var youtubeLink = document.getElementById("youtubeLink").value;
             var videoContainer = document.querySelector(".video-wrapper");
@@ -131,20 +147,10 @@
                     var iframe = createIframe(modifiedLink);
                     videoContainer.innerHTML = "";
                     videoContainer.appendChild(iframe);
+                    videoContainer.appendChild(fullscreenButton);
+                    fullscreenButton.style.display = "block";
                     currentIframe = iframe;
-                    var historyItem = document.createElement("div");
-                    historyItem.className = "historyItem";
-                    historyItem.textContent = youtubeLink;
-                    historyItem.onclick = function() {
-                        videoContainer.innerHTML = "";
-                        videoContainer.appendChild(createIframe(historyItem.textContent));
-                    };
-                    historyContainer.appendChild(historyItem);
-                } else {
-                    videoContainer.innerHTML = "Invalid YouTube link";
                 }
-            } else {
-                videoContainer.innerHTML = "Not a YouTube video link";
             }
         }
         function createIframe(src) {
@@ -153,6 +159,15 @@
             iframe.allowfullscreen = true;
             iframe.frameborder = "0";
             return iframe;
+        }
+        function toggleFullscreen() {
+            if (currentIframe) {
+                if (!document.fullscreenElement) {
+                    currentIframe.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            }
         }
     </script>
 </body>
