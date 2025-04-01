@@ -81,6 +81,14 @@
             object-fit: cover;
             border-radius: 10px;
         }
+        .game img {
+        transition: transform 0.2s ease-in-out;
+        }
+
+        .game:hover img {
+        transform: scale(0.9);
+        }
+
     </style>
     <script>
         function searchGames() {
@@ -105,7 +113,7 @@
     <div class="update-log-container">
         <div class="update-log">
             <h3>Update Log</h3>
-            <p>Mar 28: Games</p>
+            <p>Apr 1: Added smooth hover effect.</p>
         </div>
         <div class="button-container">
             <a href="bypasser/universe-bypasser-lite.html" target="_blank">
