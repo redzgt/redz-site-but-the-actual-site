@@ -171,7 +171,7 @@
             fetch(proxy + link)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error('The website you attempted to reach has patched our method, please use another.');
                     }
                     return response.text();
                 })
