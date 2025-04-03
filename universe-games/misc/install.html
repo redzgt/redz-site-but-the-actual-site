@@ -4,60 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PWA Installer</title>
+    <link rel="manifest" href="manifest.json">
+    <script>
+        let deferredPrompt;
+
+        window.addEventListener("beforeinstallprompt", (event) => {
+            event.preventDefault();
+            deferredPrompt = event;
+            document.getElementById("installBtn").style.display = "block";
+        });
+
+        document.getElementById("installBtn").addEventListener("click", async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const choiceResult = await deferredPrompt.userChoice;
+                if (choiceResult.outcome === "accepted") {
+                    console.log("User accepted the install prompt");
+                } else {
+                    console.log("User dismissed the install prompt");
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        window.addEventListener("appinstalled", () => {
+            console.log("PWA was installed");
+            document.getElementById("installBtn").style.display = "none";
+        });
+    </script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
+        body { font-family: Arial, sans-serif; text-align: center; }
         #installBtn {
             display: none;
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #28a745;
+            background-color: #007bff;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin-top: 20px;
         }
-        #installBtn:hover {
-            background-color: #218838;
-        }
+        #installBtn:hover { background-color: #0056b3; }
     </style>
 </head>
 <body>
-
     <h1>Install This Web App</h1>
     <button id="installBtn">Install App</button>
-
-    <script>
-        let deferredPrompt;
-
-        window.addEventListener('beforeinstallprompt', (event) => {
-            event.preventDefault();
-            deferredPrompt = event;
-            document.getElementById('installBtn').style.display = 'block';
-        });
-
-        document.getElementById('installBtn').addEventListener('click', () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(choiceResult => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('User installed the app');
-                    } else {
-                        console.log('User dismissed the install prompt');
-                    }
-                    deferredPrompt = null;
-                });
-            }
-        });
-
-        window.addEventListener('appinstalled', () => {
-            console.log('App was installed');
-            document.getElementById('installBtn').style.display = 'none';
-        });
-    </script>
-
 </body>
 </html>
