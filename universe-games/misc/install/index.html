@@ -5,35 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PWA Installer</title>
     <link rel="manifest" href="manifest.json">
-    <script>
-        let deferredPrompt;
-
-        window.addEventListener("beforeinstallprompt", (event) => {
-            event.preventDefault();
-            deferredPrompt = event;
-            document.getElementById("installBtn").style.display = "block";
-        });
-
-        document.getElementById("installBtn").addEventListener("click", async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const choiceResult = await deferredPrompt.userChoice;
-                if (choiceResult.outcome === "accepted") {
-                    console.log("User accepted the install prompt");
-                } else {
-                    console.log("User dismissed the install prompt");
-                }
-                deferredPrompt = null;
-            }
-        });
-
-        window.addEventListener("appinstalled", () => {
-            console.log("PWA was installed");
-            document.getElementById("installBtn").style.display = "none";
-        });
-    </script>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
         #installBtn {
             display: none;
             padding: 10px 20px;
@@ -49,7 +22,44 @@
     </style>
 </head>
 <body>
+
     <h1>Install This Web App</h1>
     <button id="installBtn">Install App</button>
+
+    <script>
+        let deferredPrompt;
+
+        window.addEventListener("beforeinstallprompt", (event) => {
+            event.preventDefault();
+            deferredPrompt = event;
+            document.getElementById("installBtn").style.display = "block";
+        });
+
+        document.getElementById("installBtn").addEventListener("click", async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const choiceResult = await deferredPrompt.userChoice;
+                if (choiceResult.outcome === "accepted") {
+                    console.log("User installed the app");
+                } else {
+                    console.log("User dismissed the install prompt");
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        window.addEventListener("appinstalled", () => {
+            console.log("PWA was installed");
+            document.getElementById("installBtn").style.display = "none";
+        });
+
+        // Register Service Worker
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("sw.js")
+            .then(() => console.log("Service Worker Registered"))
+            .catch(err => console.error("Service Worker Error:", err));
+        }
+    </script>
+
 </body>
 </html>
