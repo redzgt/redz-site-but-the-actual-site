@@ -1,7 +1,7 @@
 {
     "name": "PWA Installer",
     "short_name": "PWA",
-    "start_url": "/",
+    "start_url": "/universe-games/misc/install/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#007bff",
