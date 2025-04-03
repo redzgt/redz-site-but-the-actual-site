@@ -1,12 +1,7 @@
-self.addEventListener("install", (event) => {
-    console.log("Service Worker installed");
-    self.skipWaiting();
-});
-
-self.addEventListener("activate", (event) => {
-    console.log("Service Worker activated");
-});
-
-self.addEventListener("fetch", (event) => {
-    console.log("Fetching:", event.request.url);
-});
+<script>
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./sw.js")
+        .then(() => console.log("Service Worker Registered"))
+        .catch(err => console.error("Service Worker Error:", err));
+    }
+</script>
