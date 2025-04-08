@@ -108,11 +108,15 @@
     <input type="number" id="upgradePrice" placeholder="Price">
     <input type="number" id="upgradeCPS" placeholder="Clicks Per Second">
     <button onclick="addUpgrade()">Add Upgrade</button>
+
+    <hr>
+    <button onclick="saveToLocalStorage()">💾 Save Game Setup</button>
   </div>
 
   <script>
     let clickCount = 0;
     let cps = 0;
+    let upgrades = [];
 
     function addClicks() {
       clickCount++;
@@ -129,13 +133,8 @@
     }, 100);
 
     function applySettings() {
-      // Update background color
       document.getElementById("game").style.backgroundColor = document.getElementById("bgColor").value;
-
-      // Update image src
       document.getElementById("clickImg").src = document.getElementById("imgUrl").value;
-
-      // Update game title
       document.getElementById("gameTitle").textContent = document.getElementById("gameNameInput").value;
     }
 
@@ -143,15 +142,14 @@
     document.getElementById("imgUrl").addEventListener("input", applySettings);
     document.getElementById("gameNameInput").addEventListener("input", applySettings);
 
-    function addUpgrade() {
-      const name = document.getElementById("upgradeName").value;
-      const price = parseInt(document.getElementById("upgradePrice").value);
-      const cpsGain = parseFloat(document.getElementById("upgradeCPS").value);
-
+    function addUpgrade(name, price, cpsGain) {
       if (!name || isNaN(price) || isNaN(cpsGain)) {
         alert("Please fill out all upgrade fields.");
         return;
       }
+
+      const upgrade = { name, price, cps: cpsGain };
+      upgrades.push(upgrade);
 
       const div = document.createElement("div");
       div.className = "upgrade";
@@ -172,10 +170,39 @@
       document.getElementById("upgradeCPS").value = '';
     }
 
-    // Drag and drop image support
-    const dropZone = document.getElementById("dropZone");
+    function saveToLocalStorage() {
+      const data = {
+        title: document.getElementById("gameNameInput").value,
+        bgColor: document.getElementById("bgColor").value,
+        imgUrl: document.getElementById("imgUrl").value,
+        upgrades: upgrades
+      };
+      localStorage.setItem("clickerGameData", JSON.stringify(data));
+      alert("Game saved!");
+    }
 
-    dropZone.addEventListener("dragover", (e) => {
+    function loadFromLocalStorage() {
+      const saved = localStorage.getItem("clickerGameData");
+      if (!saved) return;
+
+      const data = JSON.parse(saved);
+      document.getElementById("gameNameInput").value = data.title;
+      document.getElementById("bgColor").value = data.bgColor;
+      document.getElementById("imgUrl").value = data.imgUrl;
+      document.getElementById("game").style.backgroundColor = data.bgColor;
+      document.getElementById("clickImg").src = data.imgUrl;
+      document.getElementById("gameTitle").textContent = data.title;
+
+      upgrades = [];
+      document.getElementById("upgradeContainer").innerHTML = '';
+      data.upgrades.forEach(upg => {
+        addUpgrade(upg.name, upg.price, upg.cps);
+      });
+    }
+
+    // Drag and drop image
+    const dropZone = document.getElementById("dropZone");
+    dropZone.addEventListener("dragover", e => {
       e.preventDefault();
       dropZone.classList.add("hover");
     });
@@ -184,16 +211,14 @@
       dropZone.classList.remove("hover");
     });
 
-    dropZone.addEventListener("drop", (e) => {
+    dropZone.addEventListener("drop", e => {
       e.preventDefault();
       dropZone.classList.remove("hover");
-
       const file = e.dataTransfer.files[0];
       if (!file.type.startsWith("image/")) {
         alert("Please drop an image file.");
         return;
       }
-
       const reader = new FileReader();
       reader.onload = () => {
         document.getElementById("clickImg").src = reader.result;
@@ -202,11 +227,8 @@
       reader.readAsDataURL(file);
     });
 
-    // Default upgrade
-    document.getElementById("upgradeName").value = "Auto Clicker";
-    document.getElementById("upgradePrice").value = 10;
-    document.getElementById("upgradeCPS").value = 1;
-    addUpgrade();
+    // Load on startup
+    loadFromLocalStorage();
   </script>
 
 </body>
