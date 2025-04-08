@@ -122,7 +122,7 @@
     <div class="update-log-container">
         <div class="update-log">
             <h3>Update Log</h3>
-            <p>Apr 8: Added Idle Breakout.</p>
+            <p>Apr 8: Added Theme Changer!</p>
         </div>
         <div class="button-container">
             <a href="bypasser/universe-bypasser-lite.html" target="_blank">
@@ -197,7 +197,71 @@
         </div>
     </div>
     <footer>
-        <p>&copy; 2025 Universe Games</p>
-    </footer>
-</body>
-</html>
+    <p>&copy; 2025 Universe Games</p>
+</footer>
+<!--Theme Buttons!-->
+<div class="button-container" style="justify-content: center; margin-bottom: 40px;">
+    <button onclick="setLightTheme()">Light Theme</button>
+    <button onclick="setDarkTheme()">Dark Theme</button>
+</div>
+
+
+<script>
+    function setLightTheme() {
+        applyTheme('light');
+        localStorage.setItem('theme', 'light');
+    }
+
+    function setDarkTheme() {
+        applyTheme('dark');
+        localStorage.setItem('theme', 'dark');
+    }
+
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            document.body.style.backgroundColor = '#1e1e1e';
+            document.body.style.color = 'white';
+
+            document.querySelectorAll('.update-log').forEach(el => {
+                el.style.backgroundColor = '#333';
+                el.style.color = 'white';
+            });
+
+            document.querySelectorAll('button').forEach(btn => {
+                btn.style.backgroundColor = '#444';
+                btn.style.color = 'white';
+            });
+
+            document.querySelectorAll('.game').forEach(g => {
+                g.style.backgroundColor = '#333';
+            });
+
+        } else {
+            document.body.style.backgroundColor = '#dbc2ff';
+            document.body.style.color = 'black';
+
+            document.querySelectorAll('.update-log').forEach(el => {
+                el.style.backgroundColor = 'white';
+                el.style.color = '#333';
+            });
+
+            document.querySelectorAll('button').forEach(btn => {
+                btn.style.backgroundColor = 'white';
+                btn.style.color = 'black';
+            });
+
+            document.querySelectorAll('.game').forEach(g => {
+                g.style.backgroundColor = 'white';
+            });
+        }
+    }
+
+    // Load theme from localStorage on page load
+    window.onload = function () {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        }
+    };
+</script>
+
