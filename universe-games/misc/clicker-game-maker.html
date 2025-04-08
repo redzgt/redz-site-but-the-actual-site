@@ -107,129 +107,135 @@
     <input type="text" id="upgradeName" placeholder="Upgrade Name">
     <input type="number" id="upgradePrice" placeholder="Price">
     <input type="number" id="upgradeCPS" placeholder="Clicks Per Second">
-    <button onclick="addUpgrade()">Add Upgrade</button>
+    <button onclick="handleAddUpgrade()">Add Upgrade</button>
 
     <hr>
     <button onclick="saveToLocalStorage()">💾 Save Game Setup</button>
   </div>
 
   <script>
-    let clickCount = 0;
-    let cps = 0;
-    let upgrades = [];
+  let clickCount = 0;
+  let cps = 0;
+  let upgrades = [];
 
-    function addClicks() {
-      clickCount++;
-      updateDisplay();
+  function addClicks() {
+    clickCount++;
+    updateDisplay();
+  }
+
+  function updateDisplay() {
+    document.getElementById("clickCount").innerText = Math.floor(clickCount);
+  }
+
+  setInterval(() => {
+    clickCount += cps / 10;
+    updateDisplay();
+  }, 100);
+
+  function applySettings() {
+    document.getElementById("game").style.backgroundColor = document.getElementById("bgColor").value;
+    document.getElementById("clickImg").src = document.getElementById("imgUrl").value;
+    document.getElementById("gameTitle").textContent = document.getElementById("gameNameInput").value;
+  }
+
+  document.getElementById("bgColor").addEventListener("input", applySettings);
+  document.getElementById("imgUrl").addEventListener("input", applySettings);
+  document.getElementById("gameNameInput").addEventListener("input", applySettings);
+
+  function handleAddUpgrade() {
+    const name = document.getElementById("upgradeName").value.trim();
+    const price = parseInt(document.getElementById("upgradePrice").value);
+    const cpsGain = parseFloat(document.getElementById("upgradeCPS").value);
+
+    if (!name || isNaN(price) || isNaN(cpsGain)) {
+      alert("Please fill out all upgrade fields.");
+      return;
     }
 
-    function updateDisplay() {
-      document.getElementById("clickCount").innerText = Math.floor(clickCount);
-    }
+    upgrades.push({ name, price, cps: cpsGain });
+    createUpgradeElement(name, price, cpsGain);
 
-    setInterval(() => {
-      clickCount += cps / 10;
-      updateDisplay();
-    }, 100);
+    document.getElementById("upgradeName").value = '';
+    document.getElementById("upgradePrice").value = '';
+    document.getElementById("upgradeCPS").value = '';
+  }
 
-    function applySettings() {
-      document.getElementById("game").style.backgroundColor = document.getElementById("bgColor").value;
-      document.getElementById("clickImg").src = document.getElementById("imgUrl").value;
-      document.getElementById("gameTitle").textContent = document.getElementById("gameNameInput").value;
-    }
-
-    document.getElementById("bgColor").addEventListener("input", applySettings);
-    document.getElementById("imgUrl").addEventListener("input", applySettings);
-    document.getElementById("gameNameInput").addEventListener("input", applySettings);
-
-    function addUpgrade(name, price, cpsGain) {
-      if (!name || isNaN(price) || isNaN(cpsGain)) {
-        alert("Please fill out all upgrade fields.");
-        return;
+  function createUpgradeElement(name, price, cpsGain) {
+    const div = document.createElement("div");
+    div.className = "upgrade";
+    div.textContent = `${name} - ${price} clicks`;
+    div.onclick = () => {
+      if (clickCount >= price) {
+        clickCount -= price;
+        cps += cpsGain;
+        updateDisplay();
+        div.remove();
       }
+    };
+    document.getElementById("upgradeContainer").appendChild(div);
+  }
 
-      const upgrade = { name, price, cps: cpsGain };
-      upgrades.push(upgrade);
+  function saveToLocalStorage() {
+    const data = {
+      title: document.getElementById("gameNameInput").value,
+      bgColor: document.getElementById("bgColor").value,
+      imgUrl: document.getElementById("imgUrl").value,
+      upgrades: upgrades
+    };
+    localStorage.setItem("clickerGameData", JSON.stringify(data));
+    alert("Game saved!");
+  }
 
-      const div = document.createElement("div");
-      div.className = "upgrade";
-      div.textContent = `${name} - ${price} clicks`;
-      div.onclick = () => {
-        if (clickCount >= price) {
-          clickCount -= price;
-          cps += cpsGain;
-          updateDisplay();
-          div.remove();
-        }
-      };
-      document.getElementById("upgradeContainer").appendChild(div);
+  function loadFromLocalStorage() {
+    const saved = localStorage.getItem("clickerGameData");
+    if (!saved) return;
 
-      // Clear inputs
-      document.getElementById("upgradeName").value = '';
-      document.getElementById("upgradePrice").value = '';
-      document.getElementById("upgradeCPS").value = '';
-    }
+    const data = JSON.parse(saved);
+    document.getElementById("gameNameInput").value = data.title;
+    document.getElementById("bgColor").value = data.bgColor;
+    document.getElementById("imgUrl").value = data.imgUrl;
+    document.getElementById("game").style.backgroundColor = data.bgColor;
+    document.getElementById("clickImg").src = data.imgUrl;
+    document.getElementById("gameTitle").textContent = data.title;
 
-    function saveToLocalStorage() {
-      const data = {
-        title: document.getElementById("gameNameInput").value,
-        bgColor: document.getElementById("bgColor").value,
-        imgUrl: document.getElementById("imgUrl").value,
-        upgrades: upgrades
-      };
-      localStorage.setItem("clickerGameData", JSON.stringify(data));
-      alert("Game saved!");
-    }
-
-    function loadFromLocalStorage() {
-      const saved = localStorage.getItem("clickerGameData");
-      if (!saved) return;
-
-      const data = JSON.parse(saved);
-      document.getElementById("gameNameInput").value = data.title;
-      document.getElementById("bgColor").value = data.bgColor;
-      document.getElementById("imgUrl").value = data.imgUrl;
-      document.getElementById("game").style.backgroundColor = data.bgColor;
-      document.getElementById("clickImg").src = data.imgUrl;
-      document.getElementById("gameTitle").textContent = data.title;
-
-      upgrades = [];
-      document.getElementById("upgradeContainer").innerHTML = '';
-      data.upgrades.forEach(upg => {
-        addUpgrade(upg.name, upg.price, upg.cps);
-      });
-    }
-
-    // Drag and drop image
-    const dropZone = document.getElementById("dropZone");
-    dropZone.addEventListener("dragover", e => {
-      e.preventDefault();
-      dropZone.classList.add("hover");
+    upgrades = data.upgrades || [];
+    document.getElementById("upgradeContainer").innerHTML = '';
+    upgrades.forEach(upg => {
+      createUpgradeElement(upg.name, upg.price, upg.cps);
     });
+  }
 
-    dropZone.addEventListener("dragleave", () => {
-      dropZone.classList.remove("hover");
-    });
+  // Drag and drop image
+  const dropZone = document.getElementById("dropZone");
+  dropZone.addEventListener("dragover", e => {
+    e.preventDefault();
+    dropZone.classList.add("hover");
+  });
 
-    dropZone.addEventListener("drop", e => {
-      e.preventDefault();
-      dropZone.classList.remove("hover");
-      const file = e.dataTransfer.files[0];
-      if (!file.type.startsWith("image/")) {
-        alert("Please drop an image file.");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = () => {
-        document.getElementById("clickImg").src = reader.result;
-        document.getElementById("imgUrl").value = reader.result;
-      };
-      reader.readAsDataURL(file);
-    });
+  dropZone.addEventListener("dragleave", () => {
+    dropZone.classList.remove("hover");
+  });
 
-    // Load on startup
-    loadFromLocalStorage();
-  </script>
+  dropZone.addEventListener("drop", e => {
+    e.preventDefault();
+    dropZone.classList.remove("hover");
+    const file = e.dataTransfer.files[0];
+    if (!file.type.startsWith("image/")) {
+      alert("Please drop an image file.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      document.getElementById("clickImg").src = reader.result;
+      document.getElementById("imgUrl").value = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Load on startup
+  loadFromLocalStorage();
+</script>
+
 
 </body>
 </html>
