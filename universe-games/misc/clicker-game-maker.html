@@ -5,13 +5,18 @@
   <title>Clicker Game Creator</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; font-family: sans-serif; display: flex; }
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+    }
 
     #game {
       width: 75%;
       background-color: #f0f0f0;
       padding: 20px;
       text-align: center;
+      overflow-y: auto;
     }
 
     #editor {
@@ -22,8 +27,18 @@
       overflow-y: auto;
     }
 
+    h1, h2, h3, h4 {
+      margin-bottom: 10px;
+    }
+
     #clickImg {
-      width: 150px; height: 150px; cursor: pointer;
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+      cursor: pointer;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background-color: white;
     }
 
     .upgrade {
@@ -31,21 +46,44 @@
       padding: 10px;
       border: 1px solid #ccc;
       width: 200px;
+      border-radius: 5px;
+      background-color: #fff;
       cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .upgrade:hover {
+      background-color: #f9f9f9;
     }
 
     input, button {
       width: 100%;
       padding: 8px;
-      margin-top: 8px;
       margin-bottom: 12px;
+      border-radius: 5px;
+      border: 1px solid #aaa;
+    }
+
+    #dropZone {
+      width: 100%;
+      padding: 15px;
+      border: 2px dashed #aaa;
+      text-align: center;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      background-color: #fafafa;
+    }
+
+    #dropZone.hover {
+      border-color: #333;
+      background-color: #eee;
     }
   </style>
 </head>
 <body>
 
   <div id="game">
-    <h2>Clicker Game</h2>
+    <h2 id="gameTitle">Clicker Game</h2>
     <img id="clickImg" src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Banana.png" onclick="addClicks()" />
     <p>Clicks: <span id="clickCount">0</span></p>
     <div id="upgradeContainer"></div>
@@ -54,11 +92,16 @@
   <div id="editor">
     <h3>Editor</h3>
 
+    <label>Game Title</label>
+    <input type="text" id="gameNameInput" placeholder="Enter game name..." value="Clicker Game">
+
     <label>Background Color</label>
     <input type="color" id="bgColor" value="#f0f0f0">
 
     <label>Click Image URL</label>
     <input type="text" id="imgUrl" value="https://upload.wikimedia.org/wikipedia/commons/4/4c/Banana.png">
+
+    <div id="dropZone">Drag and drop image here</div>
 
     <h4>Add Upgrade</h4>
     <input type="text" id="upgradeName" placeholder="Upgrade Name">
@@ -86,12 +129,19 @@
     }, 100);
 
     function applySettings() {
+      // Update background color
       document.getElementById("game").style.backgroundColor = document.getElementById("bgColor").value;
+
+      // Update image src
       document.getElementById("clickImg").src = document.getElementById("imgUrl").value;
+
+      // Update game title
+      document.getElementById("gameTitle").textContent = document.getElementById("gameNameInput").value;
     }
 
     document.getElementById("bgColor").addEventListener("input", applySettings);
     document.getElementById("imgUrl").addEventListener("input", applySettings);
+    document.getElementById("gameNameInput").addEventListener("input", applySettings);
 
     function addUpgrade() {
       const name = document.getElementById("upgradeName").value;
@@ -111,7 +161,7 @@
           clickCount -= price;
           cps += cpsGain;
           updateDisplay();
-          div.remove(); // Remove after buying (one-time use)
+          div.remove();
         }
       };
       document.getElementById("upgradeContainer").appendChild(div);
@@ -122,7 +172,37 @@
       document.getElementById("upgradeCPS").value = '';
     }
 
-    // Add default upgrade
+    // Drag and drop image support
+    const dropZone = document.getElementById("dropZone");
+
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.classList.add("hover");
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.classList.remove("hover");
+    });
+
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("hover");
+
+      const file = e.dataTransfer.files[0];
+      if (!file.type.startsWith("image/")) {
+        alert("Please drop an image file.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.getElementById("clickImg").src = reader.result;
+        document.getElementById("imgUrl").value = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Default upgrade
     document.getElementById("upgradeName").value = "Auto Clicker";
     document.getElementById("upgradePrice").value = 10;
     document.getElementById("upgradeCPS").value = 1;
