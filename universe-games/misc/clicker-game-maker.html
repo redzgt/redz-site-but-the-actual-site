@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clicker Game Creator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body, html { height: 100%; font-family: sans-serif; display: flex; }
+    #game, #editor {
+      width: 50%; height: 100%; padding: 20px;
+      overflow-y: auto;
+    }
+    #game {
+      background-color: #f0f0f0;
+      text-align: center;
+    }
+    #clickImg {
+      width: 150px; height: 150px; cursor: pointer;
+    }
+    .upgrade {
+      margin: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+    #editor input, #editor textarea {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game">
+    <h2>Clicker Game</h2>
+    <img id="clickImg" src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Banana.png" onclick="addClicks()" />
+    <p>Clicks: <span id="clickCount">0</span></p>
+    <div id="upgradeContainer"></div>
+  </div>
+
+  <div id="editor">
+    <h3>Editor</h3>
+    <label>Background Color</label>
+    <input type="color" id="bgColor" value="#f0f0f0">
+
+    <label>Click Image URL</label>
+    <input type="text" id="imgUrl" value="https://upload.wikimedia.org/wikipedia/commons/4/4c/Banana.png">
+
+    <label>Upgrade JSON</label>
+    <textarea id="upgradeData" rows="6">
+[
+  { "name": "Auto Clicker", "price": 10, "clicksPerSecond": 1 },
+  { "name": "Banana Factory", "price": 50, "clicksPerSecond": 5 }
+]
+    </textarea>
+    <button onclick="applyChanges()">Apply Changes</button>
+  </div>
+
+  <script>
+    let clickCount = 0;
+    let cps = 0;
+
+    function addClicks() {
+      clickCount++;
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      document.getElementById("clickCount").innerText = Math.floor(clickCount);
+    }
+
+    setInterval(() => {
+      clickCount += cps / 10;
+      updateDisplay();
+    }, 100);
+
+    function applyChanges() {
+      // Background
+      const bg = document.getElementById("bgColor").value;
+      document.getElementById("game").style.backgroundColor = bg;
+
+      // Image
+      const img = document.getElementById("imgUrl").value;
+      document.getElementById("clickImg").src = img;
+
+      // Upgrades
+      const upgrades = JSON.parse(document.getElementById("upgradeData").value);
+      const container = document.getElementById("upgradeContainer");
+      container.innerHTML = '';
+      upgrades.forEach(upg => {
+        const div = document.createElement("div");
+        div.className = "upgrade";
+        div.innerText = `${upg.name} - ${upg.price} clicks`;
+        div.onclick = () => {
+          if (clickCount >= upg.price) {
+            clickCount -= upg.price;
+            cps += upg.clicksPerSecond;
+            updateDisplay();
+          }
+        };
+        container.appendChild(div);
+      });
+    }
+
+    // Initialize
+    applyChanges();
+  </script>
+
+</body>
+</html>
