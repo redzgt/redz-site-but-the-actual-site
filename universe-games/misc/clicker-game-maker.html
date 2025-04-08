@@ -5,28 +5,40 @@
   <title>Clicker Game Creator</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body, html { height: 100%; font-family: sans-serif; display: flex; }
-    #game, #editor {
-      width: 50%; height: 100%; padding: 20px;
-      overflow-y: auto;
-    }
+    html, body { height: 100%; font-family: sans-serif; display: flex; }
+
     #game {
+      width: 75%;
       background-color: #f0f0f0;
+      padding: 20px;
       text-align: center;
     }
+
+    #editor {
+      width: 25%;
+      background-color: #ffffff;
+      padding: 20px;
+      border-left: 2px solid #ddd;
+      overflow-y: auto;
+    }
+
     #clickImg {
       width: 150px; height: 150px; cursor: pointer;
     }
+
     .upgrade {
-      margin: 10px;
+      margin: 10px auto;
       padding: 10px;
       border: 1px solid #ccc;
+      width: 200px;
       cursor: pointer;
     }
-    #editor input, #editor textarea {
-      display: block;
+
+    input, button {
       width: 100%;
-      margin-bottom: 10px;
+      padding: 8px;
+      margin-top: 8px;
+      margin-bottom: 12px;
     }
   </style>
 </head>
@@ -41,20 +53,18 @@
 
   <div id="editor">
     <h3>Editor</h3>
+
     <label>Background Color</label>
     <input type="color" id="bgColor" value="#f0f0f0">
 
     <label>Click Image URL</label>
     <input type="text" id="imgUrl" value="https://upload.wikimedia.org/wikipedia/commons/4/4c/Banana.png">
 
-    <label>Upgrade JSON</label>
-    <textarea id="upgradeData" rows="6">
-[
-  { "name": "Auto Clicker", "price": 10, "clicksPerSecond": 1 },
-  { "name": "Banana Factory", "price": 50, "clicksPerSecond": 5 }
-]
-    </textarea>
-    <button onclick="applyChanges()">Apply Changes</button>
+    <h4>Add Upgrade</h4>
+    <input type="text" id="upgradeName" placeholder="Upgrade Name">
+    <input type="number" id="upgradePrice" placeholder="Price">
+    <input type="number" id="upgradeCPS" placeholder="Clicks Per Second">
+    <button onclick="addUpgrade()">Add Upgrade</button>
   </div>
 
   <script>
@@ -75,36 +85,48 @@
       updateDisplay();
     }, 100);
 
-    function applyChanges() {
-      // Background
-      const bg = document.getElementById("bgColor").value;
-      document.getElementById("game").style.backgroundColor = bg;
-
-      // Image
-      const img = document.getElementById("imgUrl").value;
-      document.getElementById("clickImg").src = img;
-
-      // Upgrades
-      const upgrades = JSON.parse(document.getElementById("upgradeData").value);
-      const container = document.getElementById("upgradeContainer");
-      container.innerHTML = '';
-      upgrades.forEach(upg => {
-        const div = document.createElement("div");
-        div.className = "upgrade";
-        div.innerText = `${upg.name} - ${upg.price} clicks`;
-        div.onclick = () => {
-          if (clickCount >= upg.price) {
-            clickCount -= upg.price;
-            cps += upg.clicksPerSecond;
-            updateDisplay();
-          }
-        };
-        container.appendChild(div);
-      });
+    function applySettings() {
+      document.getElementById("game").style.backgroundColor = document.getElementById("bgColor").value;
+      document.getElementById("clickImg").src = document.getElementById("imgUrl").value;
     }
 
-    // Initialize
-    applyChanges();
+    document.getElementById("bgColor").addEventListener("input", applySettings);
+    document.getElementById("imgUrl").addEventListener("input", applySettings);
+
+    function addUpgrade() {
+      const name = document.getElementById("upgradeName").value;
+      const price = parseInt(document.getElementById("upgradePrice").value);
+      const cpsGain = parseFloat(document.getElementById("upgradeCPS").value);
+
+      if (!name || isNaN(price) || isNaN(cpsGain)) {
+        alert("Please fill out all upgrade fields.");
+        return;
+      }
+
+      const div = document.createElement("div");
+      div.className = "upgrade";
+      div.textContent = `${name} - ${price} clicks`;
+      div.onclick = () => {
+        if (clickCount >= price) {
+          clickCount -= price;
+          cps += cpsGain;
+          updateDisplay();
+          div.remove(); // Remove after buying (one-time use)
+        }
+      };
+      document.getElementById("upgradeContainer").appendChild(div);
+
+      // Clear inputs
+      document.getElementById("upgradeName").value = '';
+      document.getElementById("upgradePrice").value = '';
+      document.getElementById("upgradeCPS").value = '';
+    }
+
+    // Add default upgrade
+    document.getElementById("upgradeName").value = "Auto Clicker";
+    document.getElementById("upgradePrice").value = 10;
+    document.getElementById("upgradeCPS").value = 1;
+    addUpgrade();
   </script>
 
 </body>
