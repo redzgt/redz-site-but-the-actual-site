@@ -175,15 +175,20 @@ footer p {
     backdrop-filter: blur(10px);
 }
 
-.topbar ul {
-    list-style: none;
+.topbar-menu {
     display: flex;
     gap: 30px;
     margin: 0;
     padding: 0;
+    list-style: none;
 }
 
-.topbar a {
+.topbar-menu li {
+    margin: 0;
+    padding: 0;
+}
+
+.topbar-menu a {
     color: #FF0000;
     text-decoration: none;
     font-weight: 600;
@@ -191,9 +196,8 @@ footer p {
     transition: color 0.3s ease;
 }
 
-.topbar a:hover {
+.topbar-menu a:hover {
     color: #ff4444;
 }
-
 
 }
