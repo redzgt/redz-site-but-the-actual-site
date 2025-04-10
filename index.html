@@ -1,226 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>redz's page</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-            color: #fff;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>redz's page</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      color: #fff;
+      line-height: 1.6;
+      scroll-behavior: smooth;
+    }
 
-        /* Floating Topbar */
-        .topbar {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.85);
-            padding: 12px 30px;
-            border-radius: 999px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
+    /* Topbar */
+    .topbar {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.85);
+      padding: 12px 30px;
+      border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+    }
 
-        .topbar-menu {
-            display: flex;
-            gap: 30px;
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
+    .topbar-menu {
+      display: flex;
+      gap: 30px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
 
-        .topbar-menu li {
-            margin: 0;
-            padding: 0;
-        }
+    .topbar-menu a {
+      color: #FF0000;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1em;
+      transition: color 0.3s ease;
+    }
 
-        .topbar-menu a {
-            color: #FF0000;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1em;
-            transition: color 0.3s ease;
-        }
+    .topbar-menu a:hover {
+      color: #ff4444;
+    }
 
-        .topbar-menu a:hover {
-            color: #ff4444;
-        }
+    header {
+      padding: 140px 20px 60px;
+      text-align: center;
+    }
 
-        /* Header Section */
-        header {
-            padding: 100px 20px 40px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.9);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-        }
+    header h1 {
+      margin: 0;
+      font-size: 3em;
+      color: #FF0000;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    }
 
-        header h1 {
-            margin: 0;
-            font-size: 3em;
-            color: #FF0000;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-        }
+    header p {
+      font-size: 1.2em;
+      margin-top: 10px;
+      color: #FF0000;
+    }
 
-        header p {
-            font-size: 1.2em;
-            margin-top: 10px;
-            color: #FF0000;
-        }
+    .content {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
 
-        /* Content Section */
-        .content {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
-            text-align: center;
-        }
+    .content h2 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #FF0000;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
 
-        .content h2 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            color: #FF0000;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+    /* Game Cards */
+    .game {
+      background-color: rgba(0, 0, 0, 0.85);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      margin-bottom: 30px;
+      padding: 10px;
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+      max-width: 400px;
+      margin: 0 auto;
+    }
 
-        /* Game Cards */
-        .game {
-            background-color: rgba(0, 0, 0, 0.85);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            margin-bottom: 30px;
-            padding: 10px;
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            max-width: 400px;
-            margin: 0 auto;
-        }
+    .game:hover {
+      transform: scale(1.05);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+    }
 
-        .game:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
-        }
+    .game img {
+      width: 100%;
+      height: auto;
+      max-width: 300px;
+      margin: 0 auto;
+      border-bottom: 5px solid #FF0000;
+      transition: opacity 0.3s ease;
+    }
 
-        .game img {
-            width: 100%;
-            height: auto;
-            max-width: 300px;
-            margin: 0 auto;
-            border-bottom: 5px solid #FF0000;
-            transition: opacity 0.3s ease;
-        }
+    .game h3 {
+      font-size: 1.4em;
+      margin: 10px 0;
+      color: #FF0000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-        .game h3 {
-            font-size: 1.4em;
-            margin: 10px 0;
-            color: #FF0000;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    .game p {
+      font-size: 0.95em;
+      color: #ddd;
+      padding: 10px;
+      text-align: justify;
+    }
 
-        .game p {
-            font-size: 0.95em;
-            color: #ddd;
-            padding: 10px;
-            text-align: justify;
-        }
+    .game-link {
+      text-decoration: none;
+    }
 
-        .game-link {
-            text-decoration: none;
-        }
+    .game-link:hover {
+      text-decoration: none;
+    }
 
-        .game-link:hover {
-            text-decoration: none;
-        }
+    /* Extra Sections (Scroll Info Blocks) */
+    section.scroll-section {
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 20px;
+      background-color: rgba(20, 20, 20, 0.85);
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
 
-        /* Experiments Link */
-        .experiments-link {
-            margin-top: 20px;
-        }
+    section.scroll-section h2 {
+      font-size: 2.5em;
+      color: #FF0000;
+      margin-bottom: 10px;
+    }
 
-        .experiments-link a {
-            font-size: 1.2em;
-            color: #FF0000;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s ease;
-        }
+    section.scroll-section p {
+      font-size: 1.1em;
+      color: #ccc;
+      max-width: 700px;
+      margin: 0 auto 20px;
+    }
 
-        .experiments-link a:hover {
-            color: #ff4444;
-        }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      font-size: 1em;
+      font-weight: bold;
+      text-decoration: none;
+      background-color: #FF0000;
+      color: #000;
+      border-radius: 999px;
+      transition: background-color 0.3s ease;
+    }
 
-        /* Footer Section */
-        footer {
-            background-color: rgba(0, 0, 0, 0.9);
-            color: #FF0000;
-            text-align: center;
-            padding: 20px 0;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-        }
+    .btn:hover {
+      background-color: #ff4444;
+    }
 
-        footer p {
-            font-size: 1.1em;
-            letter-spacing: 1px;
-        }
+    footer {
+      background-color: rgba(0, 0, 0, 0.9);
+      color: #FF0000;
+      text-align: center;
+      padding: 20px 0;
+    }
 
-        /* Media Queries */
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 2.5em;
-            }
+    footer p {
+      font-size: 1.1em;
+      letter-spacing: 1px;
+    }
 
-            .game h3 {
-                font-size: 1.2em;
-            }
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2.5em;
+      }
 
-            .game p {
-                font-size: 0.9em;
-            }
-        }
-    </style>
+      .content h2 {
+        font-size: 2em;
+      }
+
+      section.scroll-section h2 {
+        font-size: 2em;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        font-size: 0.95em;
+      }
+    }
+  </style>
 </head>
 <body>
-    <nav class="topbar">
-        <ul class="topbar-menu">
-            <li><a href="/">Home</a></li>
-            <li><a href="/universe-games">Games</a></li>
-            <li><a href="/experiments">Experiments</a></li>
-        </ul>
-    </nav>
+  <nav class="topbar">
+    <ul class="topbar-menu">
+      <li><a href="/">Home</a></li>
+      <li><a href="#games">Games</a></li>
+      <li><a href="#experiments">Experiments</a></li>
+    </ul>
+  </nav>
 
-    <header>
-        <h1>redz</h1>
-        <p>Game/Web Developer and Gamer</p>
-    </header>
+  <header>
+    <h1>redz</h1>
+    <p>Game/Web Developer</p>
+  </header>
 
-    <div class="content">
-        <h2 id="games">Games</h2>
+  <!-- SCROLL SECTION: GAMES -->
+  <section id="games" class="scroll-section">
+    <h2>Games</h2>
+    <p>Play fun browser games like Slope! They're all built using HTML.</p>
+    <a href="/universe-games" class="btn">Explore Games</a>
+  </section>
 
-        <a href="/banana-brawl" class="game-link">
-            <div class="game">
-                <img src="banana-brawl.png" alt="Banana Brawl">
-                <h3>Banana Brawl</h3>
-                <p>Banana Brawl is a survival game where you play as a chimp. It takes place on an island where the only weapon you have is bananas! Fight other chimps to be the last one standing on the island!</p>
-            </div>
-        </a>
-    </div>
+  <!-- GAME CARD -->
+  <div class="content">
+    <a href="/banana-brawl" class="game-link">
+      <div class="game">
+        <img src="banana-brawl.png" alt="Banana Brawl">
+        <h3>Banana Brawl</h3>
+        <p>Banana Brawl is a survival game where you play as a chimp. It takes place on an island where the only weapon you have is bananas! Fight other chimps to be the last one standing on the island!</p>
+      </div>
+    </a>
+  </div>
 
-    <footer>
-        <p>&copy; 2025 redzgt</p>
-    </footer>
+  <!-- SCROLL SECTION: EXPERIMENTS -->
+  <section id="experiments" class="scroll-section">
+    <h2>Experiments</h2>
+    <p>Check out cool web experiments—all made in HTML, CSS, and JS.</p>
+    <a href="/experiments" class="btn">View Experiments</a>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 redz</p>
+  </footer>
 </body>
 </html>
