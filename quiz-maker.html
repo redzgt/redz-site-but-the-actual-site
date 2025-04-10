@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz Form</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+    }
+    label, input, select {
+      display: block;
+      margin: 10px 0;
+    }
+    button {
+      padding: 10px 15px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>Mini Quiz</h2>
+  <form id="quizForm">
+    <label>Your Name:</label>
+    <input type="text" name="name" required>
+
+    <label>Favorite Color:</label>
+    <select name="color" required>
+      <option value="">-- Choose --</option>
+      <option value="Red">Red</option>
+      <option value="Blue">Blue</option>
+      <option value="Green">Green</option>
+    </select>
+
+    <label>2 + 2 = ?</label>
+    <input type="number" name="answer" required>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <p id="status"></p>
+
+  <script>
+    const form = document.getElementById("quizForm");
+    const status = document.getElementById("status");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = form.name.value;
+      const color = form.color.value;
+      const answer = parseInt(form.answer.value);
+      const score = answer === 4 ? 1 : 0;
+
+      const data = {
+        name,
+        color,
+        score
+      };
+
+      try {
+        const res = await fetch("https://script.google.com/a/macros/docs.rhnet.org/s/AKfycbz7mX05Tt4YodH2Qu__A7iDlrlP7tn1rpu9PxrsLpYu1062T0uZMLPOD9GcJxhKA3GF/exec", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        const result = await res.text();
+        status.textContent = "Response submitted!";
+        form.reset();
+      } catch (err) {
+        status.textContent = "Something went wrong.";
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
