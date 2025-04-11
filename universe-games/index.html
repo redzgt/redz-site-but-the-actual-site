@@ -96,13 +96,33 @@
         button:hover {
             transform: scale(0.9);
         }
+        .big-game {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 160px;
+            height: 160px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .big-game img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.2s ease-in-out;
+        }
+        .big-game:hover img {
+            transform: scale(0.9);
+        }
+
 
 
     </style>
     <script>
         function searchGames() {
             let input = document.getElementById("searchBar").value.toLowerCase();
-            let games = document.getElementsByClassName("game");
+            let games = document.querySelectorAll(".game, .big-game");
             for (let game of games) {
                 let title = game.getAttribute("data-title").toLowerCase();
                 game.style.display = title.includes(input) ? "block" : "none";
@@ -198,7 +218,7 @@
         <div class="game" data-title="Idle Breakout" onclick="openGame('game/idle-breakout.html')">
             <img src="https://img.poki-cdn.com/cdn-cgi/image/quality=78,width=1200,height=1200,fit=cover,f=png/59a42104cf89164d41ed231574452322.png" alt="Idle Breakout">
         </div>
-        <div class="game" data-title="Krunker" onclick="openGame('game/krunker.html')">
+        <div class="big-game" data-title="Krunker" onclick="openGame('game/krunker.html')">
             <img src="https://iogames.games/data/image/game/krunker-io.png" alt="Krunker">
         </div>
     </div>
