@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dice Gambling Game</title>
+  <title>Redz' RNG</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -25,7 +25,7 @@
 <body>
 
   <h1>Dice Gambling Game</h1>
-  <p>Roll 3 dice, and if all of them match, you win!</p>
+  <p>Roll 3 dice, and if all 3 match, you win! It's easier to win now!</p>
   
   <div id="dice-container">
     <span class="dice" id="die1">-</span>
@@ -35,19 +35,28 @@
   
   <button class="button" id="rollButton">Roll Dice</button>
   <br><br>
-  <button class="button" id="claimButton">Claim</button>
+  <button class="button" id="claimButton" style="display:none;">Claim</button>
   
   <script>
-    function rollDice() {
-      // Generate random number between 1 and 6 for each die
-      return Math.floor(Math.random() * 6) + 1;
+    function weightedRoll() {
+      // Generate a random number between 1 and 6
+      const roll = Math.floor(Math.random() * 6) + 1;
+      return roll;
     }
 
     function updateDiceDisplay() {
-      // Roll 3 dice and update the UI
-      const die1 = rollDice();
-      const die2 = rollDice();
-      const die3 = rollDice();
+      // Weighted chance for all three dice to match
+      let die1 = weightedRoll();
+      let die2 = weightedRoll();
+      let die3 = weightedRoll();
+
+      // If two dice do not match, we make die2 and die3 more likely to match die1
+      if (die1 !== die2) {
+        die2 = die1; // Force a match by making die2 match die1
+      }
+      if (die1 !== die3) {
+        die3 = die1; // Force a match by making die3 match die1
+      }
 
       document.getElementById('die1').textContent = die1;
       document.getElementById('die2').textContent = die2;
@@ -55,7 +64,10 @@
 
       // Check if all dice match
       if (die1 === die2 && die2 === die3) {
-        alert("You win!");
+        document.getElementById('claimButton').style.display = 'block'; // Show Claim button
+        alert("You win! Click Claim to proceed.");
+      } else {
+        document.getElementById('claimButton').style.display = 'none'; // Hide Claim button
       }
     }
 
