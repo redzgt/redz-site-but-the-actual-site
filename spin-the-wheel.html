@@ -37,12 +37,10 @@
   gap: 8px;
   align-items: center;
   margin-bottom: 6px;
+  flex-wrap: nowrap;
 }
 
-.segment-row input[type="text"] {
-  flex: 2;
-}
-
+.segment-row input[type="text"], 
 .segment-row input[type="color"] {
   flex: 1;
 }
@@ -62,6 +60,23 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   cursor: pointer;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .segment-row {
+    gap: 4px;
+  }
+
+  .segment-row input[type="text"],
+  .segment-row input[type="color"] {
+    font-size: 14px;
+  }
+  
+  .segment-row button {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
 }
 
     input[type="text"], input[type="color"] {
