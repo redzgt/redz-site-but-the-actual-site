@@ -1,28 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Custom Spin the Wheel</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f8f9fa;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 1.8em;
+      margin-bottom: 10px;
       text-align: center;
-      margin: 20px;
     }
 
     .form-area {
-      margin-bottom: 30px;
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .segment-row {
-      margin: 5px 0;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    input[type="text"], input[type="color"] {
+      padding: 8px;
+      font-size: 1em;
+      flex: 1;
+    }
+
+    button {
+      padding: 10px 14px;
+      font-size: 1em;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #shareableLink {
+      width: 100%;
+      padding: 8px;
+      font-size: 1em;
     }
 
     .wheel-container {
       position: relative;
-      margin: auto;
       width: 300px;
       height: 300px;
+      margin: 30px auto 10px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
     }
 
     .pointer {
@@ -38,20 +89,30 @@
     }
 
     #spinBtn {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 18px;
+      margin-top: 10px;
+      width: 100%;
+      max-width: 300px;
     }
 
-    #shareableLink {
+    #result {
       margin-top: 10px;
-      width: 80%;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      .segment-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Custom Spin the Wheel</h1>
+  <h1 id="wheelTitle">Custom Spin the Wheel</h1>
+
   <div class="form-area" id="formArea">
+    <input type="text" id="wheelName" placeholder="Enter wheel name..." />
+
     <div id="segmentList"></div>
     <button onclick="addSegment()">Add Segment</button>
     <button onclick="generateLink()">Generate Link</button>
@@ -72,6 +133,9 @@
     const result = document.getElementById('result');
     const segmentListDiv = document.getElementById('segmentList');
     const shareableLink = document.getElementById('shareableLink');
+    const formArea = document.getElementById('formArea');
+    const wheelTitle = document.getElementById('wheelTitle');
+    const wheelNameInput = document.getElementById('wheelName');
 
     let segments = [];
 
@@ -168,31 +232,38 @@
 
     function generateLink() {
       const updatedSegments = [];
-
       for (let i = 0; i < segments.length; i++) {
         const text = document.getElementById(`text${i}`).value;
         const color = document.getElementById(`color${i}`).value;
         updatedSegments.push({ text, color });
       }
-
       segments = updatedSegments;
 
+      const wheelName = encodeURIComponent(wheelNameInput.value.trim());
       const data = encodeURIComponent(JSON.stringify(segments));
-      const url = `${window.location.origin}${window.location.pathname}?segments=${data}`;
+      const url = `${window.location.origin}${window.location.pathname}?name=${wheelName}&segments=${data}`;
       shareableLink.value = url;
 
       drawWheel();
     }
 
-    function loadSegmentsFromURL() {
+    function loadFromURL() {
       const params = new URLSearchParams(window.location.search);
       if (params.has('segments')) {
         try {
-          segments = JSON.parse(decodeURIComponent(params.get('segments')));
+          const decoded = decodeURIComponent(params.get('segments'));
+          segments = JSON.parse(decoded);
           renderSegmentForm();
           drawWheel();
+
+          // Show wheel name
+          const name = decodeURIComponent(params.get('name') || '');
+          wheelTitle.textContent = name || 'Custom Spin the Wheel';
+
+          // Hide editor UI
+          formArea.style.display = 'none';
         } catch (e) {
-          console.error('Invalid segment data in URL');
+          console.error('Invalid segment data');
         }
       } else {
         // Default segments
@@ -202,7 +273,7 @@
       }
     }
 
-    loadSegmentsFromURL();
+    loadFromURL();
   </script>
 </body>
 </html>
