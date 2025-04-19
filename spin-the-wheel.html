@@ -33,10 +33,36 @@
     }
 
     .segment-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.segment-row input[type="text"] {
+  flex: 2;
+}
+
+.segment-row input[type="color"] {
+  flex: 1;
+}
+
+.segment-row button {
+  background: red;
+  color: white;
+  border-radius: 4px;
+  padding: 6px 10px;
+  flex: 0 0 auto;
+}
+
+#shareableLink {
+  width: 100%;
+  padding: 8px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
     input[type="text"], input[type="color"] {
       padding: 8px;
@@ -140,18 +166,18 @@
     let segments = [];
 
     function addSegment(text = '', color = '#ff0000') {
-      const index = segments.length;
-      const div = document.createElement('div');
-      div.className = 'segment-row';
-      div.innerHTML = `
-        <input type="text" placeholder="Segment Text" value="${text}" id="text${index}" />
-        <input type="color" value="${color}" id="color${index}" />
-        <button onclick="removeSegment(${index})">X</button>
-      `;
-      segmentListDiv.appendChild(div);
-      segments.push({ text, color });
-      drawWheel();
-    }
+  const index = segments.length;
+  const div = document.createElement('div');
+  div.className = 'segment-row';
+  div.innerHTML = `
+    <input type="text" placeholder="Segment Text" value="${text}" id="text${index}" />
+    <input type="color" value="${color}" id="color${index}" />
+    <button onclick="removeSegment(${index})">X</button>
+  `;
+  segmentListDiv.appendChild(div);
+  segments.push({ text, color });
+  drawWheel();
+}
 
     function removeSegment(index) {
       segments.splice(index, 1);
@@ -237,6 +263,18 @@
         const color = document.getElementById(`color${i}`).value;
         updatedSegments.push({ text, color });
       }
+      shareableLink.addEventListener('click', () => {
+  if (!shareableLink.value) return;
+
+  shareableLink.select();
+  document.execCommand('copy');
+  const oldVal = shareableLink.value;
+  shareableLink.value = "Link Copied!";
+  setTimeout(() => {
+    shareableLink.value = oldVal;
+  }, 2000);
+});
+      
       segments = updatedSegments;
 
       const wheelName = encodeURIComponent(wheelNameInput.value.trim());
