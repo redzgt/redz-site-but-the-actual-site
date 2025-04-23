@@ -115,6 +115,53 @@
         .big-game:hover img {
             transform: scale(0.9);
         }
+        /* Transition-friendly base styles */
+        body, .update-log, .game, .big-game, button {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Dark theme styles */
+        .dark-theme {
+            background-color: #1e1e1e;
+            color: white;
+        }
+        
+        .dark-theme .update-log {
+            background-color: #333;
+            color: white;
+        }
+        
+        .dark-theme button {
+            background-color: #444;
+            color: white;
+        }
+        
+        .dark-theme .game,
+        .dark-theme .big-game {
+            background-color: #333;
+        }
+        
+        /* Light theme styles */
+        .light-theme {
+            background-color: #dbc2ff;
+            color: black;
+        }
+        
+        .light-theme .update-log {
+            background-color: white;
+            color: #333;
+        }
+        
+        .light-theme button {
+            background-color: white;
+            color: black;
+        }
+        
+        .light-theme .game,
+        .light-theme .big-game {
+            background-color: white;
+        }
+
 
 
 
@@ -142,7 +189,7 @@
     <div class="update-log-container">
         <div class="update-log">
             <h3>Update Log</h3>
-            <p>Apr 23: Fixed Minecraft!</p>
+            <p>Apr 23: Fixed Minecraft and made theme switching smooth.</p>
         </div>
         <div class="button-container">
             <a href="bypasser/universe-bypasser-lite.html" target="_blank">
@@ -234,59 +281,23 @@
 
 <script>
     function setLightTheme() {
-        applyTheme('light');
+        document.body.classList.remove('dark-theme');
+        document.body.classList.add('light-theme');
         localStorage.setItem('theme', 'light');
     }
 
     function setDarkTheme() {
-        applyTheme('dark');
+        document.body.classList.remove('light-theme');
+        document.body.classList.add('dark-theme');
         localStorage.setItem('theme', 'dark');
     }
 
-    function applyTheme(theme) {
-        if (theme === 'dark') {
-            document.body.style.backgroundColor = '#1e1e1e';
-            document.body.style.color = 'white';
-
-            document.querySelectorAll('.update-log').forEach(el => {
-                el.style.backgroundColor = '#333';
-                el.style.color = 'white';
-            });
-
-            document.querySelectorAll('button').forEach(btn => {
-                btn.style.backgroundColor = '#444';
-                btn.style.color = 'white';
-            });
-
-            document.querySelectorAll('.game, .big-game').forEach(g => {
-                g.style.backgroundColor = '#333';
-            });
-
-        } else {
-            document.body.style.backgroundColor = '#dbc2ff';
-            document.body.style.color = 'black';
-
-            document.querySelectorAll('.update-log').forEach(el => {
-                el.style.backgroundColor = 'white';
-                el.style.color = '#333';
-            });
-
-            document.querySelectorAll('button').forEach(btn => {
-                btn.style.backgroundColor = 'white';
-                btn.style.color = 'black';
-            });
-
-            document.querySelectorAll('.game, .big-game').forEach(g => {
-                g.style.backgroundColor = 'white';
-            });
-        }
-    }
-
-    // Load theme from localStorage on page load
     window.onload = function () {
         const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            applyTheme(savedTheme);
+        if (savedTheme === 'dark') {
+            setDarkTheme();
+        } else {
+            setLightTheme();
         }
     };
 </script>
