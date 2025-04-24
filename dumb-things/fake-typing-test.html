@@ -75,8 +75,25 @@
   </div>
 
   <script>
-    const words = "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".split(" ");
-    const totalWords = 50;
+    const sentenceBank = [
+      "The quick brown fox jumps over the lazy dog.",
+      "Typing speed can improve with regular practice.",
+      "A good keyboard makes a huge difference.",
+      "Stay focused and breathe while you type.",
+      "Accuracy is more important than speed.",
+      "Each word you type builds muscle memory.",
+      "Fake tests can still be fun and useful.",
+      "This typing test is totally not real.",
+      "Keep your eyes on the screen, not your fingers.",
+      "Typing like a pro takes time and patience.",
+      "Consistency and practice lead to progress.",
+      "Don't worry about mistakes — just keep typing.",
+      "Use all ten fingers for maximum efficiency.",
+      "Hacker vibes make everything feel cooler.",
+      "This isn't a real test, but it sure looks like one."
+    ];
+
+    const totalSentences = 5;
 
     const typedEl = document.getElementById("typed-text");
     const remainingEl = document.getElementById("remaining-text");
@@ -88,12 +105,13 @@
     let currentIndex = 0;
     let startTime = null;
 
-    function generateText() {
-      return Array.from({ length: totalWords }, () => words[Math.floor(Math.random() * words.length)]).join(" ");
+    function getRandomSentences(count) {
+      let shuffled = [...sentenceBank].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, count).join(" ");
     }
 
     function startFakeTest() {
-      fullText = generateText();
+      fullText = getRandomSentences(totalSentences);
       currentIndex = 0;
       startTime = null;
       typedEl.textContent = "";
@@ -105,7 +123,7 @@
     }
 
     hiddenInput.addEventListener("keydown", (e) => {
-      e.preventDefault(); // prevent actual typing
+      e.preventDefault();
 
       if (!startTime) startTime = new Date();
 
@@ -117,8 +135,8 @@
 
       if (currentIndex >= fullText.length) {
         const elapsed = (new Date() - startTime) / 1000 / 60;
-        const fakeWPM = Math.floor(Math.random() * 50 + 60);
-        const fakeAccuracy = (Math.random() * 10 + 90).toFixed(1);
+        const fakeWPM = Math.floor(Math.random() * 40 + 60);
+        const fakeAccuracy = (Math.random() * 5 + 95).toFixed(1);
         statsEl.textContent = `WPM: ${fakeWPM} | Accuracy: ${fakeAccuracy}%`;
         restartBtn.style.display = "inline-block";
         hiddenInput.blur();
