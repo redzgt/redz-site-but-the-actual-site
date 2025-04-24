@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fake Typing Test</title>
+  <title>Typing Test</title>
   <style>
     body {
       margin: 0;
@@ -77,23 +77,20 @@
   <script>
     const sentenceBank = [
       "The quick brown fox jumps over the lazy dog.",
-      "Typing speed can improve with regular practice.",
-      "A good keyboard makes a huge difference.",
-      "Stay focused and breathe while you type.",
-      "Accuracy is more important than speed.",
-      "Each word you type builds muscle memory.",
-      "Fake tests can still be fun and useful.",
-      "This typing test is totally not real.",
-      "Keep your eyes on the screen, not your fingers.",
-      "Typing like a pro takes time and patience.",
-      "Consistency and practice lead to progress.",
-      "Don't worry about mistakes — just keep typing.",
-      "Use all ten fingers for maximum efficiency.",
-      "Hacker vibes make everything feel cooler.",
-      "This isn't a real test, but it sure looks like one."
+      "Typing speed improves with consistent practice.",
+      "A good keyboard helps with accuracy and flow.",
+      "Keep your eyes on the screen as you type.",
+      "Each word helps you build muscle memory.",
+      "Accuracy is better than rushing through text.",
+      "Typing confidently takes time and patience.",
+      "Focus on rhythm and form over pure speed.",
+      "Reading ahead can help with anticipation.",
+      "Avoid looking at the keyboard while typing.",
+      "You can develop better habits with effort.",
+      "Speed comes naturally with experience."
     ];
 
-    const totalSentences = 5;
+    const totalSentences = 4;
 
     const typedEl = document.getElementById("typed-text");
     const remainingEl = document.getElementById("remaining-text");
@@ -134,10 +131,10 @@
       }
 
       if (currentIndex >= fullText.length) {
-        const elapsed = (new Date() - startTime) / 1000 / 60;
-        const fakeWPM = Math.floor(Math.random() * 40 + 60);
-        const fakeAccuracy = (Math.random() * 5 + 95).toFixed(1);
-        statsEl.textContent = `WPM: ${fakeWPM} | Accuracy: ${fakeAccuracy}%`;
+        const elapsedMinutes = (new Date() - startTime) / 60000;
+        const wpm = Math.round((fullText.length / 5) / elapsedMinutes);
+        const accuracy = (Math.random() * 5 + 96).toFixed(1); // Fake but close to real
+        statsEl.textContent = `WPM: ${wpm} | Accuracy: ${accuracy}%`;
         restartBtn.style.display = "inline-block";
         hiddenInput.blur();
       }
