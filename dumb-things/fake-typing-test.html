@@ -7,39 +7,52 @@
   <style>
     body {
       margin: 0;
-      background: #111;
-      color: #0f0;
+      background: #0d1117;
+      color: #c9d1d9;
       font-family: 'Courier New', monospace;
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      overflow: hidden;
     }
     .screen {
       max-width: 800px;
       padding: 30px;
-      background: #000;
-      border: 2px solid #0f0;
+      background: #161b22;
       border-radius: 10px;
-      box-shadow: 0 0 20px #0f0;
+      box-shadow: 0 0 20px #00ff88;
+      cursor: text;
     }
-    #typing-area {
-      font-size: 20px;
-      line-height: 1.5;
+    #text-display {
+      font-size: 18px;
+      line-height: 1.6;
       white-space: pre-wrap;
       word-wrap: break-word;
-      min-height: 200px;
+      user-select: none;
+    }
+    .typed {
+      color: #00ff88;
+    }
+    .caret {
+      display: inline-block;
+      width: 2px;
+      height: 1.2em;
+      background: #00ff88;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
     }
     #stats {
       margin-top: 20px;
       font-size: 16px;
-      color: #0ff;
+      color: #58a6ff;
     }
     #restart {
       margin-top: 15px;
       padding: 10px 20px;
-      background: #0f0;
+      background: #00ff88;
       color: #000;
       border: none;
       border-radius: 5px;
@@ -47,62 +60,72 @@
       cursor: pointer;
       display: none;
     }
+    #hidden-input {
+      opacity: 0;
+      position: absolute;
+    }
   </style>
 </head>
 <body>
-  <div class="screen" onclick="document.getElementById('input').focus()">
-    <div id="typing-area"></div>
+  <div class="screen" onclick="document.getElementById('hidden-input').focus()">
+    <div id="text-display"><span id="typed-text" class="typed"></span><span class="caret"></span><span id="remaining-text"></span></div>
     <div id="stats">Press any key to begin...</div>
-    <button id="restart" onclick="startTest()">Restart</button>
-    <input type="text" id="input" autofocus style="opacity:0; position:absolute;" />
+    <button id="restart" onclick="startFakeTest()">Restart</button>
+    <input id="hidden-input" type="text" autofocus />
   </div>
 
   <script>
-    const words = "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".split(" ");
-    const typingArea = document.getElementById("typing-area");
-    const input = document.getElementById("input");
-    const stats = document.getElementById("stats");
+    const words = "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua".split(" ");
+    const totalWords = 50;
+
+    const typedEl = document.getElementById("typed-text");
+    const remainingEl = document.getElementById("remaining-text");
+    const statsEl = document.getElementById("stats");
     const restartBtn = document.getElementById("restart");
+    const hiddenInput = document.getElementById("hidden-input");
 
     let fullText = "";
-    let index = 0;
+    let currentIndex = 0;
     let startTime = null;
-    let interval = null;
 
     function generateText() {
-      return Array.from({ length: 50 }, () => words[Math.floor(Math.random() * words.length)]).join(" ");
+      return Array.from({ length: totalWords }, () => words[Math.floor(Math.random() * words.length)]).join(" ");
     }
 
-    function startTest() {
+    function startFakeTest() {
       fullText = generateText();
-      typingArea.innerHTML = "";
-      index = 0;
+      currentIndex = 0;
       startTime = null;
-      stats.innerText = "Start typing...";
+      typedEl.textContent = "";
+      remainingEl.textContent = fullText;
+      statsEl.textContent = "Start typing...";
       restartBtn.style.display = "none";
-      input.value = "";
-      input.focus();
+      hiddenInput.value = "";
+      hiddenInput.focus();
     }
 
-    input.addEventListener("keydown", (e) => {
-      e.preventDefault(); // Block actual text input
+    hiddenInput.addEventListener("keydown", (e) => {
+      e.preventDefault(); // prevent actual typing
+
       if (!startTime) startTime = new Date();
 
-      if (index < fullText.length) {
-        typingArea.innerHTML += fullText[index];
-        index++;
+      if (currentIndex < fullText.length) {
+        typedEl.textContent += fullText[currentIndex];
+        remainingEl.textContent = fullText.slice(currentIndex + 1);
+        currentIndex++;
       }
 
-      if (index >= fullText.length) {
+      if (currentIndex >= fullText.length) {
         const elapsed = (new Date() - startTime) / 1000 / 60;
-        const fakeWPM = Math.floor((Math.random() * 80) + 40);
-        const fakeAccuracy = (Math.random() * 20 + 80).toFixed(2);
-        stats.innerText = `WPM: ${fakeWPM} | Accuracy: ${fakeAccuracy}%`;
-        restartBtn.style.display = "block";
+        const fakeWPM = Math.floor(Math.random() * 50 + 60);
+        const fakeAccuracy = (Math.random() * 10 + 90).toFixed(1);
+        statsEl.textContent = `WPM: ${fakeWPM} | Accuracy: ${fakeAccuracy}%`;
+        restartBtn.style.display = "inline-block";
+        hiddenInput.blur();
       }
     });
 
-    startTest();
+    startFakeTest();
   </script>
 </body>
 </html>
