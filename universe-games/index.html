@@ -304,3 +304,51 @@
         }
     };
 </script>
+
+<!-- Toggle for About:Blank Game Loading -->
+<div class="button-container" style="justify-content: center; margin-bottom: 20px;">
+    <button onclick="toggleAboutBlank()" id="toggleBtn">Open in about:blank: OFF</button>
+</div>
+
+<script>
+    let useAboutBlank = localStorage.getItem('aboutBlankMode') === 'true';
+
+    function toggleAboutBlank() {
+        useAboutBlank = !useAboutBlank;
+        localStorage.setItem('aboutBlankMode', useAboutBlank);
+        updateToggleText();
+    }
+
+    function updateToggleText() {
+        const btn = document.getElementById("toggleBtn");
+        btn.textContent = "Open in about:blank: " + (useAboutBlank ? "ON" : "OFF");
+    }
+
+    // Override openGame to support about:blank mode
+    function openGame(gameUrl) {
+        if (useAboutBlank) {
+            const win = window.open();
+            const iframe = win.document.createElement('iframe');
+            iframe.style.width = "100%";
+            iframe.style.height = "100%";
+            iframe.style.border = "none";
+            iframe.src = gameUrl;
+            win.document.body.style.margin = 0;
+            win.document.body.style.height = "100vh";
+            win.document.body.appendChild(iframe);
+        } else {
+            window.location.href = gameUrl;
+        }
+    }
+
+    // Keep your theme logic intact
+    window.onload = function () {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            setDarkTheme();
+        } else {
+            setLightTheme();
+        }
+        updateToggleText(); // Set toggle text on load
+    };
+</script>
