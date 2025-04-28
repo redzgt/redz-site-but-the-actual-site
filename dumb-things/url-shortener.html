@@ -48,7 +48,7 @@
         return;
       }
 
-      fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(url)}`)
+      fetch(`https://corsproxy.io/?https://is.gd/create.php?format=simple&url=${encodeURIComponent(url)}`)
         .then(response => {
           if (!response.ok) {
             throw new Error('Failed to shorten URL');
