@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>URL Shortener</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background: #f0f0f0;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    input, button {
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      font-size: 16px;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>URL Shortener</h2>
+    <input type="text" id="urlInput" placeholder="Enter your URL here">
+    <button onclick="shortenURL()">Shorten</button>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    function shortenURL() {
+      const url = document.getElementById('urlInput').value.trim();
+      if (!url) {
+        alert('Please enter a URL!');
+        return;
+      }
+
+      // Simulate shortening (in real case, you'd call an API)
+      const randomString = Math.random().toString(36).substring(2, 8);
+      const shortURL = `https://short.ly/${randomString}`;
+
+      document.getElementById('result').innerHTML = `Shortened URL: <a href="${url}" target="_blank">${shortURL}</a>`;
+    }
+  </script>
+</body>
+</html>
