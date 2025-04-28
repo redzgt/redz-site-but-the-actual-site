@@ -48,14 +48,18 @@
         return;
       }
 
-      fetch(`https://api.tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`)
+      const apiURL = `https://is.gd/create.php?format=simple&url=${encodeURIComponent(url)}`;
+      const proxyURL = `https://api.allorigins.win/get?url=${encodeURIComponent(apiURL)}`;
+
+      fetch(proxyURL)
         .then(response => {
           if (!response.ok) {
-            throw new Error('Failed to shorten URL');
+            throw new Error('Failed to fetch');
           }
-          return response.text();
+          return response.json();
         })
-        .then(shortUrl => {
+        .then(data => {
+          const shortUrl = data.contents;
           resultDiv.innerHTML = `Shortened URL: <a href="${shortUrl}" target="_blank">${shortUrl}</a>`;
         })
         .catch(error => {
