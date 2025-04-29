@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mini Web OS</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web OS</title>
   <style>
-    body, html {
+    html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      background: #1e1e2f;
-      font-family: sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       overflow: hidden;
+      background-color: #1a1a1a;
     }
     #desktop {
       position: relative;
@@ -21,24 +21,25 @@
     }
     .window {
       position: absolute;
-      width: 300px;
-      height: 200px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      width: 400px;
+      height: 300px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
       overflow: hidden;
       resize: both;
+      z-index: 1;
     }
     .titlebar {
-      background: #333;
+      background: #2b2b2b;
       color: white;
-      padding: 5px;
+      padding: 6px 10px;
       cursor: move;
       user-select: none;
     }
     .content {
-      padding: 10px;
       height: calc(100% - 30px);
+      padding: 10px;
       overflow: auto;
     }
     #taskbar {
@@ -46,24 +47,37 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 30px;
-      background: #111;
+      height: 40px;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
       color: white;
       display: flex;
       align-items: center;
-      padding: 0 10px;
+      justify-content: space-between;
+      padding: 0 15px;
     }
     .icon {
-      width: 48px;
-      height: 48px;
-      margin: 10px;
+      width: 60px;
       text-align: center;
       color: white;
       cursor: pointer;
+      margin: 10px;
     }
     .icon img {
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
+    }
+    .start-menu button {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: none;
+      margin-left: 10px;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .start-menu button:hover {
+      background: rgba(255, 255, 255, 0.2);
     }
   </style>
 </head>
@@ -71,11 +85,24 @@
   <div id="desktop">
     <div class="icon" onclick="openApp('Text Editor')">
       <img src="https://cdn-icons-png.flaticon.com/512/1828/1828911.png" alt="Text Editor">
-      <div style="font-size: 10px;">Editor</div>
+      <div>Editor</div>
+    </div>
+    <div class="icon" onclick="openApp('File Manager')">
+      <img src="https://cdn-icons-png.flaticon.com/512/716/716784.png" alt="File Manager">
+      <div>Files</div>
+    </div>
+    <div class="icon" onclick="openApp('Browser')">
+      <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Browser">
+      <div>Browser</div>
     </div>
   </div>
-  <div id="taskbar">Mini Web OS</div>
-
+  <div id="taskbar">
+    <div class="start-menu">
+      <button onclick="shutdown()">Shutdown</button>
+      <button onclick="restart()">Restart</button>
+    </div>
+    <div>Web OS</div>
+  </div>
   <script>
     let zIndex = 1;
 
@@ -92,11 +119,21 @@
 
       const content = document.createElement('div');
       content.className = 'content';
+
       if (title === 'Text Editor') {
         const textarea = document.createElement('textarea');
         textarea.style.width = '100%';
         textarea.style.height = '100%';
         content.appendChild(textarea);
+      } else if (title === 'File Manager') {
+        content.innerHTML = `<strong>Files:</strong><ul><li>example.txt</li><li>notes.md</li></ul>`;
+      } else if (title === 'Browser') {
+        const iframe = document.createElement('iframe');
+        iframe.src = 'https://example.com';
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.border = 'none';
+        content.appendChild(iframe);
       } else {
         content.textContent = 'App not found.';
       }
@@ -119,13 +156,20 @@
       }
 
       document.onmouseup = () => isDragging = false;
-
       document.onmousemove = function(e) {
         if (isDragging) {
           win.style.left = (e.clientX - offsetX) + 'px';
           win.style.top = (e.clientY - offsetY) + 'px';
         }
       }
+    }
+
+    function shutdown() {
+      document.getElementById('desktop').innerHTML = '<h1 style="color:white;text-align:center;margin-top:20%;">System Shut Down</h1>';
+    }
+
+    function restart() {
+      location.reload();
     }
   </script>
 </body>
