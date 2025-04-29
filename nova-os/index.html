@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mini Web OS</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #1e1e2f;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    #desktop {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: url('https://wallpapercave.com/wp/wp5128415.jpg') no-repeat center center/cover;
+    }
+    .window {
+      position: absolute;
+      width: 300px;
+      height: 200px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      overflow: hidden;
+      resize: both;
+    }
+    .titlebar {
+      background: #333;
+      color: white;
+      padding: 5px;
+      cursor: move;
+      user-select: none;
+    }
+    .content {
+      padding: 10px;
+      height: calc(100% - 30px);
+      overflow: auto;
+    }
+    #taskbar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: #111;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+    }
+    .icon {
+      width: 48px;
+      height: 48px;
+      margin: 10px;
+      text-align: center;
+      color: white;
+      cursor: pointer;
+    }
+    .icon img {
+      width: 32px;
+      height: 32px;
+    }
+  </style>
+</head>
+<body>
+  <div id="desktop">
+    <div class="icon" onclick="openApp('Text Editor')">
+      <img src="https://cdn-icons-png.flaticon.com/512/1828/1828911.png" alt="Text Editor">
+      <div style="font-size: 10px;">Editor</div>
+    </div>
+  </div>
+  <div id="taskbar">Mini Web OS</div>
+
+  <script>
+    let zIndex = 1;
+
+    function openApp(title) {
+      const win = document.createElement('div');
+      win.className = 'window';
+      win.style.top = '100px';
+      win.style.left = '100px';
+      win.style.zIndex = zIndex++;
+
+      const titlebar = document.createElement('div');
+      titlebar.className = 'titlebar';
+      titlebar.textContent = title;
+
+      const content = document.createElement('div');
+      content.className = 'content';
+      if (title === 'Text Editor') {
+        const textarea = document.createElement('textarea');
+        textarea.style.width = '100%';
+        textarea.style.height = '100%';
+        content.appendChild(textarea);
+      } else {
+        content.textContent = 'App not found.';
+      }
+
+      win.appendChild(titlebar);
+      win.appendChild(content);
+      document.getElementById('desktop').appendChild(win);
+
+      makeDraggable(win, titlebar);
+    }
+
+    function makeDraggable(win, bar) {
+      let offsetX = 0, offsetY = 0, isDragging = false;
+
+      bar.onmousedown = function(e) {
+        isDragging = true;
+        offsetX = e.clientX - win.offsetLeft;
+        offsetY = e.clientY - win.offsetTop;
+        win.style.zIndex = zIndex++;
+      }
+
+      document.onmouseup = () => isDragging = false;
+
+      document.onmousemove = function(e) {
+        if (isDragging) {
+          win.style.left = (e.clientX - offsetX) + 'px';
+          win.style.top = (e.clientY - offsetY) + 'px';
+        }
+      }
+    }
+  </script>
+</body>
+</html>
