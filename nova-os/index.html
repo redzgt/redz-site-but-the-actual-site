@@ -36,6 +36,20 @@
       padding: 6px 10px;
       cursor: move;
       user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .close-btn {
+      background: red;
+      border: none;
+      color: white;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      line-height: 20px;
+      border-radius: 50%;
+      cursor: pointer;
     }
     .content {
       height: calc(100% - 30px);
@@ -43,18 +57,20 @@
       overflow: auto;
     }
     #taskbar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
       height: 40px;
       background: rgba(0, 0, 0, 0.4);
       backdrop-filter: blur(10px);
       color: white;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 0 15px;
+      border-radius: 20px;
+      padding: 0 10px;
+      gap: 10px;
+      z-index: 999;
     }
     .icon {
       width: 60px;
@@ -67,17 +83,40 @@
       width: 40px;
       height: 40px;
     }
-    .start-menu button {
+    .taskbar-btn, .dropdown-btn {
       background: rgba(255, 255, 255, 0.1);
       color: white;
       border: none;
-      margin-left: 10px;
       padding: 5px 10px;
       cursor: pointer;
       border-radius: 4px;
     }
-    .start-menu button:hover {
+    .taskbar-btn:hover, .dropdown-btn:hover {
       background: rgba(255, 255, 255, 0.2);
+    }
+    #startMenu {
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      border-radius: 6px;
+      z-index: 1000;
+    }
+    #startMenu button {
+      margin: 5px 0;
+    }
+    .browser-controls {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 5px;
+    }
+    .browser-controls input {
+      flex-grow: 1;
+      padding: 4px;
     }
   </style>
 </head>
@@ -97,11 +136,14 @@
     </div>
   </div>
   <div id="taskbar">
-    <div class="start-menu">
-      <button onclick="shutdown()">Shutdown</button>
-      <button onclick="restart()">Restart</button>
-    </div>
-    <div>Web OS</div>
+    <button class="dropdown-btn" onclick="toggleStartMenu()">⋮</button>
+    <button class="taskbar-btn" onclick="openApp('Text Editor')">Editor</button>
+    <button class="taskbar-btn" onclick="openApp('File Manager')">Files</button>
+    <button class="taskbar-btn" onclick="openApp('Browser')">Browser</button>
+  </div>
+  <div id="startMenu">
+    <button onclick="shutdown()">Shutdown</button>
+    <button onclick="restart()">Restart</button>
   </div>
   <script>
     let zIndex = 1;
@@ -115,7 +157,13 @@
 
       const titlebar = document.createElement('div');
       titlebar.className = 'titlebar';
-      titlebar.textContent = title;
+      titlebar.innerHTML = `<span>${title}</span>`;
+
+      const closeButton = document.createElement('button');
+      closeButton.className = 'close-btn';
+      closeButton.innerText = '×';
+      closeButton.onclick = () => win.remove();
+      titlebar.appendChild(closeButton);
 
       const content = document.createElement('div');
       content.className = 'content';
@@ -128,11 +176,27 @@
       } else if (title === 'File Manager') {
         content.innerHTML = `<strong>Files:</strong><ul><li>example.txt</li><li>notes.md</li></ul>`;
       } else if (title === 'Browser') {
+        const controls = document.createElement('div');
+        controls.className = 'browser-controls';
+
+        const urlBar = document.createElement('input');
+        urlBar.placeholder = 'Enter URL';
+        urlBar.value = 'https://example.com';
+
+        const goBtn = document.createElement('button');
+        goBtn.innerText = 'Go';
+
+        controls.appendChild(urlBar);
+        controls.appendChild(goBtn);
+
         const iframe = document.createElement('iframe');
-        iframe.src = 'https://example.com';
+        iframe.src = urlBar.value;
         iframe.style.width = '100%';
         iframe.style.height = '100%';
         iframe.style.border = 'none';
+
+        goBtn.onclick = () => iframe.src = urlBar.value;
+        content.appendChild(controls);
         content.appendChild(iframe);
       } else {
         content.textContent = 'App not found.';
@@ -149,6 +213,7 @@
       let offsetX = 0, offsetY = 0, isDragging = false;
 
       bar.onmousedown = function(e) {
+        if (e.target.classList.contains('close-btn')) return;
         isDragging = true;
         offsetX = e.clientX - win.offsetLeft;
         offsetY = e.clientY - win.offsetTop;
@@ -166,10 +231,16 @@
 
     function shutdown() {
       document.getElementById('desktop').innerHTML = '<h1 style="color:white;text-align:center;margin-top:20%;">System Shut Down</h1>';
+      toggleStartMenu();
     }
 
     function restart() {
       location.reload();
+    }
+
+    function toggleStartMenu() {
+      const menu = document.getElementById('startMenu');
+      menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
     }
   </script>
 </body>
