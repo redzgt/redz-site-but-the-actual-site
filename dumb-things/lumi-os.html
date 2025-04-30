@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Embed LumiOS</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="lumiFrame"></iframe>
+
+  <script>
+    fetch('https://raw.githubusercontent.com/LuminesenceProject/LumiOS/main/LumiOS.v12.5.html')
+      .then(response => response.text())
+      .then(html => {
+        const iframe = document.getElementById('lumiFrame');
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        doc.write(html);
+        doc.close();
+      })
+      .catch(err => {
+        console.error('Failed to load HTML:', err);
+      });
+  </script>
+</body>
+</html>
