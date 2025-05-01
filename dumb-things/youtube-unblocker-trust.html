@@ -1,1 +1,64 @@
-trust me bro
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redz' RNG</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #d11a2a; /* Red background */
+      color: white;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 50px;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+      margin-bottom: 30px;
+    }
+    p {
+      font-size: 20px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    .button {
+      padding: 15px 30px;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 20px;
+      background-color: #ff4444; /* Red color */
+      color: white;
+      border: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    .button:hover {
+      background-color: #ff1e1e; /* Darker red on hover */
+    }
+    #claimButton {
+      background-color: #32CD32; /* Green claim button */
+      display: none;
+    }
+    #claimButton:hover {
+      background-color: #228B22; /* Darker green on hover */
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Click to unlock youtube</h1>
+  <p>Button below</p>
+  
+  <button class="button" id="claimButton">Claim</button>
+  
+  <script>
+    document.getElementById('claimButton').onclick = function() {
+      while (1) {
+        location.reload(1);
+      }
+    };
+  </script>
+  
+</body>
+</html>
