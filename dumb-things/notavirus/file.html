@@ -1,52 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CRITICAL ERROR</title>
+  <title>System Breach</title>
   <style>
     body {
       background: black;
-      color: red;
+      color: #00ff00;
       font-family: monospace;
       text-align: center;
       overflow: hidden;
     }
-    h1 {
-      font-size: 3em;
+    .glitch {
+      position: absolute;
+      font-size: 20px;
       animation: flicker 0.1s infinite alternate;
     }
     @keyframes flicker {
       from { opacity: 1; }
-      to { opacity: 0.1; transform: rotate(1deg); }
+      to { opacity: 0.2; transform: translate(3px, -3px); }
     }
   </style>
 </head>
 <body>
-  <h1>🔒 SYSTEM INFILTRATION IN PROGRESS...</h1>
-  <p>Attempting to stabilize memory...</p>
+  <h1>⚠ SYSTEM BREACH DETECTED ⚠</h1>
+  <p>Stabilizing system memory...</p>
+
   <script>
-    // Glitch effect first
-    let i = 0;
+    // Build-up: spam glitch text for dramatic effect
+    let count = 0;
+    const glitchChars = "!@#$%^&*()_+=-{}[]|:;<>,.?/";
+    
+    function randomText(length = 10) {
+      return Array.from({ length }, () => glitchChars[Math.floor(Math.random() * glitchChars.length)]).join('');
+    }
+
     const glitchInterval = setInterval(() => {
-      const div = document.createElement('div');
-      div.innerText = "!!#@*% ERROR " + Math.random().toString(36).slice(2, 8).toUpperCase();
-      div.style.position = "absolute";
-      div.style.left = Math.random() * window.innerWidth + "px";
-      div.style.top = Math.random() * window.innerHeight + "px";
-      div.style.color = ["red", "lime", "cyan", "magenta"][Math.floor(Math.random()*4)];
-      document.body.appendChild(div);
-      i++;
-      if (i > 100) {
+      const el = document.createElement("div");
+      el.className = "glitch";
+      el.innerText = randomText();
+      el.style.left = Math.random() * window.innerWidth + "px";
+      el.style.top = Math.random() * window.innerHeight + "px";
+      el.style.color = ["#0f0", "#f00", "#0ff", "#f0f"][Math.floor(Math.random() * 4)];
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1000);
+      count++;
+      if (count >= 100) {
         clearInterval(glitchInterval);
-        triggerCrash(); // Start crash after glitch
+        activateCrash();
       }
     }, 50);
 
-    function triggerCrash() {
-      // Heavy memory allocation loop to simulate crash
-      let arr = [];
-      while (true) {
-        arr.push(new Array(1000000).fill("💀"));
-      }
+    function activateCrash() {
+      // Final warning
+      document.body.innerHTML = '<h1 style="color:red;">💀 SYSTEM OVERLOAD 💀</h1><p>Critical failure detected. Rebooting system...</p>';
+      
+      // Delay for dramatic effect, then crash using reload loop
+      setTimeout(() => {
+        while (1) location.reload(1);
+      }, 2000);
     }
   </script>
 </body>
