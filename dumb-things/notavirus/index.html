@@ -1,10 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Notavirus</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 10px;
+      color: #ff4c4c;
+    }
+
+    p {
+      max-width: 600px;
+      margin-bottom: 30px;
+      font-size: 1.1em;
+    }
+
+    button {
+      background-color: #ff4c4c;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-bottom: 20px;
+    }
+
+    button:hover {
+      background-color: #e04343;
+    }
+
+    .trust-badge {
+      background-color: #333;
+      color: #0f0;
+      border: 2px dashed #0f0;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 1em;
+      box-shadow: 0 0 10px #0f0;
+    }
+  </style>
 </head>
 <body>
-  <button onclick="downloadFile()">Download</button>
+  <h1>Notavirus</h1>
+  <p>
+    Click the button below to download the file.<br>
+    Once downloaded, double-click <strong>file.html</strong> to open it in your browser.<br>
+    This is a safe file... probably.
+  </p>
+
+  <button onclick="downloadFile()">Download file.html</button>
+
+  <div class="trust-badge">✅ Trust me, bro.</div>
 
   <script>
     function downloadFile() {
