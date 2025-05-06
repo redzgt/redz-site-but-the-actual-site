@@ -140,14 +140,15 @@
   </div>
 
   <div class="container" id="viewNotePage">
-    <input type="text" id="viewNoteName" />
-    <textarea id="viewNoteContent" placeholder="Your note will appear here..."></textarea>
-    <div class="buttonRow">
-      <button class="warning" onclick="renameNote()">Rename</button>
-      <button onclick="goBack()">Back</button>
-      <button class="danger" onclick="deleteNote()">Delete</button>
-    </div>
+  <input type="text" id="viewNoteName" />
+  <textarea id="viewNoteContent" placeholder="Your note will appear here..."></textarea>
+  <div class="buttonRow">
+    <button onclick="saveEditedNote()">Save</button>
+    <button onclick="goBack()">Back</button>
+    <button class="danger" onclick="deleteNote()">Delete</button>
   </div>
+</div>
+
 
   <script>
     let notes = JSON.parse(localStorage.getItem('notes')) || [];
@@ -200,17 +201,16 @@
       togglePages('viewNotePage');
     }
 
-    function renameNote() {
-      const newName = document.getElementById('viewNoteName').value.trim();
-      const newContent = document.getElementById('viewNoteContent').value;
-      if (newName) {
-        notes[currentNoteIndex].name = newName;
-        notes[currentNoteIndex].content = newContent;
-        localStorage.setItem('notes', JSON.stringify(notes));
-        alert("Note updated.");
-        goBack();
-      }
-    }
+    function saveEditedNote() {
+  const newName = document.getElementById('viewNoteName').value.trim();
+  const newContent = document.getElementById('viewNoteContent').value;
+  if (newName) {
+    notes[currentNoteIndex].name = newName;
+    notes[currentNoteIndex].content = newContent;
+    localStorage.setItem('notes', JSON.stringify(notes));
+    alert("Note saved!");
+  }
+}
 
     function deleteNote() {
       if (confirm("Are you sure you want to delete this note?")) {
