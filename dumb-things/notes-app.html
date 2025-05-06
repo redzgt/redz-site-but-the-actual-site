@@ -1,160 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notes App</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notes App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
 
-        h1 {
-            color: #333;
-        }
+    .container {
+      max-width: 600px;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+    }
 
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            margin-top: 20px;
-        }
+    h1 {
+      color: #333;
+    }
 
-        button:hover {
-            background-color: #45a049;
-        }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      margin: 10px;
+      border-radius: 5px;
+    }
 
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+    button:hover {
+      background-color: #45a049;
+    }
 
-        #noteList {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
 
-        .noteItem {
-            background-color: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            width: 200px;
-            text-align: center;
-        }
+    #noteList {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
 
-        .noteItem button {
-            margin-top: 10px;
-            background-color: #2196F3;
-        }
+    .noteItem {
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      width: 200px;
+      text-align: center;
+    }
 
-        .noteItem button:hover {
-            background-color: #1976D2;
-        }
+    .noteItem button {
+      margin-top: 10px;
+      background-color: #2196F3;
+    }
 
-        textarea {
-            height: 200px;
-        }
+    .noteItem button:hover {
+      background-color: #1976D2;
+    }
 
-        .deleteBtn {
-            background-color: #f44336;
-        }
+    .deleteBtn {
+      background-color: #f44336;
+    }
 
-        .deleteBtn:hover {
-            background-color: #e53935;
-        }
-    </style>
+    .deleteBtn:hover {
+      background-color: #e53935;
+    }
+
+    .renameBtn {
+      background-color: #ff9800;
+    }
+
+    .renameBtn:hover {
+      background-color: #fb8c00;
+    }
+
+    textarea {
+      height: 200px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-    <div id="mainPage">
-        <h1>My Notes</h1>
-        <button onclick="showCreateNote()">Create New Note</button>
-        <div id="noteList"></div>
-    </div>
+  <div class="container" id="mainPage">
+    <h1>My Notes</h1>
+    <button onclick="showCreateNote()">Create New Note</button>
+    <div id="noteList"></div>
+  </div>
 
-    <div id="createNotePage" style="display:none;">
-        <h1>Create a New Note</h1>
-        <label for="noteName">Note Name:</label>
-        <input type="text" id="noteName" placeholder="Enter note name">
-        <textarea id="noteContent" placeholder="Write your note here..."></textarea>
-        <button onclick="saveNote()">Save Note</button>
-        <button onclick="goBack()">Back</button>
-    </div>
+  <div class="container hidden" id="createNotePage">
+    <h1>Create a New Note</h1>
+    <input type="text" id="noteName" placeholder="Enter note name" />
+    <textarea id="noteContent" placeholder="Write your note here..."></textarea>
+    <button onclick="saveNote()">Save Note</button>
+    <button onclick="goBack()">Back</button>
+  </div>
 
-    <div id="viewNotePage" style="display:none;">
-        <h1 id="viewNoteName"></h1>
-        <textarea id="viewNoteContent"></textarea>
-        <button onclick="goBack()">Back</button>
-        <button class="deleteBtn" onclick="deleteNote()">Delete Note</button>
-    </div>
+  <div class="container hidden" id="viewNotePage">
+    <input type="text" id="viewNoteName" />
+    <textarea id="viewNoteContent"></textarea>
+    <button onclick="renameNote()">Rename</button>
+    <button onclick="goBack()">Back</button>
+    <button class="deleteBtn" onclick="deleteNote()">Delete Note</button>
+  </div>
 
-    <script>
-        let notes = JSON.parse(localStorage.getItem('notes')) || [];
+  <script>
+    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+    let currentNoteIndex = null;
 
-        function showCreateNote() {
-            document.getElementById('mainPage').style.display = 'none';
-            document.getElementById('createNotePage').style.display = 'block';
-        }
+    function showCreateNote() {
+      togglePages('createNotePage');
+    }
 
-        function goBack() {
-            document.getElementById('createNotePage').style.display = 'none';
-            document.getElementById('viewNotePage').style.display = 'none';
-            document.getElementById('mainPage').style.display = 'block';
-            displayNotes();
-        }
+    function goBack() {
+      togglePages('mainPage');
+      displayNotes();
+    }
 
-        function saveNote() {
-            const noteName = document.getElementById('noteName').value;
-            const noteContent = document.getElementById('noteContent').value;
-            if (noteName && noteContent) {
-                notes.push({ name: noteName, content: noteContent });
-                localStorage.setItem('notes', JSON.stringify(notes));
-                goBack();
-            }
-        }
+    function togglePages(showId) {
+      document.getElementById('mainPage').classList.add('hidden');
+      document.getElementById('createNotePage').classList.add('hidden');
+      document.getElementById('viewNotePage').classList.add('hidden');
+      document.getElementById(showId).classList.remove('hidden');
+    }
 
-        function displayNotes() {
-            const noteListContainer = document.getElementById('noteList');
-            noteListContainer.innerHTML = '';
-            notes.forEach((note, index) => {
-                const noteItem = document.createElement('div');
-                noteItem.classList.add('noteItem');
-                noteItem.innerHTML = `
-                    <h2>${note.name}</h2>
-                    <button onclick="viewNote(${index})">Open Note</button>
-                `;
-                noteListContainer.appendChild(noteItem);
-            });
-        }
+    function saveNote() {
+      const noteName = document.getElementById('noteName').value.trim();
+      const noteContent = document.getElementById('noteContent').value;
+      if (noteName && noteContent) {
+        notes.push({ name: noteName, content: noteContent });
+        localStorage.setItem('notes', JSON.stringify(notes));
+        document.getElementById('noteName').value = '';
+        document.getElementById('noteContent').value = '';
+        goBack();
+      }
+    }
 
-        function viewNote(index) {
-            document.getElementById('mainPage').style.display = 'none';
-            document.getElementById('viewNotePage').style.display = 'block';
-            document.getElementById('viewNoteName').textContent = notes[index].name;
-            document.getElementById('viewNoteContent').value = notes[index].content;
-            currentNoteIndex = index;
-        }
+    function displayNotes() {
+      const noteListContainer = document.getElementById('noteList');
+      noteListContainer.innerHTML = '';
+      notes.forEach((note, index) => {
+        const noteItem = document.createElement('div');
+        noteItem.classList.add('noteItem');
+        noteItem.innerHTML = `
+          <h3>${note.name}</h3>
+          <button onclick="viewNote(${index})">Open</button>
+        `;
+        noteListContainer.appendChild(noteItem);
+      });
+    }
 
-        function deleteNote() {
-            if (confirm('Are you sure you want to delete this note?')) {
-                notes.splice(currentNoteIndex, 1);
-                localStorage.setItem('notes', JSON.stringify(notes));
-                goBack();
-            }
-        }
+    function viewNote(index) {
+      currentNoteIndex = index;
+      togglePages('viewNotePage');
+      document.getElementById('viewNoteName').value = notes[index].name;
+      document.getElementById('viewNoteContent').value = notes[index].content;
+    }
 
-        let currentNoteIndex;
+    function deleteNote() {
+      if (confirm('Are you sure you want to delete this note?')) {
+        notes.splice(currentNoteIndex, 1);
+        localStorage.setItem('notes', JSON.stringify(notes));
+        goBack();
+      }
+    }
 
-        window.onload = displayNotes;
-    </script>
+    function renameNote() {
+      const newName = document.getElementById('viewNoteName').value.trim();
+      const newContent = document.getElementById('viewNoteContent').value;
+      if (newName) {
+        notes[currentNoteIndex].name = newName;
+        notes[currentNoteIndex].content = newContent;
+        localStorage.setItem('notes', JSON.stringify(notes));
+        alert('Note renamed and saved!');
+        goBack();
+      }
+    }
+
+    window.onload = displayNotes;
+  </script>
 </body>
 </html>
