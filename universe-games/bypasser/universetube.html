@@ -136,23 +136,29 @@
         var currentIframe = null;
         var fullscreenButton = document.querySelector(".fullscreen-button");
         function embedVideo() {
-            var youtubeLink = document.getElementById("youtubeLink").value;
-            var videoContainer = document.querySelector(".video-wrapper");
-            var historyContainer = document.getElementById("historyItems");
-            if (youtubeLink.includes("youtube.com") && youtubeLink.includes("watch?v=")) {
-                var parts = youtubeLink.split("watch?v=");
-                if (parts.length === 2) {
-                    var videoId = parts[1];
-                    var modifiedLink = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
-                    var iframe = createIframe(modifiedLink);
-                    videoContainer.innerHTML = "";
-                    videoContainer.appendChild(iframe);
-                    videoContainer.appendChild(fullscreenButton);
-                    fullscreenButton.style.display = "block";
-                    currentIframe = iframe;
-                }
-            }
+    var youtubeLink = document.getElementById("youtubeLink").value;
+    
+    // Convert your custom domain to YouTube if detected
+    youtubeLink = youtubeLink.replace("universe-tube-v2.vercel.app", "youtube.com");
+
+    var videoContainer = document.querySelector(".video-wrapper");
+    var historyContainer = document.getElementById("historyItems");
+
+    if (youtubeLink.includes("youtube.com") && youtubeLink.includes("watch?v=")) {
+        var parts = youtubeLink.split("watch?v=");
+        if (parts.length === 2) {
+            var videoId = parts[1].split("&")[0];
+            var modifiedLink = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
+            var iframe = createIframe(modifiedLink);
+            videoContainer.innerHTML = "";
+            videoContainer.appendChild(iframe);
+            videoContainer.appendChild(fullscreenButton);
+            fullscreenButton.style.display = "block";
+            currentIframe = iframe;
         }
+    }
+}
+
         function createIframe(src) {
             var iframe = document.createElement("iframe");
             iframe.src = src;
