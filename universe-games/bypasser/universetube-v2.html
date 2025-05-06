@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UniverseTube V2</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #2c003e, #6a0dad);
+      color: white;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      color: #d896ff;
+      font-size: 3em;
+      margin-top: 20px;
+      text-shadow: 2px 2px 10px rgba(216, 150, 255, 0.7);
+    }
+    h3, h4 {
+      font-family: sans-serif;
+      font-weight: normal;
+      margin: 10px 0;
+      color: #f0d9ff;
+    }
+    a {
+      color: #ffd3fc;
+      text-decoration: underline;
+    }
+    p {
+      font-size: 1.2em;
+    }
+    #inputContainer {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    #youtubeLink {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      width: 60%;
+      background-color: #3b003f;
+      color: #fff;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+    #embedButton {
+      padding: 12px 30px;
+      background: linear-gradient(45deg, #d896ff, #9a00e6);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 0 10px rgba(216, 150, 255, 0.7);
+    }
+    #embedButton:hover {
+      background: linear-gradient(45deg, #9a00e6, #d896ff);
+      transform: scale(1.05);
+    }
+    #videoContainer {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+    .video-wrapper {
+      position: relative;
+      width: 80%;
+      padding-bottom: 45%;
+      height: 0;
+      overflow: hidden;
+    }
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(216, 150, 255, 0.3);
+    }
+    .fullscreen-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #d896ff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 5px 10px;
+      box-shadow: 0 0 10px rgba(216, 150, 255, 0.7);
+      display: none;
+    }
+    #historyContainer {
+      margin-top: 30px;
+    }
+    .historyItem {
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #4a0055;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .historyItem:hover {
+      background-color: #d896ff;
+    }
+    #credits {
+      display: block;
+      margin-top: 30px;
+      color: #d896ff;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <h1>How to use UniverseTube v2</h1>
+  <h3>Step 1: Search for the video you want at <a href="https://universe-tube-v2.vercel.app/" target="_blank">this link</a> (it is slow but bear with it!) and right-click the video > Copy link address.</h3>
+  <h3>Step 2: Paste the link here in the textbox using Ctrl+V or right-click > Paste.</h3>
+  <h3>Step 3: Enjoy watching YouTube!</h3>
+  <h4>Note: To enter fullscreen, press the button on the <em>top right</em>.</h4>
+
+  <h1>UniverseTube V2</h1>
+  <div id="inputContainer">
+    <p>Enter a YouTube link:</p>
+    <input type="text" id="youtubeLink" placeholder="Enter YouTube Link">
+    <button id="embedButton" onclick="embedVideo()">Unblock Video</button>
+  </div>
+  <div id="videoContainer">
+    <div class="video-wrapper">
+      <button class="fullscreen-button" onclick="toggleFullscreen()">&#x26F6;</button>
+    </div>
+  </div>
+  <div id="historyContainer">
+    <h2>History</h2>
+    <div id="historyItems">
+      <!-- Previously embedded videos will appear here -->
+    </div>
+  </div>
+  <p id="credits">Credits to KnightOChaos</p>
+  <script>
+    var currentIframe = null;
+    var fullscreenButton = document.querySelector(".fullscreen-button");
+
+    function embedVideo() {
+      var youtubeLink = document.getElementById("youtubeLink").value;
+      youtubeLink = youtubeLink.replace("universe-tube-v2.vercel.app", "youtube.com");
+
+      var videoContainer = document.querySelector(".video-wrapper");
+      var historyContainer = document.getElementById("historyItems");
+
+      if (youtubeLink.includes("youtube.com") && youtubeLink.includes("watch?v=")) {
+        var parts = youtubeLink.split("watch?v=");
+        if (parts.length === 2) {
+          var videoId = parts[1].split("&")[0];
+          var modifiedLink = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
+          var iframe = createIframe(modifiedLink);
+          videoContainer.innerHTML = "";
+          videoContainer.appendChild(iframe);
+          videoContainer.appendChild(fullscreenButton);
+          fullscreenButton.style.display = "block";
+          currentIframe = iframe;
+        }
+      }
+    }
+
+    function createIframe(src) {
+      var iframe = document.createElement("iframe");
+      iframe.src = src;
+      iframe.allowFullscreen = true;
+      iframe.frameBorder = "0";
+      return iframe;
+    }
+
+    function toggleFullscreen() {
+      if (currentIframe) {
+        if (!document.fullscreenElement) {
+          currentIframe.requestFullscreen();
+        } else {
+          document.exitFullscreen();
+        }
+      }
+    }
+  </script>
+</body>
+</html>
