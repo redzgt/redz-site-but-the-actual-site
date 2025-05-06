@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HTML Web IDE</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material-darker.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1e1e2f;
+      color: white;
+    }
+    header {
+      background: #29293d;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      font-size: 1.2rem;
+    }
+    header button {
+      background: #4caf50;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #tabs {
+      display: flex;
+      background: #2c2c3a;
+    }
+    #tabs button {
+      flex: 1;
+      padding: 0.5rem;
+      background: #2c2c3a;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #tabs button.active {
+      background: #3b3b4d;
+    }
+    main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    #editor-panel {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    #editors > div {
+      display: none;
+      flex: 1;
+    }
+    #editors > div.active {
+      display: block;
+    }
+    #resizer {
+      width: 5px;
+      cursor: ew-resize;
+      background: #444;
+    }
+    iframe {
+      flex: 1;
+      height: 100%;
+      border: none;
+      background: white;
+    }
+    .CodeMirror {
+      height: 100%;
+    }
+    #fullscreen-btn {
+      background-color: #2196f3;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>HTML Web IDE</h1>
+    <button onclick="saveFile()">Save HTML</button>
+    <button id="fullscreen-btn" onclick="openFullScreenPreview()">Full-Screen Preview</button>
+  </header>
+  <div id="tabs">
+    <button class="tab-btn active" onclick="switchTab('html')">HTML</button>
+  </div>
+  <main>
+    <div id="editor-panel">
+      <div id="editors">
+        <div id="html" class="active"><textarea id="html-code">
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello</title>
+  </head>
+  <body>
+    <h1>Hello World</h1>
+  </body>
+</html>
+        </textarea></div>
+      </div>
+    </div>
+    <div id="resizer"></div>
+    <iframe id="preview"></iframe>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/xml/xml.min.js"></script>
+
+  <script>
+    const htmlEditor = CodeMirror.fromTextArea(document.getElementById("html-code"), {
+      mode: "htmlmixed",
+      theme: "material-darker",
+      lineNumbers: true,
+      tabSize: 2
+    });
+
+    function updatePreview() {
+      const html = htmlEditor.getValue();
+      document.getElementById("preview").srcdoc = html;
+      localStorage.setItem('htmlCode', html); // Save to localStorage
+    }
+
+    htmlEditor.on("change", updatePreview);
+
+    // Load the code from localStorage when the page is loaded
+    window.addEventListener("load", function() {
+      const savedHTML = localStorage.getItem('htmlCode');
+      if (savedHTML) {
+        htmlEditor.setValue(savedHTML);
+      }
+      updatePreview(); // Ensure preview is updated
+    });
+
+    function saveFile() {
+      const html = htmlEditor.getValue();
+      const blob = new Blob([html], { type: "text/html" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "index.html";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll("#editors > div").forEach(div => div.classList.remove("active"));
+      document.querySelector(`.tab-btn[onclick*="${tab}"]`).classList.add("active");
+      document.getElementById(tab).classList.add("active");
+    }
+
+    // Resizer
+    const resizer = document.getElementById("resizer");
+    const editorPanel = document.getElementById("editor-panel");
+    let isResizing = false;
+
+    resizer.addEventListener("mousedown", function(e) {
+      isResizing = true;
+      document.body.style.cursor = "ew-resize";
+    });
+
+    window.addEventListener("mousemove", function(e) {
+      if (!isResizing) return;
+      const newWidth = e.clientX;
+      editorPanel.style.width = `${newWidth}px`;
+    });
+
+    window.addEventListener("mouseup", function() {
+      isResizing = false;
+      document.body.style.cursor = "default";
+    });
+
+    // Open preview in a new full tab
+    function openFullScreenPreview() {
+      const html = htmlEditor.getValue();
+      const newTab = window.open();
+      newTab.document.write(html);
+      newTab.document.title = "Preview";
+      newTab.document.close();
+    }
+  </script>
+</body>
+</html>
