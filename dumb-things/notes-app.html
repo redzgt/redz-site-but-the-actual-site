@@ -64,6 +64,14 @@
         textarea {
             height: 200px;
         }
+
+        .deleteBtn {
+            background-color: #f44336;
+        }
+
+        .deleteBtn:hover {
+            background-color: #e53935;
+        }
     </style>
 </head>
 <body>
@@ -86,6 +94,7 @@
         <h1 id="viewNoteName"></h1>
         <textarea id="viewNoteContent"></textarea>
         <button onclick="goBack()">Back</button>
+        <button class="deleteBtn" onclick="deleteNote()">Delete Note</button>
     </div>
 
     <script>
@@ -132,7 +141,18 @@
             document.getElementById('viewNotePage').style.display = 'block';
             document.getElementById('viewNoteName').textContent = notes[index].name;
             document.getElementById('viewNoteContent').value = notes[index].content;
+            currentNoteIndex = index;
         }
+
+        function deleteNote() {
+            if (confirm('Are you sure you want to delete this note?')) {
+                notes.splice(currentNoteIndex, 1);
+                localStorage.setItem('notes', JSON.stringify(notes));
+                goBack();
+            }
+        }
+
+        let currentNoteIndex;
 
         window.onload = displayNotes;
     </script>
