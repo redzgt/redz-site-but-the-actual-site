@@ -5,57 +5,90 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Notes App</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f4f9;
       margin: 0;
       padding: 0;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
     }
 
     .container {
-      max-width: 600px;
       width: 100%;
+      max-width: 800px;
       padding: 20px;
-      box-sizing: border-box;
-      text-align: center;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container.active {
+      display: flex;
     }
 
     h1 {
+      margin: 10px 0;
       color: #333;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 16px;
+    }
+
+    textarea {
+      resize: none;
     }
 
     button {
       background-color: #4CAF50;
       color: white;
-      padding: 10px 20px;
       border: none;
-      cursor: pointer;
-      margin: 10px;
+      padding: 10px 20px;
+      margin: 10px 5px 0;
       border-radius: 5px;
+      cursor: pointer;
+      font-size: 15px;
     }
 
     button:hover {
       background-color: #45a049;
     }
 
-    input[type="text"], textarea {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
+    .danger {
+      background-color: #f44336;
+    }
+
+    .danger:hover {
+      background-color: #e53935;
+    }
+
+    .warning {
+      background-color: #ff9800;
+    }
+
+    .warning:hover {
+      background-color: #fb8c00;
     }
 
     #noteList {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 10px;
+      gap: 15px;
+      margin-top: 20px;
     }
 
     .noteItem {
@@ -67,69 +100,61 @@
       text-align: center;
     }
 
-    .noteItem button {
+    .noteItem h3 {
+      margin: 10px 0;
+    }
+
+    #viewNoteContent {
+      flex-grow: 1;
+      height: 100%;
+      min-height: 400px;
+      max-height: calc(100vh - 200px);
       margin-top: 10px;
-      background-color: #2196F3;
     }
 
-    .noteItem button:hover {
-      background-color: #1976D2;
-    }
-
-    .deleteBtn {
-      background-color: #f44336;
-    }
-
-    .deleteBtn:hover {
-      background-color: #e53935;
-    }
-
-    .renameBtn {
-      background-color: #ff9800;
-    }
-
-    .renameBtn:hover {
-      background-color: #fb8c00;
-    }
-
-    textarea {
-      height: 200px;
-    }
-
-    .hidden {
-      display: none;
+    .buttonRow {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="container" id="mainPage">
+  <div class="container active" id="mainPage">
     <h1>My Notes</h1>
     <button onclick="showCreateNote()">Create New Note</button>
     <div id="noteList"></div>
   </div>
 
-  <div class="container hidden" id="createNotePage">
+  <div class="container" id="createNotePage">
     <h1>Create a New Note</h1>
     <input type="text" id="noteName" placeholder="Enter note name" />
-    <textarea id="noteContent" placeholder="Write your note here..."></textarea>
-    <button onclick="saveNote()">Save Note</button>
-    <button onclick="goBack()">Back</button>
+    <textarea id="noteContent" placeholder="Write your note here..." rows="10"></textarea>
+    <div class="buttonRow">
+      <button onclick="saveNote()">Save Note</button>
+      <button onclick="goBack()">Back</button>
+    </div>
   </div>
 
-  <div class="container hidden" id="viewNotePage">
+  <div class="container" id="viewNotePage">
     <input type="text" id="viewNoteName" />
-    <textarea id="viewNoteContent"></textarea>
-    <button onclick="renameNote()">Rename</button>
-    <button onclick="goBack()">Back</button>
-    <button class="deleteBtn" onclick="deleteNote()">Delete Note</button>
+    <textarea id="viewNoteContent" placeholder="Your note will appear here..."></textarea>
+    <div class="buttonRow">
+      <button class="warning" onclick="renameNote()">Rename</button>
+      <button onclick="goBack()">Back</button>
+      <button class="danger" onclick="deleteNote()">Delete</button>
+    </div>
   </div>
 
   <script>
     let notes = JSON.parse(localStorage.getItem('notes')) || [];
     let currentNoteIndex = null;
 
-    function showCreateNote() {
-      togglePages('createNotePage');
+    function togglePages(showId) {
+      document.querySelectorAll('.container').forEach(div => div.classList.remove('active'));
+      document.getElementById(showId).classList.add('active');
     }
 
     function goBack() {
@@ -137,52 +162,41 @@
       displayNotes();
     }
 
-    function togglePages(showId) {
-      document.getElementById('mainPage').classList.add('hidden');
-      document.getElementById('createNotePage').classList.add('hidden');
-      document.getElementById('viewNotePage').classList.add('hidden');
-      document.getElementById(showId).classList.remove('hidden');
+    function showCreateNote() {
+      document.getElementById('noteName').value = '';
+      document.getElementById('noteContent').value = '';
+      togglePages('createNotePage');
     }
 
     function saveNote() {
-      const noteName = document.getElementById('noteName').value.trim();
-      const noteContent = document.getElementById('noteContent').value;
-      if (noteName && noteContent) {
-        notes.push({ name: noteName, content: noteContent });
+      const name = document.getElementById('noteName').value.trim();
+      const content = document.getElementById('noteContent').value;
+      if (name && content) {
+        notes.push({ name, content });
         localStorage.setItem('notes', JSON.stringify(notes));
-        document.getElementById('noteName').value = '';
-        document.getElementById('noteContent').value = '';
         goBack();
       }
     }
 
     function displayNotes() {
-      const noteListContainer = document.getElementById('noteList');
-      noteListContainer.innerHTML = '';
-      notes.forEach((note, index) => {
+      const list = document.getElementById('noteList');
+      list.innerHTML = '';
+      notes.forEach((note, i) => {
         const noteItem = document.createElement('div');
-        noteItem.classList.add('noteItem');
+        noteItem.className = 'noteItem';
         noteItem.innerHTML = `
           <h3>${note.name}</h3>
-          <button onclick="viewNote(${index})">Open</button>
+          <button onclick="viewNote(${i})">Open</button>
         `;
-        noteListContainer.appendChild(noteItem);
+        list.appendChild(noteItem);
       });
     }
 
     function viewNote(index) {
       currentNoteIndex = index;
-      togglePages('viewNotePage');
       document.getElementById('viewNoteName').value = notes[index].name;
       document.getElementById('viewNoteContent').value = notes[index].content;
-    }
-
-    function deleteNote() {
-      if (confirm('Are you sure you want to delete this note?')) {
-        notes.splice(currentNoteIndex, 1);
-        localStorage.setItem('notes', JSON.stringify(notes));
-        goBack();
-      }
+      togglePages('viewNotePage');
     }
 
     function renameNote() {
@@ -192,7 +206,15 @@
         notes[currentNoteIndex].name = newName;
         notes[currentNoteIndex].content = newContent;
         localStorage.setItem('notes', JSON.stringify(notes));
-        alert('Note renamed and saved!');
+        alert("Note updated.");
+        goBack();
+      }
+    }
+
+    function deleteNote() {
+      if (confirm("Are you sure you want to delete this note?")) {
+        notes.splice(currentNoteIndex, 1);
+        localStorage.setItem('notes', JSON.stringify(notes));
         goBack();
       }
     }
