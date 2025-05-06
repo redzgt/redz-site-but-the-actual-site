@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #noteList {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .noteItem {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 200px;
+            text-align: center;
+        }
+
+        .noteItem button {
+            margin-top: 10px;
+            background-color: #2196F3;
+        }
+
+        .noteItem button:hover {
+            background-color: #1976D2;
+        }
+
+        textarea {
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div id="mainPage">
+        <h1>My Notes</h1>
+        <button onclick="showCreateNote()">Create New Note</button>
+        <div id="noteList"></div>
+    </div>
+
+    <div id="createNotePage" style="display:none;">
+        <h1>Create a New Note</h1>
+        <label for="noteName">Note Name:</label>
+        <input type="text" id="noteName" placeholder="Enter note name">
+        <textarea id="noteContent" placeholder="Write your note here..."></textarea>
+        <button onclick="saveNote()">Save Note</button>
+        <button onclick="goBack()">Back</button>
+    </div>
+
+    <div id="viewNotePage" style="display:none;">
+        <h1 id="viewNoteName"></h1>
+        <textarea id="viewNoteContent"></textarea>
+        <button onclick="goBack()">Back</button>
+    </div>
+
+    <script>
+        let notes = JSON.parse(localStorage.getItem('notes')) || [];
+
+        function showCreateNote() {
+            document.getElementById('mainPage').style.display = 'none';
+            document.getElementById('createNotePage').style.display = 'block';
+        }
+
+        function goBack() {
+            document.getElementById('createNotePage').style.display = 'none';
+            document.getElementById('viewNotePage').style.display = 'none';
+            document.getElementById('mainPage').style.display = 'block';
+            displayNotes();
+        }
+
+        function saveNote() {
+            const noteName = document.getElementById('noteName').value;
+            const noteContent = document.getElementById('noteContent').value;
+            if (noteName && noteContent) {
+                notes.push({ name: noteName, content: noteContent });
+                localStorage.setItem('notes', JSON.stringify(notes));
+                goBack();
+            }
+        }
+
+        function displayNotes() {
+            const noteListContainer = document.getElementById('noteList');
+            noteListContainer.innerHTML = '';
+            notes.forEach((note, index) => {
+                const noteItem = document.createElement('div');
+                noteItem.classList.add('noteItem');
+                noteItem.innerHTML = `
+                    <h2>${note.name}</h2>
+                    <button onclick="viewNote(${index})">Open Note</button>
+                `;
+                noteListContainer.appendChild(noteItem);
+            });
+        }
+
+        function viewNote(index) {
+            document.getElementById('mainPage').style.display = 'none';
+            document.getElementById('viewNotePage').style.display = 'block';
+            document.getElementById('viewNoteName').textContent = notes[index].name;
+            document.getElementById('viewNoteContent').value = notes[index].content;
+        }
+
+        window.onload = displayNotes;
+    </script>
+</body>
+</html>
