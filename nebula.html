@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nebula – Lightweight Web IDE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #7f5af0;
+      --bg: #0f0e17;
+      --text: #fffffe;
+      --subtle: #a7a9be;
+      --button-hover: #9c79ff;
+      --section-bg: #181820;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: var(--subtle);
+      max-width: 600px;
+      margin-bottom: 2rem;
+    }
+
+    .launch-btn {
+      background: var(--primary);
+      color: var(--text);
+      padding: 0.9rem 2.2rem;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      text-decoration: none;
+    }
+
+    .launch-btn:hover {
+      background: var(--button-hover);
+    }
+
+    section {
+      padding: 4rem 2rem;
+      background: var(--section-bg);
+      text-align: center;
+    }
+
+    section:nth-of-type(even) {
+      background: #13121c;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    .feature {
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      color: var(--subtle);
+    }
+
+    footer {
+      background: #0d0d15;
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.9rem;
+      color: var(--subtle);
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+      }
+
+      p, .feature {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Nebula</h1>
+    <p>The super lightweight, beautifully minimal web IDE for building in the browser.</p>
+    <a class="launch-btn" href="/web-idea">Launch IDE</a>
+  </header>
+
+  <section>
+    <h2>Fast & Lightweight</h2>
+    <p class="feature">Nebula launches in milliseconds, so you can get coding instantly. No bloat, just the essentials to keep you focused.</p>
+  </section>
+
+  <section>
+    <h2>HTML, CSS & JS Ready</h2>
+    <p class="feature">Write and preview HTML, CSS, and JavaScript in real time. Perfect for prototyping or learning.</p>
+  </section>
+
+  <section>
+    <h2>Project Persistence</h2>
+    <p class="feature">Your projects are saved automatically in your browser with localStorage—no sign-up needed.</p>
+  </section>
+
+  <section>
+    <h2>Built for Developers</h2>
+    <p class="feature">Nebula is distraction-free, elegant, and responsive. Ideal for students, tinkerers, and indie devs alike.</p>
+  </section>
+
+  <footer>
+    © 2025 Nebula IDE. All rights reserved.
+  </footer>
+
+</body>
+</html>
