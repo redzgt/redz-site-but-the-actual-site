@@ -180,6 +180,63 @@
         }
     </script>
 </head>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const snowContainer = document.createElement("div");
+        snowContainer.style.position = "fixed";
+        snowContainer.style.top = 0;
+        snowContainer.style.left = 0;
+        snowContainer.style.width = "100%";
+        snowContainer.style.height = "100%";
+        snowContainer.style.pointerEvents = "none";
+        snowContainer.style.zIndex = "-1";
+        document.body.appendChild(snowContainer);
+
+        const prefersDark = () =>
+            document.body.classList.contains("dark-theme");
+
+        function createSnowflake() {
+            const snowflake = document.createElement("div");
+            const size = Math.random() * 5 + 2;
+            const startLeft = Math.random() * window.innerWidth;
+            const duration = Math.random() * 3 + 2;
+
+            snowflake.style.position = "absolute";
+            snowflake.style.top = "-10px";
+            snowflake.style.left = `${startLeft}px`;
+            snowflake.style.width = `${size}px`;
+            snowflake.style.height = `${size}px`;
+            snowflake.style.borderRadius = "50%";
+            snowflake.style.opacity = Math.random().toFixed(2);
+            snowflake.style.backgroundColor = prefersDark() ? "white" : "#aaa";
+            snowflake.style.animation = `fall ${duration}s linear forwards`;
+
+            snowContainer.appendChild(snowflake);
+
+            snowflake.addEventListener("animationend", () => {
+                snowflake.remove();
+            });
+        }
+
+        setInterval(() => {
+            createSnowflake();
+        }, 100);
+
+        const style = document.createElement("style");
+        style.textContent = `
+            @keyframes fall {
+                0% {
+                    transform: translateY(0) translateX(0);
+                }
+                100% {
+                    transform: translateY(100vh) translateX(${Math.random() * 100 - 50}px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    });
+</script>
+
 <body>
     <div class="header-container">
         <h1>Universe Remake</h1>
@@ -189,7 +246,7 @@
     <div class="update-log-container">
         <div class="update-log">
             <h3>Update Log</h3>
-            <p>May 7: Working on bringing back UniverseTube V2.</p>
+            <p>May 7: Added snow background effect and UniverseTube V2 is back up and working! Make sure to read the guide that </p>
         </div>
         <div class="button-container">
             <a href="bypasser/universe-bypasser-lite.html" target="_blank">
@@ -206,6 +263,9 @@
 </a>
             <a href="misc/clicker-game-maker" target="_blank">
     <button>Clicker Game Creator</button>
+</a>
+            <a href="bypasser/universetube-v2" target="_blank">
+    <button>UniverseTube V2</button>
 </a>
         </div>
     </div>
@@ -355,7 +415,7 @@
         updateToggleText(); // Set toggle text on load
     };
 // Title Swithcing Mechanic
-  const titles = ["Universe Remake", "Working on UniverseTube V2"];
+  const titles = ["Universe Remake", "UniverseTube V2 fixed and back up and working!!"];
   let index = 0;
 
   setInterval(() => {
