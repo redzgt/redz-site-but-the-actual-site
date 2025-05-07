@@ -3,13 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HTML Web IDE</title>
+  <title>HTML IDE with Projects</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material-darker.min.css">
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       height: 100vh;
@@ -26,9 +24,7 @@
       justify-content: space-between;
       align-items: center;
     }
-    header h1 {
-      font-size: 1.2rem;
-    }
+    header h1 { font-size: 1.2rem; }
     header button {
       background: #4caf50;
       border: none;
@@ -37,11 +33,9 @@
       color: white;
       font-weight: bold;
       cursor: pointer;
+      margin-left: 0.5rem;
     }
-    #tabs {
-      display: flex;
-      background: #2c2c3a;
-    }
+    #tabs { display: flex; background: #2c2c3a; }
     #tabs button {
       flex: 1;
       padding: 0.5rem;
@@ -51,41 +45,14 @@
       cursor: pointer;
       font-weight: bold;
     }
-    #tabs button.active {
-      background: #3b3b4d;
-    }
-    main {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-    }
-    #editor-panel {
-      width: 50%;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-    #editors > div {
-      display: none;
-      flex: 1;
-    }
-    #editors > div.active {
-      display: block;
-    }
-    #resizer {
-      width: 5px;
-      cursor: ew-resize;
-      background: #444;
-    }
-    iframe {
-      flex: 1;
-      height: 100%;
-      border: none;
-      background: white;
-    }
-    .CodeMirror {
-      height: 100%;
-    }
+    #tabs button.active { background: #3b3b4d; }
+    main { display: flex; flex: 1; overflow: hidden; }
+    #editor-panel { width: 50%; display: flex; flex-direction: column; height: 100%; }
+    #editors > div { display: none; flex: 1; }
+    #editors > div.active { display: block; }
+    #resizer { width: 5px; cursor: ew-resize; background: #444; }
+    iframe { flex: 1; height: 100%; border: none; background: white; }
+    .CodeMirror { height: 100%; }
     #fullscreen-btn {
       background-color: #2196f3;
       padding: 0.5rem 1rem;
@@ -95,42 +62,67 @@
       font-weight: bold;
       cursor: pointer;
     }
+    #home-screen {
+      padding: 2rem;
+    }
+    #home-screen h2 {
+      margin-bottom: 1rem;
+    }
+    #project-list {
+      list-style: none;
+      padding: 0;
+    }
+    #project-list li {
+      background: #333;
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #new-project-form input {
+      padding: 0.5rem;
+      margin-right: 0.5rem;
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>HTML Web IDE</h1>
-    <button onclick="saveFile()">Save HTML</button>
-    <button id="fullscreen-btn" onclick="openFullScreenPreview()">Full-Screen Preview</button>
-  </header>
-  <div id="tabs">
-    <button class="tab-btn active" onclick="switchTab('html')">HTML</button>
+  <div id="home-screen">
+    <h2>Your Projects</h2>
+    <ul id="project-list"></ul>
+    <form id="new-project-form">
+      <input type="text" id="project-name" placeholder="New project name" required />
+      <button type="submit">Create</button>
+    </form>
   </div>
-  <main>
-    <div id="editor-panel">
-      <div id="editors">
-        <div id="html" class="active"><textarea id="html-code">
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Hello</title>
-  </head>
-  <body>
-    <h1>Hello World</h1>
-  </body>
-</html>
-        </textarea></div>
+
+  <div id="ide" style="display: none; flex-direction: column; height: 100vh;">
+    <header>
+      <h1 id="project-title"></h1>
+      <div>
+        <button onclick="saveFile()">Save HTML</button>
+        <button id="fullscreen-btn" onclick="openFullScreenPreview()">Full-Screen Preview</button>
+        <button onclick="goHome()">Back to Home</button>
       </div>
+    </header>
+    <div id="tabs">
+      <button class="tab-btn active" onclick="switchTab('html')">HTML</button>
     </div>
-    <div id="resizer"></div>
-    <iframe id="preview"></iframe>
-  </main>
+    <main>
+      <div id="editor-panel">
+        <div id="editors">
+          <div id="html" class="active"><textarea id="html-code"></textarea></div>
+        </div>
+      </div>
+      <div id="resizer"></div>
+      <iframe id="preview"></iframe>
+    </main>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/htmlmixed/htmlmixed.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/xml/xml.min.js"></script>
-
   <script>
+    let currentProject = null;
     const htmlEditor = CodeMirror.fromTextArea(document.getElementById("html-code"), {
       mode: "htmlmixed",
       theme: "material-darker",
@@ -141,28 +133,29 @@
     function updatePreview() {
       const html = htmlEditor.getValue();
       document.getElementById("preview").srcdoc = html;
-      localStorage.setItem('htmlCode', html); // Save to localStorage
+      if (currentProject) {
+        localStorage.setItem(`project:${currentProject}`, html);
+      }
     }
 
     htmlEditor.on("change", updatePreview);
-
-    // Load the code from localStorage when the page is loaded
-    window.addEventListener("load", function() {
-      const savedHTML = localStorage.getItem('htmlCode');
-      if (savedHTML) {
-        htmlEditor.setValue(savedHTML);
-      }
-      updatePreview(); // Ensure preview is updated
-    });
 
     function saveFile() {
       const html = htmlEditor.getValue();
       const blob = new Blob([html], { type: "text/html" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = "index.html";
+      a.download = `${currentProject || 'index'}.html`;
       a.click();
       URL.revokeObjectURL(a.href);
+    }
+
+    function openFullScreenPreview() {
+      const html = htmlEditor.getValue();
+      const newTab = window.open();
+      newTab.document.write(html);
+      newTab.document.title = "Preview";
+      newTab.document.close();
     }
 
     function switchTab(tab) {
@@ -172,35 +165,73 @@
       document.getElementById(tab).classList.add("active");
     }
 
-    // Resizer
     const resizer = document.getElementById("resizer");
     const editorPanel = document.getElementById("editor-panel");
     let isResizing = false;
 
-    resizer.addEventListener("mousedown", function(e) {
+    resizer.addEventListener("mousedown", () => {
       isResizing = true;
       document.body.style.cursor = "ew-resize";
     });
-
-    window.addEventListener("mousemove", function(e) {
+    window.addEventListener("mousemove", e => {
       if (!isResizing) return;
       const newWidth = e.clientX;
       editorPanel.style.width = `${newWidth}px`;
     });
-
-    window.addEventListener("mouseup", function() {
+    window.addEventListener("mouseup", () => {
       isResizing = false;
       document.body.style.cursor = "default";
     });
 
-    // Open preview in a new full tab
-    function openFullScreenPreview() {
-      const html = htmlEditor.getValue();
-      const newTab = window.open();
-      newTab.document.write(html);
-      newTab.document.title = "Preview";
-      newTab.document.close();
+    // Project management
+    const projectList = document.getElementById('project-list');
+    const projectForm = document.getElementById('new-project-form');
+    const projectNameInput = document.getElementById('project-name');
+
+    function loadProjects() {
+      projectList.innerHTML = '';
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('project:')) {
+          const name = key.split(':')[1];
+          const li = document.createElement('li');
+          li.textContent = name;
+          li.onclick = () => loadProject(name);
+          projectList.appendChild(li);
+        }
+      });
     }
+
+    function loadProject(name) {
+      currentProject = name;
+      const code = localStorage.getItem(`project:${name}`) || '<!DOCTYPE html>\n<html>\n  <head><title></title></head>\n  <body></body>\n</html>';
+      document.getElementById('home-screen').style.display = 'none';
+      document.getElementById('ide').style.display = 'flex';
+      document.getElementById('project-title').textContent = name;
+      htmlEditor.setValue(code);
+      updatePreview();
+    }
+
+    function goHome() {
+      document.getElementById('ide').style.display = 'none';
+      document.getElementById('home-screen').style.display = 'block';
+      loadProjects();
+    }
+
+    projectForm.onsubmit = e => {
+      e.preventDefault();
+      const name = projectNameInput.value.trim();
+      if (!name) return;
+      if (localStorage.getItem(`project:${name}`)) {
+        alert('Project already exists!');
+        return;
+      }
+      localStorage.setItem(`project:${name}`, '<!DOCTYPE html>\n<html>\n  <head><title></title></head>\n  <body></body>\n</html>');
+      projectNameInput.value = '';
+      loadProjects();
+    }
+
+    // Initial
+    loadProjects();
   </script>
 </body>
 </html>
