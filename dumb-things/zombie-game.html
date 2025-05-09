@@ -115,6 +115,14 @@
       ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
       ctx.fill();
 
+			// Draw aiming line
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(player.x, player.y);
+      ctx.lineTo(mouse.x, mouse.y);
+      ctx.stroke();
+
       // Update bullets
       bullets.forEach((b, i) => {
         b.x += b.dx;
