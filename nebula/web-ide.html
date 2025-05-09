@@ -47,12 +47,47 @@
     }
     #tabs button.active { background: #3b3b4d; }
     main { display: flex; flex: 1; overflow: hidden; }
-    #editor-panel { width: 50%; display: flex; flex-direction: column; height: 100%; }
-    #editors > div { display: none; flex: 1; }
-    #editors > div.active { display: block; }
-    #resizer { width: 5px; cursor: ew-resize; background: #444; }
-    iframe { flex: 1; height: 100%; border: none; background: white; }
-    .CodeMirror { height: 100%; }
+    #editor-panel {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    #editors {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    #editors > div {
+      display: none;
+      flex: 1;
+      overflow: hidden;
+    }
+    
+    #editors > div.active {
+      display: block;
+      flex: 1;
+      overflow: hidden;
+    }
+    
+    .CodeMirror {
+      height: 100% !important;
+      overflow: auto;
+    }
+
+    #resizer {
+      width: 5px;
+      cursor: ew-resize;
+      background: #444;
+    }
+    iframe {
+      flex: 1;
+      height: 100%;
+      border: none;
+      background: white;
+    }
     #fullscreen-btn {
       background-color: #2196f3;
       padding: 0.5rem 1rem;
@@ -127,7 +162,8 @@
       mode: "htmlmixed",
       theme: "material-darker",
       lineNumbers: true,
-      tabSize: 2
+      tabSize: 2,
+      lineWrapping: true
     });
 
     function updatePreview() {
