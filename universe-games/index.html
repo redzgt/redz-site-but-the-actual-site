@@ -161,24 +161,6 @@
         .light-theme .big-game {
             background-color: white;
         }
-        #settingsTab {
-            display: none;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        #settingsTab h2 {
-            margin-bottom: 20px;
-        }
-        .settings-content {
-            display: flex;
-            flex-direction: column;      
-            gap: 10px;
-        }
-
-
 
 
 
@@ -256,15 +238,7 @@
 </script>
 
 <body>
-    <!-- Tabs Navigation -->
-<div class="button-container" style="justify-content: center; margin-top: 10px;">
-  <button onclick="showTab('home')">Home</button>
-  <button onclick="showTab('settings')">Settings</button>
-</div>
-
-<!-- Home Tab Content -->
-<div id="homeTab">
-  <div class="header-container">
+    <div class="header-container">
         <h1>Universe Remake</h1>
         <input type="text" id="searchBar" onkeyup="searchGames()" placeholder="Search games...">
     </div>
@@ -272,7 +246,7 @@
     <div class="update-log-container">
         <div class="update-log">
             <h3>Update Log</h3>
-            <p>May 15: Added a tab system, and new settings!</p>
+            <p>May 15: Reverted back to the old version because the tab system broke things.</p>
         </div>
         <div class="button-container">
             <a href="bypasser/universe-bypasser-lite.html" target="_blank">
@@ -369,108 +343,16 @@
         <div class="game" data-title="Human or Not" onclick="openGame('game/human-or-not.html')">
             <img src="https://cdn-1.webcatalog.io/catalog/human-or-not/human-or-not-icon-filled-256.png?v=1714780572240" alt="Human or Not">
         </div>
-
-</div>
     </div>
-
-<!-- Settings Tab -->
-<div id="settingsTab" class="settings-tab">
-    <h2>Settings</h2>
-    <div class="settings-content">
-        <div class="button-container">
-            <button onclick="setLightTheme()">Light Theme</button>
-            <button onclick="setDarkTheme()">Dark Theme</button>
-        </div>
-        <div class="button-container">
-            <button onclick="toggleAboutBlank()" id="toggleBtn">Open in about:blank: OFF</button>
-        </div>
-        <div class="button-container" style="flex-direction: column; align-items: center;">
-  <label for="tabCloakInput" style="margin-bottom: 5px;">Tab Cloak (Warning: "Reset" not working!):</label>
-  <input type="text" id="tabCloakInput" placeholder="Enter custom tab name" style="padding: 8px; border-radius: 5px; width: 200px;">
-  <button onclick="saveTabCloak()">Save</button><button onclick="resetTabCloak()">Reset</button>
+    <footer>
+    <p>&copy; 2025 Universe Games</p>
+        <p>Settings:</p>
+</footer>
+<!--Theme Buttons!-->
+<div class="button-container" style="justify-content: center; margin-bottom: 40px;">
+    <button onclick="setLightTheme()">Light Theme</button>
+    <button onclick="setDarkTheme()">Dark Theme</button>
 </div>
-
-    </div>
-</div>
-<script>
-  function saveTabCloak() {
-    const title = document.getElementById("tabCloakInput").value.trim();
-    if (title) {
-      localStorage.setItem("customTabTitle", title);
-      document.title = title;
-      clearInterval(window._titleInterval); // Stop rotating title if active
-    } else {
-      localStorage.removeItem("customTabTitle");
-      document.title = "Universe Remake";
-    }
-  }
-
-  // On load: check and apply tab cloak
-  document.addEventListener("DOMContentLoaded", () => {
-    const customTitle = localStorage.getItem("customTabTitle");
-    if (customTitle) {
-      document.title = customTitle;
-    } else {
-      // Fallback: use rotating titles if no cloak is set
-      const titles = ["Universe Remake", "UniverseTube V2 fixed and back up and working!!"];
-      let index = 0;
-      window._titleInterval = setInterval(() => {
-        document.title = titles[index];
-        index = (index + 1) % titles.length;
-      }, 2000);
-    }
-
-    // Prefill input with saved title
-    const input = document.getElementById("tabCloakInput");
-    if (input && customTitle) input.value = customTitle;
-  });
-</script>
-
-
-<script>
-function showTab(tab) {
-    const home = document.getElementById("homeTab");
-    const settings = document.getElementById("settingsTab");
-    if (tab === "home") {
-        home.style.display = "block";
-        settings.style.display = "none";
-    } else {
-        home.style.display = "none";
-        settings.style.display = "flex";
-    }
-}
-
-
-  function setLightTheme() {
-    document.body.style.backgroundColor = "#f0f0f0";
-    document.body.style.color = "#000";
-  }
-
-  function setDarkTheme() {
-    document.body.style.backgroundColor = "#121212";
-    document.body.style.color = "#fff";
-  }
-
-  let useAboutBlank = false;
-  function toggleAboutBlank() {
-    useAboutBlank = !useAboutBlank;
-    document.getElementById("toggleBtn").innerText = `Open in about:blank: ${useAboutBlank ? "ON" : "OFF"}`;
-    const links = document.querySelectorAll(".game a");
-    links.forEach(link => {
-      if (useAboutBlank) {
-        const href = link.getAttribute("href");
-        link.setAttribute("onclick", `event.preventDefault(); openInBlank('${href}')`);
-      } else {
-        link.removeAttribute("onclick");
-      }
-    });
-  }
-
-  function openInBlank(url) {
-    const newWin = window.open();
-    newWin.document.write(`<iframe src="${url}" frameborder="0" style="width:100vw;height:100vh;"></iframe>`);
-  }
-</script>
 
 
 <script>
@@ -496,8 +378,24 @@ function showTab(tab) {
     };
 </script>
 
+<!-- Toggle for About:Blank Game Loading -->
+<div class="button-container" style="justify-content: center; margin-bottom: 20px;">
+    <button onclick="toggleAboutBlank()" id="toggleBtn">Open in about:blank: OFF</button>
+</div>
 
 <script>
+    let useAboutBlank = localStorage.getItem('aboutBlankMode') === 'true';
+
+    function toggleAboutBlank() {
+        useAboutBlank = !useAboutBlank;
+        localStorage.setItem('aboutBlankMode', useAboutBlank);
+        updateToggleText();
+    }
+
+    function updateToggleText() {
+        const btn = document.getElementById("toggleBtn");
+        btn.textContent = "Open in about:blank: " + (useAboutBlank ? "ON" : "OFF");
+    }
 
     // Override openGame to support about:blank mode
     function openGame(gameUrl) {
@@ -526,59 +424,12 @@ function showTab(tab) {
         }
         updateToggleText(); // Set toggle text on load
     };
-<script>
-<script>
-  function saveTabCloak() {
-    const title = document.getElementById("tabCloakInput").value.trim();
-    if (title) {
-      localStorage.setItem("customTabTitle", title);
-      document.title = title;
-      clearInterval(window._titleInterval); // Stop rotating title
-    } else {
-      localStorage.removeItem("customTabTitle");
-      startTitleRotation();
-    }
-  }
+// Title Swithcing Mechanic
+  const titles = ["Universe Remake", "UniverseTube V2 fixed and back up and working!!"];
+  let index = 0;
 
-function resetTabCloak() {
-  // Remove only the custom tab title key from localStorage
-  localStorage.removeItem("customTabTitle");
-
-  // Clear input field (optional, if you have an input)
-  const input = document.getElementById("tabCloakInput");
-  if (input) input.value = "";
-
-  // Restart the rotating tab title
-  clearInterval(window._titleInterval);
-  startTitleRotation();
-}
-
-  function startTitleRotation() {
-    const titles = ["Universe Remake", "UniverseTube V2 fixed and back up and working!!"];
-    let index = 0;
-    document.title = titles[0];
-    window._titleInterval = setInterval(() => {
-      document.title = titles[index];
-      index = (index + 1) % titles.length;
-    }, 2000);
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const customTitle = localStorage.getItem("customTabTitle");
-    const input = document.getElementById("tabCloakInput");
-
-    if (customTitle) {
-      document.title = customTitle;
-    } else {
-      startTitleRotation();
-    }
-
-    if (input && customTitle) input.value = customTitle;
-  });
+  setInterval(() => {
+    document.title = titles[index];
+    index = (index + 1) % titles.length;
+  }, 2000); // Change every 2 seconds
 </script>
-
-</script>
-<!--Footer keep at bottom-->
-    <footer>
-    <p>&copy; 2025 Universe Games</p>
-</footer>
