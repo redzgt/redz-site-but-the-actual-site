@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>redz' gun gambling!</title>
+  <style>
+    body {
+      background: #121212;
+      color: #fff;
+      font-family: "Segoe UI", sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 {
+      color: #f39c12;
+    }
+    button {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: 0.2s;
+    }
+    button:hover {
+      background-color: #1e8449;
+    }
+    .gun-roll {
+      font-size: 2rem;
+      margin: 1rem auto;
+      height: 60px;
+    }
+    .gun-name {
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+    .rarity-common {
+      color: gray;
+    }
+    .rarity-rare {
+      color: #00bfff;
+    }
+    .rarity-epic {
+      color: violet;
+    }
+    .rarity-legendary {
+      color: gold;
+    }
+    .inventory {
+      margin-top: 2rem;
+    }
+    .inventory-item {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔫 Gun Gambling Game</h1>
+  <div id="money">💰 Money: $9,999,999</div>
+  <button onclick="gamble()">Gamble!</button>
+
+  <div class="gun-roll" id="rollingText">Ready to roll...</div>
+
+  <h2>Your Inventory</h2>
+  <div class="inventory" id="inventoryList"></div>
+
+  <script>
+    let money = 9999999;
+    const rollCost = 1000;
+
+const guns = [
+  // Common – civilian/basic sidearms and SMGs
+  { name: "Glock 17", rarity: "common" },
+  { name: "Beretta M9", rarity: "common" },
+  { name: "Colt M1911", rarity: "common" },
+  { name: "Smith & Wesson M&P", rarity: "common" },
+  { name: "CZ 75", rarity: "common" },
+  { name: "Walther P99", rarity: "common" },
+  { name: "Hi-Point C9", rarity: "common" },
+  { name: "Kel-Tec P-11", rarity: "common" },
+  { name: "Taurus G2C", rarity: "common" },
+  { name: "Ruger SR9", rarity: "common" },
+
+  // Rare – popular rifles and shotguns used by law enforcement/military
+  { name: "Remington 870", rarity: "rare" },
+  { name: "Mossberg 500", rarity: "rare" },
+  { name: "Glock 18", rarity: "rare" },
+  { name: "HK MP5", rarity: "rare" },
+  { name: "FN P90", rarity: "rare" },
+  { name: "AKM", rarity: "rare" },
+  { name: "FN FAL", rarity: "rare" },
+  { name: "Galil ACE", rarity: "rare" },
+  { name: "SIG SG 552", rarity: "rare" },
+  { name: "Mini-14", rarity: "rare" },
+
+  // Epic – special forces/high-performance/modern battlefield weapons
+  { name: "HK416", rarity: "epic" },
+  { name: "FN SCAR-H", rarity: "epic" },
+  { name: "KRISS Vector", rarity: "epic" },
+  { name: "Steyr AUG", rarity: "epic" },
+  { name: "FAMAS F1", rarity: "epic" },
+  { name: "Tavor X95", rarity: "epic" },
+  { name: "UMP45", rarity: "epic" },
+  { name: "Benelli M4", rarity: "epic" },
+  { name: "M4A1 Carbine", rarity: "epic" },
+  { name: "Desert Eagle", rarity: "epic" },
+
+  // Legendary – sniper rifles, rare battle rifles, and powerful classics
+  { name: "Barrett M82", rarity: "legendary" },
+  { name: "CheyTac M200 Intervention", rarity: "legendary" },
+  { name: "Accuracy International AXMC", rarity: "legendary" },
+  { name: "Dragunov SVD", rarity: "legendary" },
+  { name: "Heckler & Koch G3", rarity: "legendary" },
+  { name: "FN SCAR 20S", rarity: "legendary" },
+  { name: "M110 SASS", rarity: "legendary" },
+  { name: "McMillan TAC-50", rarity: "legendary" },
+  { name: "Steyr SSG 69", rarity: "legendary" },
+  { name: "M24 Sniper Weapon System", rarity: "legendary" }
+];
+
+
+    const rarityChances = {
+      common: 0.5,
+      rare: 0.3,
+      epic: 0.15,
+      legendary: 0.05
+    };
+
+    const inventory = [];
+
+    function updateMoney() {
+      document.getElementById('money').textContent = `💰 Money: $${money.toLocaleString()}`;
+    }
+
+    function updateInventory() {
+      const inv = document.getElementById("inventoryList");
+      inv.innerHTML = "";
+      inventory.forEach(gun => {
+        const div = document.createElement("div");
+        div.className = `inventory-item rarity-${gun.rarity}`;
+        div.textContent = `${gun.name} (${gun.rarity.toUpperCase()})`;
+        inv.appendChild(div);
+      });
+    }
+
+    function getRandomGun() {
+      const rand = Math.random();
+      let sum = 0;
+      for (const rarity in rarityChances) {
+        sum += rarityChances[rarity];
+        if (rand < sum) {
+          const gunsOfRarity = guns.filter(g => g.rarity === rarity);
+          return gunsOfRarity[Math.floor(Math.random() * gunsOfRarity.length)];
+        }
+      }
+      return guns[0];
+    }
+
+    function gamble() {
+      if (money < rollCost) {
+        alert("You're out of money!");
+        return;
+      }
+
+      money -= rollCost;
+      updateMoney();
+
+      const rollingText = document.getElementById("rollingText");
+      rollingText.textContent = "Rolling...";
+      let counter = 0;
+      const spinInterval = setInterval(() => {
+        const fakeGun = guns[Math.floor(Math.random() * guns.length)];
+        rollingText.className = `gun-roll rarity-${fakeGun.rarity}`;
+        rollingText.textContent = fakeGun.name;
+        counter++;
+        if (counter >= 15) {
+          clearInterval(spinInterval);
+          const realGun = getRandomGun();
+          rollingText.className = `gun-roll rarity-${realGun.rarity}`;
+          rollingText.textContent = `🎉 You got: ${realGun.name} (${realGun.rarity.toUpperCase()})`;
+          inventory.push(realGun);
+          updateInventory();
+        }
+      }, 75);
+    }
+
+    updateMoney();
+  </script>
+
+</body>
+</html>
