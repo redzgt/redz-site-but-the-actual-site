@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Tab</title>
+  <style>
+    :root {
+      --bg-color: #fff;
+      --text-color: #000;
+      --input-bg: #f0f0f0;
+      --input-color: #000;
+    }
+    body.dark {
+      --bg-color: #121212;
+      --text-color: #fff;
+      --input-bg: #1f1f1f;
+      --input-color: #fff;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .search-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .title {
+      font-size: 16px;
+      margin-bottom: 10px;
+      opacity: 0.8;
+      letter-spacing: 0.5px;
+    }
+
+    form {
+      display: flex;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background: var(--input-bg);
+      color: var(--input-color);
+      outline: none;
+    }
+
+    .menu {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .settings-popup {
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      background: var(--bg-color);
+      color: var(--text-color);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 12px 16px;
+      display: none;
+      z-index: 10;
+    }
+
+    .settings-popup label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .settings-popup input[type="checkbox"] {
+      transform: scale(1.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="menu" onclick="toggleSettings()">⋮</div>
+
+  <div class="settings-popup" id="settingsPopup">
+    <label>
+      <input type="checkbox" id="themeToggle" onchange="toggleTheme()" />
+      Dark Theme
+    </label>
+  </div>
+
+  <div class="search-container">
+    <div class="title">Universe</div>
+    <form action="https://www.bing.com/search" method="GET">
+      <input type="text" name="q" placeholder="Search with Bing..." autofocus />
+    </form>
+  </div>
+
+  <script>
+    const settingsPopup = document.getElementById("settingsPopup");
+    const themeToggle = document.getElementById("themeToggle");
+
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark");
+      themeToggle.checked = true;
+    }
+
+    function toggleSettings() {
+      settingsPopup.style.display =
+        settingsPopup.style.display === "block" ? "none" : "block";
+    }
+
+    function toggleTheme() {
+      const isDark = themeToggle.checked;
+      document.body.classList.toggle("dark", isDark);
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    }
+
+    document.addEventListener("click", (e) => {
+      if (!settingsPopup.contains(e.target) && !e.target.classList.contains("menu")) {
+        settingsPopup.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
