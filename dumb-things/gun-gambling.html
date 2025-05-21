@@ -55,6 +55,13 @@
     .inventory-item {
       margin: 5px 0;
     }
+    #resetButton {
+      margin-top: 2rem;
+      background-color: #c0392b;
+    }
+    #resetButton:hover {
+      background-color: #922b21;
+    }
   </style>
 </head>
 <body>
@@ -68,6 +75,8 @@
   <h2>Your Inventory</h2>
   <div id="rarityCounts" style="margin-bottom: 1rem; font-size: 1rem; color: #ccc;"></div>
   <div class="inventory" id="inventoryList"></div>
+
+  <button id="resetButton" onclick="resetData()">Reset Data</button>
 
   <script>
     let money = 9999999;
@@ -130,7 +139,7 @@
       legendary: 0.05
     };
 
-    const inventory = [];
+    let inventory = [];
 
     function updateMoney() {
       document.getElementById('money').textContent = `💰 Money: $${money.toLocaleString()}`;
@@ -153,6 +162,9 @@
       document.getElementById("rarityCounts").textContent = 
         `${rarityCounts.common} Common, ${rarityCounts.rare} Rare, ` +
         `${rarityCounts.epic} Epic, ${rarityCounts.legendary} Legendary`;
+
+      // Save to localStorage
+      localStorage.setItem("gun_inventory", JSON.stringify(inventory));
     }
 
     function getRandomGun() {
@@ -196,7 +208,29 @@
       }, 75);
     }
 
+    function loadInventory() {
+      const saved = localStorage.getItem("gun_inventory");
+      if (saved) {
+        try {
+          inventory = JSON.parse(saved);
+          updateInventory();
+        } catch (e) {
+          inventory = [];
+        }
+      }
+    }
+
+    function resetData() {
+      if (confirm("Are you sure you want to reset your inventory?")) {
+        localStorage.removeItem("gun_inventory");
+        inventory = [];
+        updateInventory();
+        location.reload();
+      }
+    }
+
     updateMoney();
+    loadInventory();
   </script>
 
 </body>
