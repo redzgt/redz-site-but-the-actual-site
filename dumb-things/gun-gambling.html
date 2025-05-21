@@ -67,7 +67,7 @@
 <body>
 
   <h1>🔫 Gun Gambling Game</h1>
-  <div id="money">💰 Money: $9,999,999</div>
+  <div id="money">💰 Money: $0</div>
   <button onclick="gamble()">Gamble!</button>
 
   <div class="gun-roll" id="rollingText">Ready to roll...</div>
@@ -79,8 +79,8 @@
   <button id="resetButton" onclick="resetData()">Reset Data</button>
 
   <script>
-    let money = 9999999;
     const rollCost = 1000;
+    const defaultMoney = 9999999;
 
     const guns = [
       // Common
@@ -139,10 +139,12 @@
       legendary: 0.05
     };
 
+    let money = parseInt(localStorage.getItem("money")) || defaultMoney;
     let inventory = [];
 
     function updateMoney() {
       document.getElementById('money').textContent = `💰 Money: $${money.toLocaleString()}`;
+      localStorage.setItem("money", money);
     }
 
     function updateInventory() {
@@ -163,7 +165,6 @@
         `${rarityCounts.common} Common, ${rarityCounts.rare} Rare, ` +
         `${rarityCounts.epic} Epic, ${rarityCounts.legendary} Legendary`;
 
-      // Save to localStorage
       localStorage.setItem("gun_inventory", JSON.stringify(inventory));
     }
 
@@ -221,9 +222,12 @@
     }
 
     function resetData() {
-      if (confirm("Are you sure you want to reset your inventory?")) {
+      if (confirm("Are you sure you want to reset your data?")) {
         localStorage.removeItem("gun_inventory");
+        localStorage.removeItem("money");
         inventory = [];
+        money = defaultMoney;
+        updateMoney();
         updateInventory();
         location.reload();
       }
