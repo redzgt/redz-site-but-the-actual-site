@@ -129,14 +129,18 @@
       { name: "M110 SASS", rarity: "legendary" },
       { name: "McMillan TAC-50", rarity: "legendary" },
       { name: "Steyr SSG 69", rarity: "legendary" },
-      { name: "M24 Sniper Weapon System", rarity: "legendary" }
+      { name: "M24 Sniper Weapon System", rarity: "legendary" },
+
+      // Mythic
+      { name: "Minigun", rarity: "mythic" },
     ];
 
     const rarityChances = {
       common: 0.5,
       rare: 0.3,
       epic: 0.15,
-      legendary: 0.05
+      legendary: 0.05,
+      mythic: 0.01
     };
 
     let money = parseInt(localStorage.getItem("money")) || defaultMoney;
@@ -149,7 +153,7 @@
 
     function updateInventory() {
       const inv = document.getElementById("inventoryList");
-      const rarityCounts = { common: 0, rare: 0, epic: 0, legendary: 0 };
+      const rarityCounts = { common: 0, rare: 0, epic: 0, legendary: 0, mythic: 0 };
 
       inv.innerHTML = "";
 
@@ -163,7 +167,7 @@
 
       document.getElementById("rarityCounts").textContent = 
         `${rarityCounts.common} Common, ${rarityCounts.rare} Rare, ` +
-        `${rarityCounts.epic} Epic, ${rarityCounts.legendary} Legendary`;
+        `${rarityCounts.epic} Epic, ${rarityCounts.legendary} Legendary ${rarityCounts.mythic} Mythic`;
 
       localStorage.setItem("gun_inventory", JSON.stringify(inventory));
     }
