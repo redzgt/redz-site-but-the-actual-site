@@ -49,6 +49,10 @@
     .rarity-legendary {
       color: gold;
     }
+    .rarity-mythic {
+      color: #ff00ff; /* Bright pink/purple for mythic */
+      text-shadow: 0 0 5px #ff00ff;
+    }
     .inventory {
       margin-top: 2rem;
     }
@@ -167,7 +171,7 @@
 
       document.getElementById("rarityCounts").textContent = 
         `${rarityCounts.common} Common, ${rarityCounts.rare} Rare, ` +
-        `${rarityCounts.epic} Epic, ${rarityCounts.legendary} Legendary ${rarityCounts.mythic} Mythic`;
+        `${rarityCounts.epic} Epic, ${rarityCounts.legendary} Legendary, ${rarityCounts.mythic} Mythic`;
 
       localStorage.setItem("gun_inventory", JSON.stringify(inventory));
     }
