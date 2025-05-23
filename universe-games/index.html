@@ -162,6 +162,81 @@
             background-color: white;
         }
 
+				/* Topbar */
+        .topbar {
+          position: fixed;
+          top: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: none;
+          padding: 0;
+          border-radius: 0;
+          box-shadow: none;
+          z-index: 1000;
+          backdrop-filter: none;
+          color: inherit;
+          font-size: 16px; /* Optional: adjust size */
+        }
+
+
+        .topbar-menu {
+          display: flex;
+          gap: 30px;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+        }
+
+        .topbar-menu a {
+          color: #ffff;
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 1em;
+          transition: color 0.3s ease;
+        }
+
+        .topbar-menu a:hover {
+          color: #dbc2ff;
+        }
+        .topbar-menu {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  padding: 10px;
+}
+
+.topbar-menu > li {
+  position: relative;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  background-color: #222;
+  min-width: 160px;
+  z-index: 999;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.dropdown-content li {
+  display: block;
+}
+
+.dropdown-content a {
+  display: block;
+  color: white;
+  padding: 10px;
+  text-decoration: none;
+}
+
+.dropdown-content a:hover {
+  background-color: #444;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
 
 
 
@@ -238,6 +313,78 @@
 </script>
 
 <body>
+  <nav class="topbar">
+    <ul class="topbar-menu">
+      <li class="dropdown">
+        <a href="#">Shooters</a>
+        <ul class="dropdown-content">
+          <li><a href="game/krunker.html">Krunker</a></li>
+          <li><a href="game/war-brokers.html">War Brokers</a></li>
+          <li><a href="game/kour-io.html">Kour.io</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="#">Driving</a>
+        <ul class="dropdown-content">
+          <li><a href="game/smash-karts.html">Smash Karts</a></li>
+          <li><a href="game/crazy-cars.html">Crazy Cars</a></li>
+          <li><a href="game/drive-mad.html">Drive Mad</a></li>
+          <li><a href="game/slowroads.html">Slow Roads</a></li>
+          <li><a href="game/moto-x3m.html">Moto X3M</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="#">Platformers</a>
+        <ul class="dropdown-content">
+          <li><a href="game/tag.html">Tag</a></li>
+          <li><a href="game/stickman-hook.html">Stickman Hook</a></li>
+          <li><a href="game/bonk-io.html">Bonk.io</a></li>
+          <li><a href="game/run-3.html">Run 3</a></li>
+          <li><a href="game/cs-surf-go.html">CS Surf Go</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="#">Casual</a>
+        <ul class="dropdown-content">
+          <li><a href="game/subway-surfers.html">Subway Surfers</a></li>
+          <li><a href="game/crossy-road.html">Crossy Road</a></li>
+          <li><a href="game/lolbeans-io.html">LOLBeans.io</a></li>
+          <li><a href="game/tap-road.html">Tap Road</a></li>
+          <li><a href="game/happy-wheels.html">Happy Wheels</a></li>
+          <li><a href="game/wacky-flip">Wacky Flip</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="#">Idle</a>
+        <ul class="dropdown-content">
+          <li><a href="game/banana-clicker.html">Banana Clicker</a></li>
+          <li><a href="game/stone-grass">Stone Grass</a></li>
+          <li><a href="game/monkey-mart.html">Monkey Mart</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="#">Arcade</a>
+        <ul class="dropdown-content">
+          <li><a href="game/slope.html">Slope</a></li>
+          <li><a href="game/google-baseball.html">Google Baseball</a></li>
+          <li><a href="game/speed-stars.html">Speed Stars</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="#">Other</a>
+        <ul class="dropdown-content">
+          <li><a href="game/minecraft.html">Minecraft</a></li>
+          <li><a href="game/minefun-io.html">MineFun.io</a></li>
+          <li><a href="game/human-or-not.html">Human or Not</a></li>
+          <li><a href="game/escape-road-2.html">Escape Road 2</a></li>
+          <li><a href="game/duck-life.html">Duck Life</a></li>
+          <li><a href="game/duck-life-3.html">Duck Life 3: Evolution</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+
     <div class="header-container">
         <h1>Universe Remake</h1>
         <input type="text" id="searchBar" onkeyup="searchGames()" placeholder="Search games...">
@@ -246,7 +393,7 @@
     <div class="update-log-container">
         <div class="update-log">
             <h3>Update Log</h3>
-            <p>May 23: Added Wacky Flip.</p>
+            <p>May 23: Added Wacky Flip and category dropdowns!</p>
         </div>
         <div class="button-container">
             <a href="bypasser/universe-bypasser-lite.html" target="_blank">
