@@ -1,4 +1,4 @@
-You may NOT fork this repository or use it's code for ANYTHING hosted online, you may only borrow some code if it is for personal use and used LOCALLY on YOUR computer.
+You may not fork this repository or use its code for anything hosted online. You may only borrow some code if it is for personal use and used locally on your computer.
 
 Thank you :)
 
