@@ -1,58 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dumb Things - redzgt</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dumb Things - redzgt</title>
+  <style>
+    /* General Styles */
+    body {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #000;
+        color: #fff;
+        line-height: 1.6;
+        overflow-x: hidden;
+        text-align: center;
+    }
+
+    /* Header Section */
+    header {
+        padding: 40px 20px;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.9);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 3em;
+        color: #FF0000;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    }
+
+    header p {
+        font-size: 1.2em;
+        margin-top: 10px;
+        color: #FF0000;
+    }
+
+    /* Navigation */
+    nav {
+        margin-top: 15px;
+    }
+
+    nav a {
+        color: #FF0000;
+        text-decoration: none;
+        font-size: 1.2em;
+        margin: 0 15px;
+        transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+        color: #ff4444;
+    }
+
+    /* Content Section */
+    .content {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .content h2 {
+        width: 100%;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        color: #FF0000;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    /* Experiment Cards */
+    .experiment-link {
+        text-decoration: none;
+        flex: 1;
+        min-width: 300px;
+        max-width: 400px;
+    }
+
+    .experiment {
+        background-color: rgba(0, 0, 0, 0.85);
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        padding: 10px;
+        text-align: center;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .experiment:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    .experiment img {
+        width: 100%;
+        height: auto;
+        max-width: 300px;
+        border-bottom: 5px solid #FF0000;
+        transition: opacity 0.3s ease;
+    }
+
+    .experiment img:hover {
+        opacity: 0.8;
+    }
+
+    .experiment h3 {
+        font-size: 1.4em;
+        margin: 10px 0;
+        color: #FF0000;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Footer Section */
+    footer {
+        background-color: rgba(0, 0, 0, 0.9);
+        color: #FF0000;
+        text-align: center;
+        padding: 20px 0;
+        position: relative;
+        bottom: 0;
+        width: 100%;
+    }
+
+    footer p {
+        font-size: 1.1em;
+        letter-spacing: 1px;
+    }
+
+    /* Media Queries for Mobile */
+    @media (max-width: 768px) {
+        header h1 {
+            font-size: 2.5em;
+        }
+
+        .content {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .experiment-link {
+            width: 100%;
+        }
+
+        .experiment h3 {
+            font-size: 1.5em;
+        }
+
+        .experiment img {
+            max-width: 250px;
+        }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Dumb Things</h1>
-    </header>
+  <header>
+    <h1>Dumb Things</h1>
+  </header>
 
-    <div class="content">
-        <h2>These are things that are too pointless to put on experiments.</h2>
+  <div class="content"> <!--Experiments page explains why this is here.--->
 
-        <a href="/experiments/drawing" class="experiment-link">
-            <div class="experiment">
-                <img src="drawing-app.png" alt="Thing (im too lazy to put the alt on the other things)">
-                <h3>Thing 1</h3>
-            </div>
-        </a>
+    <a href="/experiments/drawing" class="experiment-link">
+      <div class="experiment">
+        <img src="drawing-app.png" alt="Thing (im too lazy to put the alt on the other things)">
+        <h3>Thing 1</h3>
+      </div>
+    </a>
 
-        <a href="/experiments/banana-clicker" class="experiment-link">
-            <div class="experiment">
-                <img src="banana-clicker.png" alt="Banana Clicker">
-                <h3>Thing 2</h3>
-            </div>
-        </a>
-        
-        <a href="/experiments/typing-test" class="experiment-link">
-            <div class="experiment">
-                <img src="typing-test.png" alt="Typing Test">
-                <h3>Thing 3</h3>
-            </div>
-        </a>
-        
-        <a href="/experiments/fake-typing-test" class="experiment-link">
-            <div class="experiment">
-                <img src="fake-typing-test.png" alt="Fake Typing Test">
-                <h3>Thing 4</h3>
-            </div>
-        </a>
-        
-        <a href="/experiments/ai-chatbot" class="experiment-link">
-            <div class="experiment">
-                <img src="ai-chatbot.png" alt="AI Chatbot">
-                <h3>Thing 5</h3>
-            </div>
-        </a>
-        
-    </div>
+    <a href="/experiments/banana-clicker" class="experiment-link">
+      <div class="experiment">
+        <img src="banana-clicker.png" alt="Banana Clicker">
+        <h3>Thing 2</h3>
+      </div>
+    </a>
 
-    <footer>
-        <p>&copy; 2025 redz</p>
-    </footer>
+    <a href="/experiments/typing-test" class="experiment-link">
+      <div class="experiment">
+        <img src="typing-test.png" alt="Typing Test">
+        <h3>Thing 3</h3>
+      </div>
+    </a>
+
+    <a href="/experiments/fake-typing-test" class="experiment-link">
+      <div class="experiment">
+        <img src="fake-typing-test.png" alt="Fake Typing Test">
+        <h3>Thing 4</h3>
+      </div>
+    </a>
+
+    <a href="/experiments/ai-chatbot" class="experiment-link">
+      <div class="experiment">
+        <img src="ai-chatbot.png" alt="AI Chatbot">
+        <h3>Thing 5</h3>
+      </div>
+    </a>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 redz</p>
+  </footer>
 </body>
 </html>
