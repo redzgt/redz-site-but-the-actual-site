@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura RNG</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: #fff;
+      --accent: #8b5cf6;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      text-align: center;
+      overflow: hidden;
+    }
+    h1 {
+      margin-top: 20px;
+      color: var(--accent);
+      font-size: 3em;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin: 10px;
+    }
+    button:hover {
+      background: #a78bfa;
+    }
+    #aura-display, #level-display {
+      margin-top: 20px;
+      font-size: 1.5em;
+    }
+    .aura-effect {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .aura {
+      position: absolute;
+      border-radius: 50%;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
+    }
+    .inventory {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    .inventory.active {
+      display: flex;
+    }
+    .inventory h2 {
+      color: var(--accent);
+    }
+    .inventory-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 90vw;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .inventory-item {
+      border: 2px solid var(--accent);
+      padding: 10px;
+      border-radius: 8px;
+      background: #1a1a1a;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 100px;
+    }
+    .inventory-item:hover {
+      background: #2a2a2a;
+    }
+    #inventory-toggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.5em;
+      background: none;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      z-index: 11;
+    }
+  </style>
+</head>
+<body>
+  <h1>Aura RNG</h1>
+  <button onclick="rollAura()">Roll for Aura</button>
+  <button id="inventory-toggle" onclick="toggleInventory()">🎒</button>
+  <div id="aura-display">No aura yet!</div>
+  <div id="level-display">Level: 1 | XP: 0 / 10</div>
+  <div id="inventory-container" class="inventory">
+    <h2>Your Inventory</h2>
+    <div id="inventory" class="inventory-list"></div>
+  </div>
+  <div id="aura-effects" class="aura-effect"></div>
+
+  <script>
+    let level = 1;
+    let xp = 0;
+    let xpToNext = 10;
+
+    const allAuras = [];
+    const types = ['gradient', 'star', 'glow', 'cloud'];
+    const rarities = [
+      { label: '1/5', threshold: 0.8, rank: 0 },
+      { label: '1/50', threshold: 0.98, rank: 1 },
+      { label: '1/5000', threshold: 1.0, rank: 2 }
+    ];
+    const rarityRank = { '1/5': 0, '1/50': 1, '1/5000': 2 };
+    const gradients = [
+      'linear-gradient(to right, #ff7e5f, #feb47b)',
+      'radial-gradient(circle, #00c6ff, #0072ff)',
+      'linear-gradient(to right, #43cea2, #185a9d)',
+      'linear-gradient(to right, #ff00cc, #3333ff)',
+      'radial-gradient(circle, #8e2de2, #4a00e0)'
+    ];
+
+    for (let i = 0; i < 60; i++) {
+      const type = types[i % types.length];
+      const rarity = rarities[i % rarities.length].label;
+      let aura = {
+        id: i,
+        name: `Aura ${i + 1}`,
+        rarity,
+        type,
+        size: 30 + (i % 3) * 20
+      };
+      if (type === 'gradient') {
+        aura.gradient = gradients[i % gradients.length];
+      } else {
+        aura.color = `hsl(${(i * 37) % 360}, 80%, 60%)`;
+      }
+      allAuras.push(aura);
+    }
+
+    let inventory = JSON.parse(localStorage.getItem('auraInventory')) || {};
+    let currentAura = JSON.parse(localStorage.getItem('equippedAura')) || null;
+    if (currentAura) renderAuraEffect(currentAura);
+    updateInventory();
+
+    function rollAura() {
+      const roll = Math.random();
+      let pool;
+      if (roll < rarities[0].threshold) pool = allAuras.filter(a => a.rarity === rarities[0].label);
+      else if (roll < rarities[1].threshold) pool = allAuras.filter(a => a.rarity === rarities[1].label);
+      else pool = allAuras.filter(a => a.rarity === rarities[2].label);
+
+      const aura = pool[Math.floor(Math.random() * pool.length)];
+      document.getElementById('aura-display').textContent = `You got: ${aura.name} (${aura.rarity})`;
+      if (!inventory[aura.id]) {
+        inventory[aura.id] = { aura, count: 0 };
+      }
+      inventory[aura.id].count++;
+      localStorage.setItem('auraInventory', JSON.stringify(inventory));
+      gainXP(1);
+      updateInventory();
+    }
+
+    function gainXP(amount) {
+      xp += amount;
+      if (xp >= xpToNext) {
+        xp -= xpToNext;
+        level++;
+        xpToNext = Math.floor(xpToNext * 1.2);
+      }
+      document.getElementById('level-display').textContent = `Level: ${level} | XP: ${xp} / ${xpToNext}`;
+    }
+
+    function updateInventory() {
+      const inv = document.getElementById('inventory');
+      inv.innerHTML = '';
+      const items = Object.values(inventory)
+        .sort((a, b) => rarityRank[b.aura.rarity] - rarityRank[a.aura.rarity]);
+
+      for (const { aura, count } of items) {
+        const item = document.createElement('div');
+        item.className = 'inventory-item';
+        item.innerHTML = `<strong>${aura.name}</strong><br>x${count}<br>[${aura.rarity}]`;
+        item.onclick = () => activateAura(aura);
+        inv.appendChild(item);
+      }
+    }
+
+    function activateAura(aura) {
+      currentAura = aura;
+      localStorage.setItem('equippedAura', JSON.stringify(aura));
+      renderAuraEffect(aura);
+    }
+
+    function toggleInventory() {
+      const invContainer = document.getElementById('inventory-container');
+      invContainer.classList.toggle('active');
+    }
+
+    function renderAuraEffect(aura) {
+      const effects = document.getElementById('aura-effects');
+      effects.innerHTML = '';
+      for (let i = 0; i < 20; i++) {
+        const el = document.createElement('div');
+        el.classList.add('aura');
+        el.style.width = el.style.height = `${aura.size}px`;
+        el.style.left = `${Math.random() * 100}vw`;
+        el.style.top = `${Math.random() * 100}vh`;
+        el.style.opacity = Math.random();
+
+        if (aura.type === 'gradient') {
+          el.style.backgroundImage = aura.gradient;
+        } else if (aura.type === 'star') {
+          el.style.background = aura.color;
+          el.style.clipPath = 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)';
+        } else if (aura.type === 'glow') {
+          el.style.background = aura.color;
+          el.style.boxShadow = `0 0 20px ${aura.color}`;
+        } else if (aura.type === 'cloud') {
+          el.style.background = aura.color;
+          el.style.borderRadius = '50%';
+          el.style.filter = 'blur(5px)';
+        } else {
+          el.style.background = aura.color;
+        }
+        effects.appendChild(el);
+      }
+    }
+  </script>
+</body>
+</html>
