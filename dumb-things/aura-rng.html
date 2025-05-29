@@ -474,13 +474,14 @@ function loadLuckStatus() {
   updateLuckUI();
 }
     //load thingy
-    window.onload = () => {
+    window.addEventListener("load", () => {
   loadLuckStatus();
-  // existing initialization
+
   if (currentAura) renderAuraEffect(currentAura);
   updateInventory();
-  updateLevelDisplay();
-};
+  document.getElementById('level-display').textContent = `Level: ${level} | XP: ${xp} / ${xpToNext}`;
+});
+
 
   </script>
 </body>
