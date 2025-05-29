@@ -131,6 +131,7 @@
 <body>
   <h1>Aura RNG</h1>
   <button onclick="rollAura()">Roll for Aura</button>
+  <button id="auto-roll-btn" onclick="toggleAutoRoll()">Auto-Roll: OFF</button>
   <button id="inventory-toggle" onclick="toggleInventory()">🎒</button>
   <div id="aura-display">No aura yet!</div>
   <div id="level-display">Level: 1 | XP: 0 / 10</div>
@@ -373,6 +374,20 @@
         document.getElementById('aura-effects').innerHTML = '';
       }
     }
+    let autoRollInterval = null;
+
+function toggleAutoRoll() {
+  const btn = document.getElementById('auto-roll-btn');
+  if (autoRollInterval) {
+    clearInterval(autoRollInterval);
+    autoRollInterval = null;
+    btn.textContent = "Auto-Roll: OFF";
+  } else {
+    autoRollInterval = setInterval(rollAura, 1000); // Roll every 1s
+    btn.textContent = "Auto-Roll: ON";
+  }
+}
+
   </script>
 </body>
 </html>
