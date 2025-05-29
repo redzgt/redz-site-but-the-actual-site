@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Aura RNG</title>
   <style>
     :root {
@@ -95,7 +95,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 100px;
+      min-width: 120px;
+      user-select: none;
     }
     .inventory-item:hover {
       background: #2a2a2a;
@@ -111,16 +112,19 @@
       cursor: pointer;
       z-index: 11;
     }
-    #reset-data {
-      position: absolute;
+    #reset-btn {
+      position: fixed;
       bottom: 10px;
       right: 10px;
-      font-size: 0.8em;
-      background: none;
+      background: transparent;
       border: none;
-      color: var(--accent);
+      color: #555;
+      font-size: 0.8em;
       cursor: pointer;
-      z-index: 11;
+      user-select: none;
+    }
+    #reset-btn:hover {
+      color: var(--accent);
     }
   </style>
 </head>
@@ -128,7 +132,6 @@
   <h1>Aura RNG</h1>
   <button onclick="rollAura()">Roll for Aura</button>
   <button id="inventory-toggle" onclick="toggleInventory()">🎒</button>
-  <button id="reset-data" onclick="resetData()">Reset Data</button>
   <div id="aura-display">No aura yet!</div>
   <div id="level-display">Level: 1 | XP: 0 / 10</div>
   <div id="inventory-container" class="inventory">
@@ -136,68 +139,104 @@
     <div id="inventory" class="inventory-list"></div>
   </div>
   <div id="aura-effects" class="aura-effect"></div>
+  <button id="reset-btn" title="Reset all data" onclick="resetData()">Reset Data</button>
 
   <script>
-    let level = parseInt(localStorage.getItem('level')) || 1;
-    let xp = parseInt(localStorage.getItem('xp')) || 0;
-    let xpToNext = parseInt(localStorage.getItem('xpToNext')) || 10;
+    let level = 1;
+    let xp = 0;
+    let xpToNext = 10;
 
-    const allAuras = [];
-    const types = ['gradient', 'star', 'glow', 'cloud'];
+    // Define rarity tiers with realistic probabilities
     const rarities = [
-      { label: '1/5', threshold: 0.8, rank: 0 },
-      { label: '1/50', threshold: 0.98, rank: 1 },
-      { label: '1/5000', threshold: 1.0, rank: 2 }
+      { label: '1/2', threshold: 0.5, rank: 0 },
+      { label: '1/10', threshold: 0.8, rank: 1 },
+      { label: '1/50', threshold: 0.95, rank: 2 },
+      { label: '1/500', threshold: 0.99, rank: 3 },
+      { label: '1/2000', threshold: 0.999, rank: 4 },
+      { label: '1/10000', threshold: 1.0, rank: 5 }
     ];
-    const rarityRank = { '1/5': 0, '1/50': 1, '1/5000': 2 };
+    const rarityRank = {};
+    rarities.forEach(r => rarityRank[r.label] = r.rank);
+
+    // Aura types and example gradients
+    const types = ['gradient', 'star', 'glow', 'cloud', 'sparkle', 'ring', 'pulse', 'wave'];
     const gradients = [
       'linear-gradient(to right, #ff7e5f, #feb47b)',
       'radial-gradient(circle, #00c6ff, #0072ff)',
       'linear-gradient(to right, #43cea2, #185a9d)',
       'linear-gradient(to right, #ff00cc, #3333ff)',
-      'radial-gradient(circle, #8e2de2, #4a00e0)'
+      'radial-gradient(circle, #8e2de2, #4a00e0)',
+      'linear-gradient(to right, #f7971e, #ffd200)',
+      'radial-gradient(circle, #ffafbd, #ffc3a0)',
+      'linear-gradient(to right, #654ea3, #eaafc8)'
     ];
 
-    for (let i = 0; i < 60; i++) {
+    // Store all auras
+    const allAuras = [];
+
+    // Generate 1000+ auras dynamically with varied types and rarities
+    for(let i = 0; i < 1100; i++) {
       const type = types[i % types.length];
-      const rarity = rarities[i % rarities.length].label;
-      let aura = {
+      // Assign rarities cycling with weights (more common than rare)
+      // We'll map i to rarity using a pattern to match approximate thresholds
+      let rarity;
+      if (i < 550) rarity = rarities[0].label;             // 50% common
+      else if (i < 770) rarity = rarities[1].label;        // 20% uncommon
+      else if (i < 880) rarity = rarities[2].label;        // 11% rare
+      else if (i < 930) rarity = rarities[3].label;        // 4.5% epic
+      else if (i < 970) rarity = rarities[4].label;        // 3.5% legendary
+      else rarity = rarities[5].label;                      // 3% mythic (very rare)
+
+      // Size varies a bit
+      const size = 20 + (i % 5) * 10;
+
+      // Color hue cycling
+      const hue = (i * 137) % 360;
+      const color = `hsl(${hue}, 80%, 60%)`;
+      const gradient = gradients[i % gradients.length];
+
+      allAuras.push({
         id: i,
-        name: `Aura ${i + 1}`,
+        name: `Aura #${i + 1}`,
         rarity,
         type,
-        size: 30 + (i % 3) * 20
-      };
-      if (type === 'gradient') {
-        aura.gradient = gradients[i % gradients.length];
-      } else {
-        aura.color = `hsl(${(i * 37) % 360}, 80%, 60%)`;
-      }
-      allAuras.push(aura);
+        size,
+        color,
+        gradient
+      });
     }
 
+    // Load saved data or initialize empty
     let inventory = JSON.parse(localStorage.getItem('auraInventory')) || {};
     let currentAura = JSON.parse(localStorage.getItem('currentAura')) || null;
+    level = parseInt(localStorage.getItem('level')) || 1;
+    xp = parseInt(localStorage.getItem('xp')) || 0;
+    xpToNext = parseInt(localStorage.getItem('xpToNext')) || 10;
 
     if (currentAura) renderAuraEffect(currentAura);
-    updateLevelDisplay();
     updateInventory();
+    updateLevelDisplay();
 
     function rollAura() {
       const roll = Math.random();
       let pool;
-      if (roll < rarities[0].threshold) pool = allAuras.filter(a => a.rarity === rarities[0].label);
-      else if (roll < rarities[1].threshold) pool = allAuras.filter(a => a.rarity === rarities[1].label);
-      else pool = allAuras.filter(a => a.rarity === rarities[2].label);
+      for (const r of rarities) {
+        if (roll < r.threshold) {
+          pool = allAuras.filter(a => a.rarity === r.label);
+          break;
+        }
+      }
+      if (!pool || pool.length === 0) pool = allAuras;
 
       const aura = pool[Math.floor(Math.random() * pool.length)];
       document.getElementById('aura-display').textContent = `You got: ${aura.name} (${aura.rarity})`;
+
       if (!inventory[aura.id]) {
         inventory[aura.id] = { aura, count: 0 };
       }
       inventory[aura.id].count++;
+      saveData();
       gainXP(1);
-      saveAll();
       updateInventory();
     }
 
@@ -209,6 +248,7 @@
         xpToNext = Math.floor(xpToNext * 1.2);
       }
       updateLevelDisplay();
+      saveData();
     }
 
     function updateLevelDisplay() {
@@ -232,7 +272,7 @@
 
     function activateAura(aura) {
       currentAura = aura;
-      saveAll();
+      saveData();
       renderAuraEffect(aura);
     }
 
@@ -244,34 +284,74 @@
     function renderAuraEffect(aura) {
       const effects = document.getElementById('aura-effects');
       effects.innerHTML = '';
-      for (let i = 0; i < 20; i++) {
+      const count = 20; // number of aura elements
+
+      for (let i = 0; i < count; i++) {
         const el = document.createElement('div');
         el.classList.add('aura');
         el.style.width = el.style.height = `${aura.size}px`;
         el.style.left = `${Math.random() * 100}vw`;
         el.style.top = `${Math.random() * 100}vh`;
-        el.style.opacity = Math.random();
+        el.style.opacity = (Math.random() * 0.5 + 0.3).toFixed(2);
 
-        if (aura.type === 'gradient') {
-          el.style.backgroundImage = aura.gradient;
-        } else if (aura.type === 'star') {
-          el.style.background = aura.color;
-          el.style.clipPath = 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)';
-        } else if (aura.type === 'glow') {
-          el.style.background = aura.color;
-          el.style.boxShadow = `0 0 20px ${aura.color}`;
-        } else if (aura.type === 'cloud') {
-          el.style.background = aura.color;
-          el.style.borderRadius = '50%';
-          el.style.filter = 'blur(5px)';
-        } else {
-          el.style.background = aura.color;
+        switch(aura.type) {
+          case 'gradient':
+            el.style.backgroundImage = aura.gradient;
+            break;
+          case 'star':
+            el.style.background = aura.color;
+            el.style.clipPath = 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)';
+            break;
+          case 'glow':
+            el.style.background = aura.color;
+            el.style.boxShadow = `0 0 20px ${aura.color}`;
+            break;
+          case 'cloud':
+            el.style.background = aura.color;
+            el.style.borderRadius = '50%';
+            el.style.filter = 'blur(5px)';
+            break;
+          case 'sparkle':
+            el.style.background = aura.color;
+            el.style.borderRadius = '50%';
+            el.style.boxShadow = `0 0 10px ${aura.color}, 0 0 20px ${aura.color}`;
+            break;
+          case 'ring':
+            el.style.border = `3px solid ${aura.color}`;
+            el.style.background = 'transparent';
+            break;
+          case 'pulse':
+            el.style.background = aura.color;
+            el.style.animation = 'pulse 2s infinite';
+            break;
+          case 'wave':
+            el.style.background = aura.color;
+            el.style.borderRadius = '50%';
+            el.style.animation = 'wave 3s infinite ease-in-out';
+            break;
+          default:
+            el.style.background = aura.color;
         }
         effects.appendChild(el);
       }
     }
 
-    function saveAll() {
+    // Animations for pulse and wave
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = `
+      @keyframes pulse {
+        0% { transform: scale(1); opacity: 0.7; }
+        50% { transform: scale(1.2); opacity: 1; }
+        100% { transform: scale(1); opacity: 0.7; }
+      }
+      @keyframes wave {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+    `;
+    document.head.appendChild(styleSheet);
+
+    function saveData() {
       localStorage.setItem('auraInventory', JSON.stringify(inventory));
       localStorage.setItem('currentAura', JSON.stringify(currentAura));
       localStorage.setItem('level', level);
@@ -280,13 +360,17 @@
     }
 
     function resetData() {
-      if (confirm('Are you sure you want to reset your data?')) {
-        localStorage.removeItem('auraInventory');
-        localStorage.removeItem('currentAura');
-        localStorage.removeItem('level');
-        localStorage.removeItem('xp');
-        localStorage.removeItem('xpToNext');
-        location.reload();
+      if (confirm("Are you sure you want to reset all your data? This cannot be undone.")) {
+        localStorage.clear();
+        inventory = {};
+        currentAura = null;
+        level = 1;
+        xp = 0;
+        xpToNext = 10;
+        document.getElementById('aura-display').textContent = "No aura yet!";
+        updateInventory();
+        updateLevelDisplay();
+        document.getElementById('aura-effects').innerHTML = '';
       }
     }
   </script>
