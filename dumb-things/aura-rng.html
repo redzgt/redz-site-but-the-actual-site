@@ -165,7 +165,8 @@
     }
 
     let inventory = JSON.parse(localStorage.getItem('auraInventory')) || {};
-    let currentAura = JSON.parse(localStorage.getItem('equippedAura')) || null;
+    let currentAura = JSON.parse(localStorage.getItem('currentAura')) || null;
+
     if (currentAura) renderAuraEffect(currentAura);
     updateInventory();
 
@@ -182,7 +183,7 @@
         inventory[aura.id] = { aura, count: 0 };
       }
       inventory[aura.id].count++;
-      localStorage.setItem('auraInventory', JSON.stringify(inventory));
+      saveInventory();
       gainXP(1);
       updateInventory();
     }
@@ -214,7 +215,7 @@
 
     function activateAura(aura) {
       currentAura = aura;
-      localStorage.setItem('equippedAura', JSON.stringify(aura));
+      saveInventory();
       renderAuraEffect(aura);
     }
 
@@ -251,6 +252,11 @@
         }
         effects.appendChild(el);
       }
+    }
+
+    function saveInventory() {
+      localStorage.setItem('auraInventory', JSON.stringify(inventory));
+      localStorage.setItem('currentAura', JSON.stringify(currentAura));
     }
   </script>
 </body>
