@@ -111,12 +111,24 @@
       cursor: pointer;
       z-index: 11;
     }
+    #reset-data {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      font-size: 0.8em;
+      background: none;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      z-index: 11;
+    }
   </style>
 </head>
 <body>
   <h1>Aura RNG</h1>
   <button onclick="rollAura()">Roll for Aura</button>
   <button id="inventory-toggle" onclick="toggleInventory()">🎒</button>
+  <button id="reset-data" onclick="resetData()">Reset Data</button>
   <div id="aura-display">No aura yet!</div>
   <div id="level-display">Level: 1 | XP: 0 / 10</div>
   <div id="inventory-container" class="inventory">
@@ -126,9 +138,9 @@
   <div id="aura-effects" class="aura-effect"></div>
 
   <script>
-    let level = 1;
-    let xp = 0;
-    let xpToNext = 10;
+    let level = parseInt(localStorage.getItem('level')) || 1;
+    let xp = parseInt(localStorage.getItem('xp')) || 0;
+    let xpToNext = parseInt(localStorage.getItem('xpToNext')) || 10;
 
     const allAuras = [];
     const types = ['gradient', 'star', 'glow', 'cloud'];
@@ -168,6 +180,7 @@
     let currentAura = JSON.parse(localStorage.getItem('currentAura')) || null;
 
     if (currentAura) renderAuraEffect(currentAura);
+    updateLevelDisplay();
     updateInventory();
 
     function rollAura() {
@@ -183,8 +196,8 @@
         inventory[aura.id] = { aura, count: 0 };
       }
       inventory[aura.id].count++;
-      saveInventory();
       gainXP(1);
+      saveAll();
       updateInventory();
     }
 
@@ -195,6 +208,10 @@
         level++;
         xpToNext = Math.floor(xpToNext * 1.2);
       }
+      updateLevelDisplay();
+    }
+
+    function updateLevelDisplay() {
       document.getElementById('level-display').textContent = `Level: ${level} | XP: ${xp} / ${xpToNext}`;
     }
 
@@ -215,7 +232,7 @@
 
     function activateAura(aura) {
       currentAura = aura;
-      saveInventory();
+      saveAll();
       renderAuraEffect(aura);
     }
 
@@ -254,9 +271,23 @@
       }
     }
 
-    function saveInventory() {
+    function saveAll() {
       localStorage.setItem('auraInventory', JSON.stringify(inventory));
       localStorage.setItem('currentAura', JSON.stringify(currentAura));
+      localStorage.setItem('level', level);
+      localStorage.setItem('xp', xp);
+      localStorage.setItem('xpToNext', xpToNext);
+    }
+
+    function resetData() {
+      if (confirm('Are you sure you want to reset your data?')) {
+        localStorage.removeItem('auraInventory');
+        localStorage.removeItem('currentAura');
+        localStorage.removeItem('level');
+        localStorage.removeItem('xp');
+        localStorage.removeItem('xpToNext');
+        location.reload();
+      }
     }
   </script>
 </body>
