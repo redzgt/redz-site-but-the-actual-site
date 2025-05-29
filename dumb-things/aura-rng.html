@@ -131,6 +131,8 @@
 <body>
   <h1>Aura RNG</h1>
   <button onclick="rollAura()">Roll for Aura</button>
+  <button id="claim-luck-btn" onclick="claimLuck()">Claim 2X Luck</button>
+  <div id="luck-timer" style="margin-top: 10px; font-size: 1em; color: var(--accent);"></div>
   <button id="inventory-toggle" onclick="toggleInventory()">🎒</button>
   <div id="aura-display">No aura yet!</div>
   <div id="level-display">Level: 1 | XP: 0 / 10</div>
@@ -145,6 +147,12 @@
     let level = 1;
     let xp = 0;
     let xpToNext = 10;
+    
+    // 2X Luck System Variables
+    let luckActive = false;
+    let luckExpire = 0;   // timestamp when 2X luck expires
+    let luckCooldownExpire = 0;  // timestamp when you can claim again (24h cooldown)
+
 
     // Define rarity tiers with realistic probabilities
     const rarities = [
@@ -218,27 +226,66 @@
     updateLevelDisplay();
 
     function rollAura() {
-      const roll = Math.random();
-      let pool;
-      for (const r of rarities) {
-        if (roll < r.threshold) {
-          pool = allAuras.filter(a => a.rarity === r.label);
-          break;
-        }
-      }
-      if (!pool || pool.length === 0) pool = allAuras;
+  const roll = Math.random();
 
-      const aura = pool[Math.floor(Math.random() * pool.length)];
-      document.getElementById('aura-display').textContent = `You got: ${aura.name} (${aura.rarity})`;
+  // Adjusted thresholds for 2X luck — this means rarer thresholds move lower by a factor of 2 (more chance)
+  // We'll compute adjusted thresholds dynamically:
 
-      if (!inventory[aura.id]) {
-        inventory[aura.id] = { aura, count: 0 };
+  function getAdjustedThresholds() {
+    if (!luckActive || Date.now() > luckExpire) return rarities.map(r => r.threshold);
+
+    // Calculate a modified threshold array that moves rarer thresholds to happen twice as often:
+    // For simplicity: shift thresholds down by half the "rarer" range proportionally.
+
+    // Example: 
+    // Original thresholds: 0.5, 0.8, 0.95, 0.99, 0.999 ...
+    // We want rarer ones (higher thresholds) to be more likely, so we reduce thresholds accordingly.
+
+    const baseThresholds = rarities.map(r => r.threshold);
+    const newThresholds = [];
+    let prev = 0;
+    for (let i = 0; i < baseThresholds.length; i++) {
+      let range = baseThresholds[i] - prev;
+      // Double the chance for rarer tiers by increasing their range
+      // We'll reduce the range of common tiers by the same total amount to keep total 1
+      // So multiply rarer tiers by 2 (or clamp to max 1)
+
+      let adjustedRange;
+      if (i < baseThresholds.length - 2) {
+        // For common tiers, reduce range proportionally
+        adjustedRange = range * 0.75; 
+      } else {
+        // For rare tiers, double range but clamp
+        adjustedRange = Math.min(range * 2, 1 - (newThresholds[i-1] || 0));
       }
-      inventory[aura.id].count++;
-      saveData();
-      gainXP(1);
-      updateInventory();
+      newThresholds[i] = (newThresholds[i-1] || 0) + adjustedRange;
+      prev = baseThresholds[i];
     }
+    return newThresholds;
+  }
+
+  const adjustedThresholds = getAdjustedThresholds();
+
+  let pool;
+  for (let i = 0; i < rarities.length; i++) {
+    if (roll < adjustedThresholds[i]) {
+      pool = allAuras.filter(a => a.rarity === rarities[i].label);
+      break;
+    }
+  }
+  if (!pool || pool.length === 0) pool = allAuras;
+
+  const aura = pool[Math.floor(Math.random() * pool.length)];
+  document.getElementById('aura-display').textContent = `You got: ${aura.name} (${aura.rarity})`;
+  if (!inventory[aura.id]) {
+    inventory[aura.id] = { aura, count: 0 };
+  }
+  inventory[aura.id].count++;
+  saveInventory();
+  gainXP(1);
+  updateInventory();
+}
+
 
     function gainXP(amount) {
       xp += amount;
@@ -373,6 +420,68 @@
         document.getElementById('aura-effects').innerHTML = '';
       }
     }
+
+    function claimLuck() {
+  const now = Date.now();
+  if (now < luckCooldownExpire) {
+    alert("You can only claim 2X Luck once every 24 hours!");
+    return;
+  }
+  luckActive = true;
+  luckExpire = now + 30 * 60 * 1000;  // 30 minutes from now
+  luckCooldownExpire = now + 24 * 60 * 60 * 1000; // 24 hours cooldown
+  localStorage.setItem('luckActive', JSON.stringify(luckActive));
+  localStorage.setItem('luckExpire', luckExpire);
+  localStorage.setItem('luckCooldownExpire', luckCooldownExpire);
+  updateLuckUI();
+}
+
+function updateLuckUI() {
+  const now = Date.now();
+  const btn = document.getElementById('claim-luck-btn');
+  const timer = document.getElementById('luck-timer');
+
+  if (luckActive && now < luckExpire) {
+    btn.disabled = true;
+    let msLeft = luckExpire - now;
+    timer.textContent = `2X Luck active! Ends in ${formatTime(msLeft)}`;
+  } else {
+    luckActive = false;
+    localStorage.setItem('luckActive', JSON.stringify(luckActive));
+    timer.textContent = "";
+    if (now < luckCooldownExpire) {
+      btn.disabled = true;
+      let msLeft = luckCooldownExpire - now;
+      btn.textContent = `Claim 2X Luck (Available in ${formatTime(msLeft)})`;
+    } else {
+      btn.disabled = false;
+      btn.textContent = "Claim 2X Luck";
+    }
+  }
+}
+
+function formatTime(ms) {
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}m ${seconds}s`;
+}
+
+function loadLuckStatus() {
+  luckActive = JSON.parse(localStorage.getItem('luckActive')) || false;
+  luckExpire = parseInt(localStorage.getItem('luckExpire')) || 0;
+  luckCooldownExpire = parseInt(localStorage.getItem('luckCooldownExpire')) || 0;
+  updateLuckUI();
+}
+    //load thingy
+    window.onload = () => {
+  loadLuckStatus();
+  // existing initialization
+  if (currentAura) renderAuraEffect(currentAura);
+  updateInventory();
+  updateLevelDisplay();
+};
+
   </script>
 </body>
 </html>
