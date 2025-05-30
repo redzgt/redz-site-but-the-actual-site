@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Only Up 2D</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: radial-gradient(ellipse at bottom, #050505 0%, #000000 100%);
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto;
+      background: radial-gradient(circle at top, #000010 0%, #000000 100%);
+      image-rendering: pixelated;
+      border: 4px solid #0f0;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #0f0;
+    }
+    #elevation {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 22px;
+      font-weight: bold;
+      background: rgba(0, 255, 0, 0.1);
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: 2px solid #0f0;
+      z-index: 10;
+      text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
+    }
+    #gameOver {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 40px;
+      font-weight: bold;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 30px 40px;
+      border-radius: 15px;
+      border: 3px solid #0f0;
+      color: #0f0;
+      display: none;
+      z-index: 20;
+      text-align: center;
+      box-shadow: 0 0 20px #0f0, 0 0 40px #0f0;
+    }
+  </style>
+</head>
+<body>
+  <div id="elevation">Elevation: 0</div>
+  <div id="gameOver">Game Over<br><span id="finalScore"></span><br><small>Press <b>R</b> to Restart</small></div>
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const elevationText = document.getElementById("elevation");
+    const gameOverText = document.getElementById("gameOver");
+    const finalScore = document.getElementById("finalScore");
+
+    const keys = {};
+    document.addEventListener("keydown", e => keys[e.key] = true);
+    document.addEventListener("keyup", e => keys[e.key] = false);
+
+    let gameOver = false;
+    let maxHeight = 0;
+
+    const player = {
+      x: 385,
+      y: 550,
+      width: 30,
+      height: 30,
+      vx: 0,
+      vy: 0,
+      speed: 6,    // increased speed here
+      jumpPower: 15,
+      onGround: false
+    };
+
+
+    const gravity = 0.5;
+    const friction = 0.8;
+
+    let cameraOffset = 0;
+
+    const platforms = [];
+    const platformSpacing = 75;
+    const platformCount = 100;
+
+    platforms.push({ x: 0, y: canvas.height - 10, width: canvas.width, height: 20 });
+
+    for (let i = 1; i < platformCount; i++) {
+      let width = Math.random() * 100 + 60;
+      let x = Math.random() * (canvas.width - width);
+      let y = canvas.height - i * platformSpacing;
+      platforms.push({ x, y, width, height: 20 });
+    }
+
+    function drawPlayer() {
+      ctx.fillStyle = "#00ff00";
+      ctx.shadowColor = "#00ff00";
+      ctx.shadowBlur = 15;
+      ctx.fillRect(player.x, player.y - cameraOffset, player.width, player.height);
+      ctx.shadowBlur = 0;
+    }
+
+    function drawPlatforms() {
+      ctx.fillStyle = "#0f0";
+      ctx.shadowColor = "#0f0";
+      ctx.shadowBlur = 10;
+      platforms.forEach(p => {
+        ctx.fillRect(p.x, p.y - cameraOffset, p.width, p.height);
+      });
+      ctx.shadowBlur = 0;
+    }
+
+    function updatePlayer() {
+      if (gameOver) return;
+
+      if (keys["ArrowLeft"] || keys["a"]) player.vx = -player.speed;
+      if (keys["ArrowRight"] || keys["d"]) player.vx = player.speed;
+
+      if ((keys["ArrowUp"] || keys["w"] || keys[" "]) && player.onGround) {
+        player.vy = -player.jumpPower;
+        player.onGround = false;
+      }
+
+      player.vy += gravity;
+      player.x += player.vx;
+      player.y += player.vy;
+      player.vx *= friction;
+
+      player.onGround = false;
+      platforms.forEach(p => {
+        if (
+          player.x < p.x + p.width &&
+          player.x + player.width > p.x &&
+          player.y < p.y + p.height &&
+          player.y + player.height > p.y
+        ) {
+          if (player.vy > 0) {
+            player.y = p.y - player.height;
+            player.vy = 0;
+            player.onGround = true;
+          }
+        }
+      });
+
+      if (player.y - cameraOffset < canvas.height / 2) {
+        cameraOffset = player.y - canvas.height / 2;
+      }
+
+      let currentElevation = Math.floor(canvas.height - player.y);
+      maxHeight = Math.max(maxHeight, currentElevation);
+
+      if (player.y > canvas.height + cameraOffset + 100) {
+        finalScore.innerText = `Final Elevation: ${maxHeight}`;
+        gameOver = true;
+        gameOverText.style.display = "block";
+      }
+    }
+
+    function drawUI() {
+      elevationText.innerText = `Elevation: ${maxHeight}`;
+    }
+
+    function resetGame() {
+      player.x = 385;
+      player.y = 550;
+      player.vx = 0;
+      player.vy = 0;
+      cameraOffset = 0;
+      maxHeight = 0;
+      gameOver = false;
+      gameOverText.style.display = "none";
+    }
+
+    document.addEventListener("keydown", e => {
+      if (gameOver && e.key.toLowerCase() === 'r') {
+        resetGame();
+      }
+    });
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawPlatforms();
+      updatePlayer();
+      drawPlayer();
+      drawUI();
+      requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+  </script>
+</body>
+</html>
