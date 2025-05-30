@@ -6,8 +6,20 @@
   <title>Flappy Orb</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body, html { height: 100%; overflow: hidden; background: #000; font-family: Arial, sans-serif; }
-    canvas { display: block; margin: auto; background: linear-gradient(to bottom, #020024, #090979, #00d4ff); }
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      background: black;
+    }
+
+    canvas {
+      display: block;
+      background: linear-gradient(to bottom, #020024, #090979, #00d4ff);
+    }
+
 
     #score {
       position: absolute;
@@ -96,6 +108,14 @@
     const pipesPerLevel = 10;
     let pipesPassed = 0;
     let waitingNextLevel = false;
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas(); // initial call
+
 
     function resetGameVars() {
       orb = { x: 80, y: 150, radius: 15, velocity: 0 };
