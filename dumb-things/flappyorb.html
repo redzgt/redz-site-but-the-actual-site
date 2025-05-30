@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flappy Orb</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { height: 100%; overflow: hidden; background: #000; font-family: Arial, sans-serif; }
+    canvas { display: block; margin: auto; background: linear-gradient(to bottom, #020024, #090979, #00d4ff); }
+
+    #score {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: lime;
+      font-size: 32px;
+      font-weight: bold;
+      text-shadow: 0 0 10px #00ff88;
+      display: none;
+    }
+
+    #gameover, #startScreen, #levelScreen {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      font-size: 28px;
+      text-align: center;
+    }
+
+    #startScreen button, #gameover button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 20px;
+      background: lime;
+      color: black;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #startScreen button:hover, #gameover button:hover {
+      background: #00ff88;
+    }
+
+    #startScreen, #gameover, #levelScreen {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="game" width="400" height="600"></canvas>
+  <div id="score">0</div>
+
+  <div id="startScreen">
+    <div>Select a Mode</div>
+    <button onclick="selectMode('endless')">Endless</button>
+    <button onclick="selectMode('levels')">Levels</button>
+    <div style="margin-top:15px;">Then press <b>Space</b> to start</div>
+  </div>
+
+  <div id="gameover">
+    <div id="gameoverText">Game Over!<br>Score: <span id="finalScore">0</span></div>
+    <button onclick="location.reload()">Play Again</button>
+  </div>
+
+  <div id="levelScreen">
+    <div id="levelText">Level 1 Complete!</div>
+    <div>Press Space to continue</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const scoreDisplay = document.getElementById("score");
+    const gameover = document.getElementById("gameover");
+    const finalScore = document.getElementById("finalScore");
+    const startScreen = document.getElementById("startScreen");
+    const levelScreen = document.getElementById("levelScreen");
+    const levelText = document.getElementById("levelText");
+    const gameoverText = document.getElementById("gameoverText");
+
+    let orb, gravity, jump, pipes, frame, score;
+    let gameRunning = false;
+    let gameStarted = false;
+    let mode = null;
+    let pipeSpeed = 2;
+    let pipeGap = 140;
+
+    // Levels mode
+    let currentLevel = 1;
+    const maxLevel = 10;
+    const pipesPerLevel = 10;
+    let pipesPassed = 0;
+    let waitingNextLevel = false;
+
+    function resetGameVars() {
+      orb = { x: 80, y: 150, radius: 15, velocity: 0 };
+      gravity = 0.5;
+      jump = -8;
+      pipes = [];
+      frame = 0;
+      score = 0;
+      pipesPassed = 0;
+    }
+
+    function selectMode(selectedMode) {
+      mode = selectedMode;
+      startScreen.style.display = "none";
+      scoreDisplay.innerText = "0";
+      scoreDisplay.style.display = "block";
+      gameStarted = false; // wait for space
+      resetGameVars();
+    }
+
+    function startGame() {
+      if (gameStarted || !mode) return;
+      gameStarted = true;
+      gameRunning = true;
+      if (mode === "levels") {
+        currentLevel = 1;
+        applyLevelSettings();
+      }
+      update();
+    }
+
+    function applyLevelSettings() {
+      pipeSpeed = 2 + currentLevel * 0.4;
+      pipeGap = 140 - currentLevel * 5;
+      levelScreen.style.display = "none";
+    }
+
+    function nextLevel() {
+      if (currentLevel < maxLevel) {
+        currentLevel++;
+        applyLevelSettings();
+        resetGameVars();
+        gameRunning = true;
+        waitingNextLevel = false;
+        update();
+      } else {
+        gameoverText.innerHTML = "🎉 You Win All Levels! 🎉<br>Total Score: <span id='finalScore'>" + score + "</span>";
+        gameover.style.display = "block";
+      }
+    }
+
+    function drawOrb() {
+      ctx.beginPath();
+      ctx.arc(orb.x, orb.y, orb.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "lime";
+      ctx.shadowColor = "lime";
+      ctx.shadowBlur = 15;
+      ctx.fill();
+    }
+
+    function drawPipe(pipe) {
+      ctx.fillStyle = "#00ffcc";
+      ctx.shadowColor = "#00ffcc";
+      ctx.shadowBlur = 10;
+      ctx.fillRect(pipe.x, 0, 50, pipe.top);
+      ctx.fillRect(pipe.x, pipe.bottom, 50, canvas.height - pipe.bottom);
+    }
+
+    function update() {
+      if (!gameRunning) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      orb.velocity += gravity;
+      orb.y += orb.velocity;
+      drawOrb();
+
+      if (frame % 90 === 0) {
+        const top = Math.random() * (canvas.height - pipeGap - 100) + 50;
+        pipes.push({ x: canvas.width, top: top, bottom: top + pipeGap });
+      }
+
+      for (let i = 0; i < pipes.length; i++) {
+        let p = pipes[i];
+        p.x -= pipeSpeed;
+        drawPipe(p);
+
+        if (
+          orb.x + orb.radius > p.x &&
+          orb.x - orb.radius < p.x + 50 &&
+          (orb.y - orb.radius < p.top || orb.y + orb.radius > p.bottom)
+        ) {
+          endGame();
+        }
+
+        if (!p.passed && p.x + 50 < orb.x) {
+          p.passed = true;
+          score++;
+          pipesPassed++;
+          scoreDisplay.innerText = score;
+
+          if (mode === "levels" && pipesPassed >= pipesPerLevel) {
+            gameRunning = false;
+            waitingNextLevel = true;
+            levelText.innerText = `Level ${currentLevel} Complete!`;
+            levelScreen.style.display = "block";
+          }
+        }
+      }
+
+      pipes = pipes.filter(p => p.x > -50);
+
+      if (orb.y + orb.radius > canvas.height || orb.y - orb.radius < 0) {
+        endGame();
+      }
+
+      frame++;
+      requestAnimationFrame(update);
+    }
+
+    function flap() {
+      if (gameRunning) {
+        orb.velocity = jump;
+      }
+    }
+
+    function endGame() {
+      gameRunning = false;
+      finalScore.textContent = score;
+      gameover.style.display = "block";
+    }
+
+    window.addEventListener("keydown", e => {
+      if (e.code === "Space") {
+        if (!gameStarted && !waitingNextLevel && mode) {
+          startGame();
+        } else if (gameRunning) {
+          flap();
+        } else if (waitingNextLevel) {
+          nextLevel();
+        } else if (!gameRunning && gameStarted) {
+          location.reload();
+        }
+      }
+    });
+
+    window.addEventListener("mousedown", flap);
+    window.addEventListener("touchstart", flap);
+
+    // On page load
+    startScreen.style.display = "block";
+  </script>
+</body>
+</html>
