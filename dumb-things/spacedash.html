@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Space Dash</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #000;
+    }
+    canvas {
+      display: block;
+      background: radial-gradient(ellipse at center, #000 0%, #111 100%);
+    }
+    #gameOver, #startScreen {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #0ff;
+      font-family: 'Courier New', monospace;
+      font-size: 24px;
+      text-align: center;
+    }
+    #gameOver {
+      display: none;
+    }
+    #startScreen {
+      display: block;
+    }
+    #restartBtn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background: #0ff;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #scoreDisplay {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: #0ff;
+      font-family: monospace;
+      font-size: 20px;
+      text-shadow: 0 0 5px #0ff;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <div id="scoreDisplay">Score: 0</div>
+  <div id="startScreen">
+    <div>Press <strong>Space</strong> or <strong>Tap</strong> to Play</div>
+    <div style="font-size:16px; margin-top:10px;">Controls: Jump / Double Jump</div>
+  </div>
+  <div id="gameOver">
+    <div>Game Over</div>
+    <div id="finalScore"></div>
+    <button id="restartBtn">Restart</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let player, gravity, velocityY, isJumping, jumpsLeft, groundHeight;
+    let obstacles = [];
+    let particles = [];
+    let gameSpeed = 6;
+    let gameOver = false;
+    let started = false;
+    let score = 0;
+    let scoreInterval;
+
+    function resetGame() {
+      player = {
+        x: 100,
+        y: canvas.height - 150,
+        size: 40,
+        color: '#0ff',
+        rotation: 0,
+        rotationTarget: 0
+      };
+      gravity = 0.8;
+      velocityY = 0;
+      isJumping = false;
+      jumpsLeft = 2;
+      groundHeight = canvas.height - 100;
+      obstacles = [];
+      particles = [];
+      gameOver = false;
+      score = 0;
+      document.getElementById("scoreDisplay").textContent = "Score: 0";
+      document.getElementById("gameOver").style.display = "none";
+      clearInterval(scoreInterval);
+      scoreInterval = setInterval(() => {
+        if (!gameOver && started) {
+          score++;
+          document.getElementById("scoreDisplay").textContent = `Score: ${score}`;
+        }
+      }, 100);
+      loop();
+    }
+
+    function createObstacle() {
+      obstacles.push({
+        x: canvas.width,
+        y: groundHeight,
+        size: 40,
+        color: '#f0f'
+      });
+    }
+
+    function createParticles(x, y, color) {
+      for (let i = 0; i < 5; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          size: Math.random() * 4 + 2,
+          speedX: Math.random() * 2 - 1,
+          speedY: Math.random() * -2 - 1,
+          color: color,
+          life: 30
+        });
+      }
+    }
+
+    function update() {
+      if (gameOver || !started) return;
+
+      velocityY += gravity;
+      player.y += velocityY;
+
+      if (player.y > groundHeight - player.size) {
+        player.y = groundHeight - player.size;
+        velocityY = 0;
+        isJumping = false;
+        jumpsLeft = 2;
+      }
+
+      if (player.rotation < player.rotationTarget) {
+        player.rotation += 0.2;
+        if (player.rotation > player.rotationTarget) {
+          player.rotation = player.rotationTarget;
+        }
+      }
+
+      obstacles.forEach(ob => {
+        ob.x -= gameSpeed;
+
+        if (
+          player.x < ob.x + ob.size &&
+          player.x + player.size > ob.x &&
+          player.y < ob.y &&
+          player.y + player.size > ob.y - ob.size
+        ) {
+          gameOver = true;
+          document.getElementById("finalScore").textContent = `Your Score: ${score}`;
+          document.getElementById("gameOver").style.display = "block";
+        }
+      });
+
+      obstacles = obstacles.filter(ob => ob.x + ob.size > 0);
+
+      if (Math.random() < 0.02) {
+        createObstacle();
+      }
+
+      particles.forEach(p => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.life--;
+      });
+      particles = particles.filter(p => p.life > 0);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Ground
+      ctx.fillStyle = '#222';
+      ctx.fillRect(0, groundHeight, canvas.width, 5);
+
+      // Player
+      ctx.save();
+      ctx.translate(player.x + player.size / 2, player.y + player.size / 2);
+      ctx.rotate(player.rotation);
+      ctx.fillStyle = player.color;
+      ctx.shadowColor = player.color;
+      ctx.shadowBlur = 15;
+      ctx.fillRect(-player.size / 2, -player.size / 2, player.size, player.size);
+      ctx.shadowBlur = 0;
+      ctx.restore();
+
+      // Obstacles
+      obstacles.forEach(ob => {
+        ctx.fillStyle = ob.color;
+        ctx.shadowColor = ob.color;
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.moveTo(ob.x, ob.y);
+        ctx.lineTo(ob.x + ob.size / 2, ob.y - ob.size);
+        ctx.lineTo(ob.x + ob.size, ob.y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      // Particles
+      particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.life / 30;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        ctx.globalAlpha = 1;
+      });
+    }
+
+    function loop() {
+      update();
+      draw();
+      if (!gameOver) {
+        requestAnimationFrame(loop);
+      }
+    }
+
+    function jump() {
+      if (jumpsLeft > 0 && !gameOver && started) {
+        velocityY = -15;
+        isJumping = true;
+        jumpsLeft--;
+        player.rotationTarget += Math.PI * 2;
+        createParticles(player.x + player.size / 2, player.y + player.size, player.color);
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' || e.code === 'ArrowUp') {
+        if (!started) {
+          started = true;
+          document.getElementById("startScreen").style.display = "none";
+          resetGame();
+        } else {
+          jump();
+        }
+      }
+    });
+
+    window.addEventListener('touchstart', () => {
+      if (!started) {
+        started = true;
+        document.getElementById("startScreen").style.display = "none";
+        resetGame();
+      } else {
+        jump();
+      }
+    });
+
+    document.getElementById("restartBtn").addEventListener("click", () => {
+      started = true;
+      document.getElementById("gameOver").style.display = "none";
+      resetGame();
+    });
+
+    // Initialize
+    player = {
+      x: 100,
+      y: canvas.height - 150,
+      size: 40,
+      color: '#0ff',
+      rotation: 0,
+      rotationTarget: 0
+    };
+    draw(); // Show cube on start screen
+  </script>
+</body>
+</html>
