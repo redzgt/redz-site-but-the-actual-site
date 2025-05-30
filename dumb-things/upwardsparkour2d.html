@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Upwards Parkour</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+  body {
+    margin: 0;
+    background: #0a0a1a;
+    overflow: hidden;
+    color: white;
+    font-family: 'Orbitron', monospace;
+  }
+  canvas {
+    display: block;
+    margin: 0 auto;
+    background: linear-gradient(to top, #001022, #000611);
+    box-shadow: 0 0 20px #00ffccaa;
+    border-radius: 12px;
+  }
+  #timer {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 26px;
+    font-weight: 700;
+    user-select: none;
+    color: #00ffcc;
+    text-shadow:
+      0 0 5px #00ffccee,
+      0 0 10px #00ffccdd,
+      0 0 20px #00ffccbb;
+  }
+</style>
+</head>
+<body>
+<div id="timer">Time: 0.00s</div>
+<canvas id="game" width="400" height="600"></canvas>
+
+<script>
+(() => {
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  const timerDisplay = document.getElementById("timer");
+
+  const WIDTH = canvas.width;
+  const HEIGHT = canvas.height;
+
+  // Particle system for background ambience
+  const particles = [];
+  const PARTICLE_COUNT = 30;
+  for(let i=0; i<PARTICLE_COUNT; i++) {
+    particles.push({
+      x: Math.random() * WIDTH,
+      y: Math.random() * HEIGHT,
+      radius: 1 + Math.random() * 2,
+      speedY: 0.1 + Math.random() * 0.3,
+      alpha: 0.1 + Math.random() * 0.2
+    });
+  }
+
+  // Player properties
+  const player = {
+    x: WIDTH / 2 - 20,
+    y: HEIGHT - 60,
+    width: 40,
+    height: 40,
+    dx: 0,
+    dy: 0,
+    speed: 5,
+    gravity: 0.5,
+    jumpPower: 12,
+    onPlatform: false,
+    cornerRadius: 8,
+    glowColor: 'aqua',
+  };
+
+  // Platforms array
+  const platforms = [];
+  const PLATFORM_HEIGHT = 15;
+  const PLATFORM_GAP = 120;
+  const PLATFORM_MIN_WIDTH = 50;
+  const PLATFORM_MAX_WIDTH = 100;
+  const PLATFORM_CORNER_RADIUS = 6;
+
+  // Input controls
+  const keys = {
+    left: false,
+    right: false,
+  };
+
+  // Game state
+  let started = false;
+  let gameOver = false;
+  let elapsedTime = 0;
+  let lastTime = null;
+
+  // Difficulty
+  let scrollSpeed = 2;
+  let platformWidth = PLATFORM_MAX_WIDTH;
+
+  // Starting platform
+  let startPlatform = {
+    x: WIDTH / 2 - platformWidth / 2,
+    y: HEIGHT - PLATFORM_HEIGHT,
+    width: platformWidth,
+    height: PLATFORM_HEIGHT,
+  };
+
+  // Helper: draw rounded rect
+  function drawRoundedRect(x, y, w, h, r, fillStyle, shadowColor = null) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+
+    if (shadowColor) {
+      ctx.shadowColor = shadowColor;
+      ctx.shadowBlur = 10;
+    } else {
+      ctx.shadowBlur = 0;
+    }
+    ctx.fillStyle = fillStyle;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  // Initialize platforms
+  function initPlatforms() {
+    platforms.length = 0;
+    platforms.push({...startPlatform});
+    let y = startPlatform.y - PLATFORM_GAP;
+    while (y > -HEIGHT) {
+      const x = Math.random() * (WIDTH - platformWidth);
+      platforms.push({ x, y, width: platformWidth, height: PLATFORM_HEIGHT });
+      y -= PLATFORM_GAP;
+    }
+  }
+
+  // Spawn platform at top
+  function spawnPlatform() {
+    const x = Math.random() * (WIDTH - platformWidth);
+    const y = platforms[0].y - PLATFORM_GAP;
+    platforms.unshift({ x, y, width: platformWidth, height: PLATFORM_HEIGHT });
+  }
+
+  function reset() {
+    player.x = WIDTH / 2 - player.width / 2;
+    player.y = HEIGHT - 60;
+    player.dy = 0;
+    player.onPlatform = true;
+    keys.left = false;
+    keys.right = false;
+    started = false;
+    gameOver = false;
+    elapsedTime = 0;
+    lastTime = null;
+    scrollSpeed = 2;
+    platformWidth = PLATFORM_MAX_WIDTH; // Set width BEFORE initPlatforms
+    startPlatform = {
+      x: WIDTH / 2 - platformWidth / 2,
+      y: HEIGHT - PLATFORM_HEIGHT,
+      width: platformWidth,
+      height: PLATFORM_HEIGHT,
+    };
+    initPlatforms();
+    timerDisplay.textContent = `Time: 0.00s`;
+  }
+
+  // Input handlers
+  window.addEventListener("keydown", (e) => {
+    if (e.code === "ArrowLeft" || e.code === "KeyA") {
+      keys.left = true;
+      if (!started) started = true;
+    }
+    if (e.code === "ArrowRight" || e.code === "KeyD") {
+      keys.right = true;
+      if (!started) started = true;
+    }
+    if ((e.code === "Space" || e.code === "ArrowUp") && player.onPlatform && started && !gameOver) {
+      player.dy = -player.jumpPower;
+      player.onPlatform = false;
+    }
+    if (e.code === "Enter" && gameOver) {
+      reset();
+    }
+  });
+  window.addEventListener("keyup", (e) => {
+    if (e.code === "ArrowLeft" || e.code === "KeyA") keys.left = false;
+    if (e.code === "ArrowRight" || e.code === "KeyD") keys.right = false;
+  });
+
+  // Update function
+  function update(delta) {
+    if (gameOver) return;
+
+    if (!started) {
+      player.dx = 0;
+      player.dy = 0;
+      player.onPlatform = true;
+      return;
+    }
+
+    elapsedTime += delta / 1000;
+    timerDisplay.textContent = `Time: ${elapsedTime.toFixed(2)}s`;
+
+    // Increase difficulty over time
+    if (Math.floor(elapsedTime) % 10 === 0) {
+      scrollSpeed = 2 + 0.2 * Math.floor(elapsedTime / 10);
+      // platformWidth updates only for future platforms, don't resize existing platforms
+      platformWidth = Math.max(PLATFORM_MIN_WIDTH, PLATFORM_MAX_WIDTH - 5 * Math.floor(elapsedTime / 10));
+    }
+
+    // Player horizontal movement
+    if (keys.left) player.dx = -player.speed;
+    else if (keys.right) player.dx = player.speed;
+    else player.dx = 0;
+
+    player.x += player.dx;
+    if (player.x < 0) player.x = 0;
+    if (player.x + player.width > WIDTH) player.x = WIDTH - player.width;
+
+    // Gravity & vertical movement
+    player.dy += player.gravity;
+    player.y += player.dy;
+
+    player.onPlatform = false;
+
+    // Platform collision
+    for (let plat of platforms) {
+      if (
+        player.dy >= 0 &&
+        player.x + player.width > plat.x &&
+        player.x < plat.x + plat.width &&
+        player.y + player.height >= plat.y &&
+        player.y + player.height <= plat.y + plat.height
+      ) {
+        player.y = plat.y - player.height;
+        player.dy = 0;
+        player.onPlatform = true;
+      }
+    }
+
+    // Scroll platforms and player down to simulate upwards movement
+    player.y += scrollSpeed;
+    for (let plat of platforms) {
+      plat.y += scrollSpeed;
+      // Do NOT update plat.width here!
+    }
+
+    // Remove platforms off bottom
+    while (platforms.length && platforms[platforms.length - 1].y > HEIGHT) {
+      platforms.pop();
+    }
+
+    // Spawn new platforms at top if needed
+    while (platforms.length && platforms[0].y > -PLATFORM_GAP) {
+      spawnPlatform();
+    }
+
+    // Check if player fell
+    if (player.y > HEIGHT) {
+      gameOver = true;
+      timerDisplay.textContent = `Game Over! Your time: ${elapsedTime.toFixed(2)}s`;
+    }
+  }
+
+  // Draw background particles
+  function drawParticles() {
+    for (let p of particles) {
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(0, 255, 204, ${p.alpha.toFixed(2)})`;
+      ctx.shadowColor = 'rgba(0, 255, 204, 0.7)';
+      ctx.shadowBlur = 4;
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      p.y += p.speedY;
+      if (p.y > HEIGHT) p.y = 0;
+    }
+  }
+
+  // Draw player with glow & rounded corners
+  function drawPlayer() {
+    ctx.save();
+    ctx.shadowColor = player.glowColor;
+    ctx.shadowBlur = 15;
+    ctx.fillStyle = "#00fff0";
+    drawRoundedRect(player.x, player.y, player.width, player.height, player.cornerRadius, ctx.fillStyle, player.glowColor);
+    ctx.restore();
+
+    // Inner highlight
+    const grad = ctx.createLinearGradient(player.x, player.y, player.x, player.y + player.height);
+    grad.addColorStop(0, 'rgba(255,255,255,0.7)');
+    grad.addColorStop(1, 'rgba(0,255,255,0)');
+    ctx.fillStyle = grad;
+    ctx.globalAlpha = 0.5;
+    drawRoundedRect(player.x + 6, player.y + 4, player.width - 12, player.height / 2, player.cornerRadius / 2, ctx.fillStyle);
+    ctx.globalAlpha = 1;
+  }
+
+  // Draw platforms with gradient & shadow
+  function drawPlatform(plat) {
+    ctx.save();
+    // Gradient fill
+    const grad = ctx.createLinearGradient(plat.x, plat.y, plat.x, plat.y + plat.height);
+    grad.addColorStop(0, "#00ffcc");
+    grad.addColorStop(1, "#006655");
+    ctx.fillStyle = grad;
+
+    // Shadow glow
+    ctx.shadowColor = "#00ffccbb";
+    ctx.shadowBlur = 10;
+
+    drawRoundedRect(plat.x, plat.y, plat.width, plat.height, PLATFORM_CORNER_RADIUS, ctx.fillStyle);
+    ctx.restore();
+  }
+
+  // Draw game frame
+  function draw() {
+    // Clear canvas with gradient background
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, HEIGHT);
+    bgGrad.addColorStop(0, "#001020");
+    bgGrad.addColorStop(1, "#000608");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+    drawParticles();
+
+    // Platforms
+    for (let plat of platforms) {
+      drawPlatform(plat);
+    }
+
+    // Player
+    drawPlayer();
+
+    // Instructions
+    if (!started && !gameOver) {
+      ctx.font = "20px Orbitron, monospace";
+      ctx.fillStyle = "#00ffccdd";
+      ctx.textAlign = "center";
+      ctx.shadowColor = "#00ffccaa";
+      ctx.shadowBlur = 8;
+      ctx.fillText("Use ← → to move, Space to jump", WIDTH / 2, HEIGHT / 2);
+      ctx.fillText("Press any arrow key or A/D to start", WIDTH / 2, HEIGHT / 2 + 30);
+      ctx.shadowBlur = 0;
+    }
+
+    if (gameOver) {
+      ctx.font = "32px Orbitron, monospace";
+      ctx.fillStyle = "#ff0044cc";
+      ctx.textAlign = "center";
+      ctx.shadowColor = "#ff0044cc";
+      ctx.shadowBlur = 15;
+      ctx.fillText("GAME OVER", WIDTH / 2, HEIGHT / 2);
+      ctx.font = "18px Orbitron, monospace";
+      ctx.fillText("Press Enter to Restart", WIDTH / 2, HEIGHT / 2 + 40);
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  // Game loop
+  function loop(timestamp) {
+    if (!lastTime) lastTime = timestamp;
+    const delta = timestamp - lastTime;
+    lastTime = timestamp;
+
+    update(delta);
+    draw();
+
+    requestAnimationFrame(loop);
+  }
+
+  reset();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
