@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Watch Video</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      height: 100%;
+    }
+    iframe {
+      border: none;
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="ytEmbed" allowfullscreen></iframe>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const videoID = params.get('v');
+
+    if (videoID && /^[\w-]{11}$/.test(videoID)) {
+      document.getElementById("ytEmbed").src = `https://www.youtube.com/embed/${videoID}`;
+    } else {
+      document.body.innerHTML = "<h2 style='color:white;text-align:center;padding-top:20%;'>Invalid video ID</h2>";
+    }
+  </script>
+</body>
+</html>
