@@ -91,6 +91,7 @@
   const keys = {
     left: false,
     right: false,
+    jump: false, // NEW
   };
 
   // Game state
@@ -162,12 +163,13 @@
     player.onPlatform = true;
     keys.left = false;
     keys.right = false;
+    keys.jump = false;
     started = false;
     gameOver = false;
     elapsedTime = 0;
     lastTime = null;
     scrollSpeed = 2;
-    platformWidth = PLATFORM_MAX_WIDTH; // Set width BEFORE initPlatforms
+    platformWidth = PLATFORM_MAX_WIDTH;
     startPlatform = {
       x: WIDTH / 2 - platformWidth / 2,
       y: HEIGHT - PLATFORM_HEIGHT,
@@ -188,17 +190,19 @@
       keys.right = true;
       if (!started) started = true;
     }
-    if ((e.code === "Space" || e.code === "ArrowUp") && player.onPlatform && started && !gameOver) {
-      player.dy = -player.jumpPower;
-      player.onPlatform = false;
+    if (e.code === "Space" || e.code === "ArrowUp") {
+      keys.jump = true;
+      if (!started) started = true;
     }
     if (e.code === "Enter" && gameOver) {
       reset();
     }
   });
+
   window.addEventListener("keyup", (e) => {
     if (e.code === "ArrowLeft" || e.code === "KeyA") keys.left = false;
     if (e.code === "ArrowRight" || e.code === "KeyD") keys.right = false;
+    if (e.code === "Space" || e.code === "ArrowUp") keys.jump = false;
   });
 
   // Update function
@@ -215,14 +219,11 @@
     elapsedTime += delta / 1000;
     timerDisplay.textContent = `Time: ${elapsedTime.toFixed(2)}s`;
 
-    // Increase difficulty over time
     if (Math.floor(elapsedTime) % 10 === 0) {
       scrollSpeed = 2 + 0.2 * Math.floor(elapsedTime / 10);
-      // platformWidth updates only for future platforms, don't resize existing platforms
       platformWidth = Math.max(PLATFORM_MIN_WIDTH, PLATFORM_MAX_WIDTH - 5 * Math.floor(elapsedTime / 10));
     }
 
-    // Player horizontal movement
     if (keys.left) player.dx = -player.speed;
     else if (keys.right) player.dx = player.speed;
     else player.dx = 0;
@@ -231,13 +232,11 @@
     if (player.x < 0) player.x = 0;
     if (player.x + player.width > WIDTH) player.x = WIDTH - player.width;
 
-    // Gravity & vertical movement
     player.dy += player.gravity;
     player.y += player.dy;
 
     player.onPlatform = false;
 
-    // Platform collision
     for (let plat of platforms) {
       if (
         player.dy >= 0 &&
@@ -252,31 +251,31 @@
       }
     }
 
-    // Scroll platforms and player down to simulate upwards movement
+    // Jump if key is held and player is on a platform
+    if (keys.jump && player.onPlatform && !gameOver) {
+      player.dy = -player.jumpPower;
+      player.onPlatform = false;
+    }
+
     player.y += scrollSpeed;
     for (let plat of platforms) {
       plat.y += scrollSpeed;
-      // Do NOT update plat.width here!
     }
 
-    // Remove platforms off bottom
     while (platforms.length && platforms[platforms.length - 1].y > HEIGHT) {
       platforms.pop();
     }
 
-    // Spawn new platforms at top if needed
     while (platforms.length && platforms[0].y > -PLATFORM_GAP) {
       spawnPlatform();
     }
 
-    // Check if player fell
     if (player.y > HEIGHT) {
       gameOver = true;
       timerDisplay.textContent = `Game Over! Your time: ${elapsedTime.toFixed(2)}s`;
     }
   }
 
-  // Draw background particles
   function drawParticles() {
     for (let p of particles) {
       ctx.beginPath();
@@ -292,7 +291,6 @@
     }
   }
 
-  // Draw player with glow & rounded corners
   function drawPlayer() {
     ctx.save();
     ctx.shadowColor = player.glowColor;
@@ -301,7 +299,6 @@
     drawRoundedRect(player.x, player.y, player.width, player.height, player.cornerRadius, ctx.fillStyle, player.glowColor);
     ctx.restore();
 
-    // Inner highlight
     const grad = ctx.createLinearGradient(player.x, player.y, player.x, player.y + player.height);
     grad.addColorStop(0, 'rgba(255,255,255,0.7)');
     grad.addColorStop(1, 'rgba(0,255,255,0)');
@@ -311,26 +308,19 @@
     ctx.globalAlpha = 1;
   }
 
-  // Draw platforms with gradient & shadow
   function drawPlatform(plat) {
     ctx.save();
-    // Gradient fill
     const grad = ctx.createLinearGradient(plat.x, plat.y, plat.x, plat.y + plat.height);
     grad.addColorStop(0, "#00ffcc");
     grad.addColorStop(1, "#006655");
     ctx.fillStyle = grad;
-
-    // Shadow glow
     ctx.shadowColor = "#00ffccbb";
     ctx.shadowBlur = 10;
-
     drawRoundedRect(plat.x, plat.y, plat.width, plat.height, PLATFORM_CORNER_RADIUS, ctx.fillStyle);
     ctx.restore();
   }
 
-  // Draw game frame
   function draw() {
-    // Clear canvas with gradient background
     const bgGrad = ctx.createLinearGradient(0, 0, 0, HEIGHT);
     bgGrad.addColorStop(0, "#001020");
     bgGrad.addColorStop(1, "#000608");
@@ -339,15 +329,12 @@
 
     drawParticles();
 
-    // Platforms
     for (let plat of platforms) {
       drawPlatform(plat);
     }
 
-    // Player
     drawPlayer();
 
-    // Instructions
     if (!started && !gameOver) {
       ctx.font = "20px Orbitron, monospace";
       ctx.fillStyle = "#00ffccdd";
@@ -372,7 +359,6 @@
     }
   }
 
-  // Game loop
   function loop(timestamp) {
     if (!lastTime) lastTime = timestamp;
     const delta = timestamp - lastTime;
