@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ad-Free YouTube Link Generator</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2em;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+      width: 90%;
+      max-width: 500px;
+      border: none;
+      border-radius: 6px;
+    }
+    input {
+      background: #222;
+      color: #fff;
+    }
+    button {
+      background: #00ffcc;
+      color: #000;
+      cursor: pointer;
+    }
+    .output {
+      margin-top: 20px;
+    }
+    a {
+      color: #00ffcc;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ad-Free YouTube Link Generator</h1>
+  <input type="text" id="ytLink" placeholder="Paste YouTube link here...">
+  <button onclick="generate()">Generate Custom Link</button>
+  <div class="output" id="output"></div>
+
+  <script>
+    function extractVideoID(url) {
+      const regex = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w-]{11})/;
+      const match = url.match(regex);
+      return match ? match[1] : null;
+    }
+
+    function generate() {
+      const input = document.getElementById("ytLink").value.trim();
+      const videoID = extractVideoID(input);
+      const output = document.getElementById("output");
+
+      if (videoID) {
+        const customURL = `https://redz.is-a.dev/watch.html?v=${videoID}`;
+        output.innerHTML = `
+          <p><strong>Your Custom Ad-Free Link:</strong></p>
+          <a href="${customURL}" target="_blank">${customURL}</a>
+        `;
+      } else {
+        output.innerHTML = `<p style="color:red;">Invalid YouTube URL.</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
