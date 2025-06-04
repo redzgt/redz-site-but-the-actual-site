@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gaming PC Clicker</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at center, #1c1c1c, #0d0d0d);
+      color: white;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    h1 {
+      margin: 10px 0 20px;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px #000;
+      color: #00ffcc;
+    }
+    #clickBtn {
+      padding: 20px 40px;
+      font-size: 1.6rem;
+      background: linear-gradient(145deg, #00cc66, #00994d);
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      width: 90%;
+      max-width: 340px;
+      transition: transform 0.1s, background 0.3s;
+      box-shadow: 0 5px 15px rgba(0, 255, 100, 0.4);
+    }
+    #clickBtn:active {
+      transform: scale(0.97);
+    }
+    #money, #pcTier, #prestigeDisplay {
+      margin: 6px 0;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+    .store {
+      margin-top: 25px;
+      max-width: 450px;
+      width: 100%;
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: inset 0 0 10px #000;
+    }
+    .upgrade {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #2a2a2a;
+      padding: 12px 16px;
+      margin: 8px 0;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+    .upgrade button {
+      background: #007bff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .upgrade button:hover {
+      background: #339dff;
+    }
+    #progressContainer {
+      width: 100%;
+      max-width: 400px;
+      background: #333;
+      height: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 15px 0 10px;
+      box-shadow: inset 0 0 5px #000;
+    }
+    #progressBar {
+      height: 100%;
+      background: linear-gradient(90deg, #00ff99, #00ccff);
+      width: 0%;
+      transition: width 0.3s ease-in-out;
+    }
+    #prestigeBtn {
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      margin-top: 20px;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 4px 15px rgba(255, 75, 43, 0.5);
+    }
+    #prestigeBtn:hover {
+      background: linear-gradient(to right, #ff4b2b, #ff416c);
+    }
+    #autoBuildBtn {
+      background: linear-gradient(to right, #ffc107, #ff9800);
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      margin-top: 15px;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 4px 15px rgba(255, 152, 0, 0.5);
+    }
+    #autoBuildBtn:hover {
+      background: linear-gradient(to right, #ff9800, #ffc107);
+    }
+  </style>
+</head>
+<body>
+  <h1>Gaming PC Clicker</h1>
+  <button id="clickBtn">Build PC 🖥️</button>
+  <div id="money">Money: $0</div>
+  <div id="pcTier">Current PC: Potato PC 🥔</div>
+  <div id="prestigeDisplay">Prestige Level: 0</div>
+  <div id="progressContainer"><div id="progressBar"></div></div>
+  <button id="autoBuildBtn">Auto-Build: OFF ⚙️</button>
+  <button id="prestigeBtn">Prestige 🔁</button>
+  <div class="store" id="store"></div>
+
+  <audio id="clickSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_87d52a3cb7.mp3?filename=button-click-124476.mp3"></audio>
+
+  <script>
+    let money = parseFloat(localStorage.getItem('money')) || 0;
+    let clickPower = parseFloat(localStorage.getItem('clickPower')) || 1;
+    let prestige = parseInt(localStorage.getItem('prestige')) || 0;
+    let upgradeCosts = JSON.parse(localStorage.getItem('upgradeCosts')) || [10, 50, 200, 500, 1000, 5000];
+    let autoBuildEnabled = false;
+    let autoBuildInterval = null;
+
+    const tiers = [
+      "Potato PC 🥔",
+      "Office PC 💼",
+      "Budget Gaming PC 🎮",
+      "Mid-Range Gaming PC 🧠",
+      "High-End Gaming PC 🔥",
+      "Enthusiast PC 🚀",
+      "NASA Supercomputer 🛰️"
+    ];
+
+    const upgrades = [
+      { name: "Upgrade RAM", cost: upgradeCosts[0], power: 1 },
+      { name: "Buy Graphics Card", cost: upgradeCosts[1], power: 5 },
+      { name: "Upgrade CPU", cost: upgradeCosts[2], power: 20 },
+      { name: "RGB Everything", cost: upgradeCosts[3], power: 50 },
+      { name: "Custom Water Cooling", cost: upgradeCosts[4], power: 100 },
+      { name: "Build 2nd PC", cost: upgradeCosts[5], power: 500 }
+    ];
+
+    const clickBtn = document.getElementById('clickBtn');
+    const moneyDisplay = document.getElementById('money');
+    const pcTierDisplay = document.getElementById('pcTier');
+    const store = document.getElementById('store');
+    const prestigeBtn = document.getElementById('prestigeBtn');
+    const prestigeDisplay = document.getElementById('prestigeDisplay');
+    const progressBar = document.getElementById('progressBar');
+    const clickSound = document.getElementById('clickSound');
+    const autoBuildBtn = document.getElementById('autoBuildBtn');
+
+    clickBtn.onclick = () => {
+      buildPC();
+    };
+
+    function buildPC() {
+      money += clickPower * (1 + prestige * 0.1);
+      clickSound.currentTime = 0;
+      clickSound.play();
+      updateDisplay();
+      saveProgress();
+    }
+
+    autoBuildBtn.onclick = () => {
+      autoBuildEnabled = !autoBuildEnabled;
+      autoBuildBtn.textContent = `Auto-Build: ${autoBuildEnabled ? 'ON 🛠️' : 'OFF ⚙️'}`;
+      if (autoBuildEnabled) {
+        autoBuildInterval = setInterval(buildPC, 1000);
+      } else {
+        clearInterval(autoBuildInterval);
+      }
+    };
+
+    prestigeBtn.onclick = () => {
+      if (clickPower >= 1000) {
+        prestige++;
+        money = 0;
+        clickPower = 1;
+        upgradeCosts = [10, 50, 200, 500, 1000, 5000];
+        saveProgress();
+        updateDisplay();
+        renderStore();
+      }
+    };
+
+    function updateDisplay() {
+      moneyDisplay.textContent = `Money: $${Math.floor(money)}`;
+      prestigeDisplay.textContent = `Prestige Level: ${prestige}`;
+      let tierIndex = Math.min(tiers.length - 1, Math.floor(Math.log10(clickPower + 1)));
+      pcTierDisplay.textContent = `Current PC: ${tiers[tierIndex]}`;
+
+      let currentTierPower = Math.pow(10, tierIndex);
+      let nextTierPower = Math.pow(10, tierIndex + 1);
+      let progress = Math.min(1, (clickPower - currentTierPower) / (nextTierPower - currentTierPower));
+      progressBar.style.width = `${progress * 100}%`;
+    }
+
+    function buyUpgrade(index) {
+      let upgrade = upgrades[index];
+      if (money >= upgrade.cost) {
+        money -= upgrade.cost;
+        clickPower += upgrade.power;
+        upgrade.cost = Math.floor(upgrade.cost * 1.5);
+        upgradeCosts[index] = upgrade.cost;
+        saveProgress();
+        renderStore();
+        updateDisplay();
+      }
+    }
+
+    function renderStore() {
+      store.innerHTML = '';
+      upgrades.forEach((upg, i) => {
+        const item = document.createElement('div');
+        item.className = 'upgrade';
+        item.innerHTML = `
+          <span>${upg.name} ($${upg.cost})</span>
+          <button onclick="buyUpgrade(${i})">Buy</button>
+        `;
+        store.appendChild(item);
+      });
+    }
+
+    function saveProgress() {
+      localStorage.setItem('money', money);
+      localStorage.setItem('clickPower', clickPower);
+      localStorage.setItem('prestige', prestige);
+      localStorage.setItem('upgradeCosts', JSON.stringify(upgradeCosts));
+    }
+
+    renderStore();
+    updateDisplay();
+  </script>
+</body>
+</html>
