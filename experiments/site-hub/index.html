@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Untitled</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #111;
+      color: white;
+    }
+
+    h1 {
+      text-align: center;
+      cursor: pointer;
+      margin-bottom: 30px;
+    }
+
+    .site-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      padding-bottom: 80px;
+    }
+
+    .site {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background: #222;
+      padding: 10px;
+      border-radius: 10px;
+      width: 100px;
+      transition: transform 0.2s;
+    }
+
+    .site:hover {
+      transform: scale(1.05);
+    }
+
+    .site img {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 5px;
+    }
+
+    .site a {
+      color: #00bcd4;
+      text-decoration: none;
+      word-break: break-word;
+      font-size: 12px;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: red;
+      border: none;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 14px;
+      display: none;
+      cursor: pointer;
+    }
+
+    .site:hover .delete-btn {
+      display: block;
+    }
+
+    .add-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #00bcd4;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 32px;
+      cursor: pointer;
+      z-index: 999;
+    }
+
+    .popup {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      background: #222;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #000;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      width: 250px;
+    }
+
+    .popup input[type="url"] {
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      width: 100%;
+    }
+
+    .popup button {
+      padding: 10px;
+      background: #00bcd4;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .popup-close {
+      align-self: flex-end;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: -10px;
+      margin-right: -5px;
+    }
+
+    #titleInput {
+      display: none;
+      background: none;
+      border: none;
+      border-bottom: 1px solid white;
+      color: white;
+      font-size: 28px;
+      text-align: center;
+      margin: 0 auto 30px auto;
+      width: 100%;
+      max-width: 300px;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="titleDisplay">Untitled</h1>
+  <input type="text" id="titleInput" maxlength="50" />
+
+  <div class="site-list" id="siteList"></div>
+
+  <button class="add-btn" id="openPopup">+</button>
+
+  <div class="popup" id="popup">
+    <button class="popup-close" id="closePopup">✕</button>
+    <form id="siteForm">
+      <input type="url" id="siteUrl" placeholder="Enter site URL" required />
+      <button type="submit">Add Site</button>
+    </form>
+  </div>
+
+  <script>
+    const titleDisplay = document.getElementById('titleDisplay');
+    const titleInput = document.getElementById('titleInput');
+    const siteList = document.getElementById('siteList');
+    const popup = document.getElementById('popup');
+    const openPopup = document.getElementById('openPopup');
+    const closePopup = document.getElementById('closePopup');
+    const siteUrl = document.getElementById('siteUrl');
+    const siteForm = document.getElementById('siteForm');
+
+    let sites = JSON.parse(localStorage.getItem('sites') || '[]');
+    let title = localStorage.getItem('hubTitle') || 'Untitled';
+    document.title = title;
+    titleDisplay.textContent = title;
+
+    function formatUrl(url) {
+      if (!/^https?:\/\//i.test(url)) {
+        return 'https://' + url;
+      }
+      return url;
+    }
+
+    function renderSites() {
+      siteList.innerHTML = '';
+      sites.forEach((url, index) => {
+        try {
+          const formattedUrl = formatUrl(url);
+          const hostname = new URL(formattedUrl).hostname;
+          const faviconUrl = `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`;
+
+          const a = document.createElement('a');
+          a.href = formattedUrl;
+          a.target = '_blank';
+
+          const div = document.createElement('div');
+          div.className = 'site';
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'delete-btn';
+          deleteBtn.textContent = '×';
+          deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            sites.splice(index, 1);
+            localStorage.setItem('sites', JSON.stringify(sites));
+            renderSites();
+          });
+
+          a.innerHTML = `
+            <img src="${faviconUrl}" alt="Favicon">
+            <div>${hostname}</div>
+          `;
+
+          div.appendChild(deleteBtn);
+          div.appendChild(a);
+          siteList.appendChild(div);
+        } catch (e) {
+          console.warn('Invalid URL:', url);
+        }
+      });
+    }
+
+    openPopup.addEventListener('click', () => {
+      popup.style.display = 'flex';
+      siteUrl.focus();
+    });
+
+    closePopup.addEventListener('click', () => {
+      popup.style.display = 'none';
+      siteUrl.value = '';
+    });
+
+    siteForm.addEventListener('submit', e => {
+      e.preventDefault();
+      let rawUrl = siteUrl.value.trim();
+      if (!rawUrl) return;
+
+      const formattedUrl = formatUrl(rawUrl);
+
+      try {
+        new URL(formattedUrl); // validate
+        if (!sites.includes(formattedUrl)) {
+          sites.push(formattedUrl);
+          localStorage.setItem('sites', JSON.stringify(sites));
+          renderSites();
+        }
+        popup.style.display = 'none';
+        siteUrl.value = '';
+      } catch {
+        alert("Invalid URL");
+      }
+    });
+
+    titleDisplay.addEventListener('click', () => {
+      titleInput.value = titleDisplay.textContent;
+      titleDisplay.style.display = 'none';
+      titleInput.style.display = 'block';
+      titleInput.focus();
+    });
+
+    titleInput.addEventListener('blur', () => {
+      const newTitle = titleInput.value.trim() || 'Untitled';
+      localStorage.setItem('hubTitle', newTitle);
+      document.title = newTitle;
+      titleDisplay.textContent = newTitle;
+      titleInput.style.display = 'none';
+      titleDisplay.style.display = 'block';
+    });
+
+    titleInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        titleInput.blur();
+      }
+    });
+
+    renderSites();
+  </script>
+</body>
+</html>
