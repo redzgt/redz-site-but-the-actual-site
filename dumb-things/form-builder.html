@@ -2,74 +2,112 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Form Builder</title>
   <style>
+    :root {
+      --primary: #6200ea;
+      --background: #f4f4f8;
+      --card: white;
+    }
+
     body {
-      font-family: sans-serif;
-      background: #f2f2f2;
       margin: 0;
-      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--background);
     }
+
     header {
-      padding: 1rem;
-      background: #6200ea;
+      background: var(--primary);
       color: white;
-      font-size: 1.5rem;
-    }
-    #form-builder {
       padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
+
+    #layout {
+      display: flex;
+    }
+
+    #sidebar {
+      width: 250px;
+      background: #fff;
+      padding: 1rem;
+      border-right: 1px solid #ccc;
+      height: calc(100vh - 64px);
+      box-sizing: border-box;
+    }
+
+    #main {
+      flex-grow: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
     .question {
-      background: white;
+      background: var(--card);
       border-radius: 8px;
       padding: 1rem;
       margin-bottom: 1rem;
-      box-shadow: 0 0 4px rgba(0,0,0,0.1);
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
-    select, input, textarea {
+
+    input, select, textarea, button {
       width: 100%;
-      margin-top: 0.5rem;
+      margin: 0.5rem 0;
       padding: 0.5rem;
-      margin-bottom: 0.5rem;
+      box-sizing: border-box;
     }
+
     button {
-      padding: 0.5rem 1rem;
-      background: #6200ea;
+      background: var(--primary);
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
     }
-    #link-box {
-      margin-top: 1rem;
-      background: white;
-      padding: 1rem;
-      border-radius: 8px;
-      display: none;
+
+    .theme-btn {
+      margin-top: 0.5rem;
+      padding: 0.3rem;
+      background: #ddd;
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-<header>Form Builder</header>
-
-<div id="form-builder">
-  <div id="questions"></div>
-
-  <select id="question-type">
-    <option value="short">Short Answer</option>
-    <option value="paragraph">Paragraph</option>
-    <option value="multiple">Multiple Choice</option>
-    <option value="checkbox">Checkboxes</option>
-  </select>
-  <button onclick="addQuestion()">Add Question</button>
+<header>
+  <input type="text" placeholder="Untitled Form" id="form-title" style="font-size:1.5rem; border: none; background: transparent; color: white;">
   <button onclick="generateLink()">Send</button>
+</header>
 
-  <div id="link-box">
-    <strong>Shareable Link:</strong>
-    <input type="text" id="share-link" readonly>
-    <button onclick="copyLink()">Copy</button>
+<div id="layout">
+  <div id="sidebar">
+    <h3>Question Types</h3>
+    <select id="question-type">
+      <option value="short">Short Answer</option>
+      <option value="paragraph">Paragraph</option>
+      <option value="multiple">Multiple Choice</option>
+      <option value="checkbox">Checkboxes</option>
+    </select>
+    <button onclick="addQuestion()">Add</button>
+
+    <h3>Theme</h3>
+    <button class="theme-btn" onclick="setTheme('#6200ea')">Purple</button>
+    <button class="theme-btn" onclick="setTheme('#00695c')">Teal</button>
+    <button class="theme-btn" onclick="setTheme('#c62828')">Red</button>
+  </div>
+
+  <div id="main">
+    <div id="questions"></div>
+    <div id="link-box" style="display:none">
+      <h4>Shareable Link:</h4>
+      <input type="text" id="share-link" readonly>
+      <button onclick="copyLink()">Copy</button>
+    </div>
   </div>
 </div>
 
@@ -78,12 +116,7 @@
 
   function addQuestion() {
     const type = document.getElementById("question-type").value;
-    const question = {
-      type,
-      text: "",
-      options: []
-    };
-    questions.push(question);
+    questions.push({ type, text: '', options: [] });
     renderQuestions();
   }
 
@@ -91,38 +124,29 @@
     const container = document.getElementById("questions");
     container.innerHTML = "";
     questions.forEach((q, i) => {
-      const div = document.createElement("div");
-      div.className = "question";
-
-      div.innerHTML = `
-        <input type="text" placeholder="Question" value="${q.text}" 
-          oninput="questions[${i}].text = this.value">
-      `;
-
-      if (q.type === "multiple" || q.type === "checkbox") {
-        const typeLabel = q.type === "multiple" ? "radio" : "checkbox";
-        q.options = q.options || [""];
-        div.innerHTML += q.options.map((opt, j) => `
+      let html = `<div class='question'>
+        <input type='text' placeholder='Question' value="${q.text}" oninput="questions[${i}].text = this.value">`;
+      if (q.type === 'short') {
+        html += `<input type='text' placeholder='Short answer' disabled>`;
+      } else if (q.type === 'paragraph') {
+        html += `<textarea disabled placeholder='Paragraph'></textarea>`;
+      } else if (q.type === 'multiple' || q.type === 'checkbox') {
+        const inputType = q.type === 'multiple' ? 'radio' : 'checkbox';
+        html += q.options.map((opt, j) => `
           <div>
-            <input type="${typeLabel}" disabled>
-            <input type="text" placeholder="Option" value="${opt}" 
-              oninput="questions[${i}].options[${j}] = this.value">
-            <button onclick="removeOption(${i}, ${j})">×</button>
-          </div>
-        `).join("");
-        div.innerHTML += `<button onclick="addOption(${i})">Add Option</button>`;
-      } else if (q.type === "short") {
-        div.innerHTML += `<input type="text" placeholder="Short answer" disabled>`;
-      } else if (q.type === "paragraph") {
-        div.innerHTML += `<textarea placeholder="Paragraph" disabled></textarea>`;
+            <input type='${inputType}' disabled>
+            <input type='text' value='${opt}' oninput='questions[${i}].options[${j}] = this.value'>
+            <button onclick='removeOption(${i},${j})'>×</button>
+          </div>`).join('');
+        html += `<button onclick='addOption(${i})'>Add Option</button>`;
       }
-
-      container.appendChild(div);
+      html += `</div>`;
+      container.innerHTML += html;
     });
   }
 
   function addOption(i) {
-    questions[i].options.push("");
+    questions[i].options.push('');
     renderQuestions();
   }
 
@@ -132,8 +156,12 @@
   }
 
   function generateLink() {
-    const id = "form_" + Date.now();
-    localStorage.setItem(id, JSON.stringify(questions));
+    const id = 'form_' + Date.now();
+    const data = {
+      title: document.getElementById('form-title').value,
+      questions
+    };
+    localStorage.setItem(id, JSON.stringify(data));
     const url = `${location.origin}${location.pathname}?form=${id}`;
     document.getElementById("share-link").value = url;
     document.getElementById("link-box").style.display = "block";
@@ -146,33 +174,38 @@
     alert("Link copied!");
   }
 
-  // Preview Mode
+  function setTheme(color) {
+    document.documentElement.style.setProperty('--primary', color);
+  }
+
+  // Preview/Submit Mode
   const params = new URLSearchParams(location.search);
   const formId = params.get("form");
   if (formId) {
-    const data = localStorage.getItem(formId);
+    const data = JSON.parse(localStorage.getItem(formId));
     if (data) {
-      questions = JSON.parse(data);
-      document.getElementById("form-builder").innerHTML = `
-        <h2>Preview</h2>
-        ${questions.map(q => {
-          let html = `<p><strong>${q.text}</strong></p>`;
-          if (q.type === "short") {
-            html += `<input type="text">`;
-          } else if (q.type === "paragraph") {
-            html += `<textarea></textarea>`;
-          } else if (q.type === "multiple") {
-            html += q.options.map(o => `
-              <div><input type="radio" name="${q.text}"> ${o}</div>
-            `).join("");
-          } else if (q.type === "checkbox") {
-            html += q.options.map(o => `
-              <div><input type="checkbox"> ${o}</div>
-            `).join("");
-          }
-          return `<div class="question">${html}</div>`;
-        }).join("")}
-      `;
+      document.body.innerHTML = `<div style='padding:2rem'>
+        <h2>${data.title}</h2>
+        <form id='responseForm'>
+          ${data.questions.map((q, i) => {
+            let input = '';
+            if (q.type === 'short') input = `<input name='q${i}' type='text'>`;
+            else if (q.type === 'paragraph') input = `<textarea name='q${i}'></textarea>`;
+            else if (q.type === 'multiple') {
+              input = q.options.map(opt => `<label><input type='radio' name='q${i}' value='${opt}'> ${opt}</label><br>`).join('');
+            } else if (q.type === 'checkbox') {
+              input = q.options.map(opt => `<label><input type='checkbox' name='q${i}' value='${opt}'> ${opt}</label><br>`).join('');
+            }
+            return `<div style='margin-bottom:1rem'><strong>${q.text}</strong><br>${input}</div>`;
+          }).join('')}
+          <button type='submit'>Submit</button>
+        </form>
+      </div>`;
+
+      document.getElementById('responseForm').onsubmit = (e) => {
+        e.preventDefault();
+        alert('Form submitted! (demo)');
+      };
     }
   }
 </script>
