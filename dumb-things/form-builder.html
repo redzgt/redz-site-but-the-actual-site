@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Form Builder</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      padding: 1rem;
+      background: #6200ea;
+      color: white;
+      font-size: 1.5rem;
+    }
+    #form-builder {
+      padding: 1rem;
+    }
+    .question {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    }
+    select, input, textarea {
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      background: #6200ea;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #link-box {
+      margin-top: 1rem;
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<header>Form Builder</header>
+
+<div id="form-builder">
+  <div id="questions"></div>
+
+  <select id="question-type">
+    <option value="short">Short Answer</option>
+    <option value="paragraph">Paragraph</option>
+    <option value="multiple">Multiple Choice</option>
+    <option value="checkbox">Checkboxes</option>
+  </select>
+  <button onclick="addQuestion()">Add Question</button>
+  <button onclick="generateLink()">Send</button>
+
+  <div id="link-box">
+    <strong>Shareable Link:</strong>
+    <input type="text" id="share-link" readonly>
+    <button onclick="copyLink()">Copy</button>
+  </div>
+</div>
+
+<script>
+  let questions = [];
+
+  function addQuestion() {
+    const type = document.getElementById("question-type").value;
+    const question = {
+      type,
+      text: "",
+      options: []
+    };
+    questions.push(question);
+    renderQuestions();
+  }
+
+  function renderQuestions() {
+    const container = document.getElementById("questions");
+    container.innerHTML = "";
+    questions.forEach((q, i) => {
+      const div = document.createElement("div");
+      div.className = "question";
+
+      div.innerHTML = `
+        <input type="text" placeholder="Question" value="${q.text}" 
+          oninput="questions[${i}].text = this.value">
+      `;
+
+      if (q.type === "multiple" || q.type === "checkbox") {
+        const typeLabel = q.type === "multiple" ? "radio" : "checkbox";
+        q.options = q.options || [""];
+        div.innerHTML += q.options.map((opt, j) => `
+          <div>
+            <input type="${typeLabel}" disabled>
+            <input type="text" placeholder="Option" value="${opt}" 
+              oninput="questions[${i}].options[${j}] = this.value">
+            <button onclick="removeOption(${i}, ${j})">×</button>
+          </div>
+        `).join("");
+        div.innerHTML += `<button onclick="addOption(${i})">Add Option</button>`;
+      } else if (q.type === "short") {
+        div.innerHTML += `<input type="text" placeholder="Short answer" disabled>`;
+      } else if (q.type === "paragraph") {
+        div.innerHTML += `<textarea placeholder="Paragraph" disabled></textarea>`;
+      }
+
+      container.appendChild(div);
+    });
+  }
+
+  function addOption(i) {
+    questions[i].options.push("");
+    renderQuestions();
+  }
+
+  function removeOption(i, j) {
+    questions[i].options.splice(j, 1);
+    renderQuestions();
+  }
+
+  function generateLink() {
+    const id = "form_" + Date.now();
+    localStorage.setItem(id, JSON.stringify(questions));
+    const url = `${location.origin}${location.pathname}?form=${id}`;
+    document.getElementById("share-link").value = url;
+    document.getElementById("link-box").style.display = "block";
+  }
+
+  function copyLink() {
+    const link = document.getElementById("share-link");
+    link.select();
+    document.execCommand("copy");
+    alert("Link copied!");
+  }
+
+  // Preview Mode
+  const params = new URLSearchParams(location.search);
+  const formId = params.get("form");
+  if (formId) {
+    const data = localStorage.getItem(formId);
+    if (data) {
+      questions = JSON.parse(data);
+      document.getElementById("form-builder").innerHTML = `
+        <h2>Preview</h2>
+        ${questions.map(q => {
+          let html = `<p><strong>${q.text}</strong></p>`;
+          if (q.type === "short") {
+            html += `<input type="text">`;
+          } else if (q.type === "paragraph") {
+            html += `<textarea></textarea>`;
+          } else if (q.type === "multiple") {
+            html += q.options.map(o => `
+              <div><input type="radio" name="${q.text}"> ${o}</div>
+            `).join("");
+          } else if (q.type === "checkbox") {
+            html += q.options.map(o => `
+              <div><input type="checkbox"> ${o}</div>
+            `).join("");
+          }
+          return `<div class="question">${html}</div>`;
+        }).join("")}
+      `;
+    }
+  }
+</script>
+
+</body>
+</html>
