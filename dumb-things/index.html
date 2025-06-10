@@ -2,162 +2,134 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dumb Things - redzgt</title>
   <style>
     /* General Styles */
     body {
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #000;
-        color: #fff;
-        line-height: 1.6;
-        overflow-x: hidden;
-        text-align: center;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      color: #fff;
+      line-height: 1.6;
+      overflow-x: hidden;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     /* Header Section */
     header {
-        padding: 40px 20px;
-        text-align: center;
-        background: rgba(0, 0, 0, 0.9);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      padding: 40px 20px;
+      background: rgba(0, 0, 0, 0.9);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
     }
 
     header h1 {
-        margin: 0;
-        font-size: 3em;
-        color: #FF0000;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+      margin: 0;
+      font-size: 3em;
+      color: #FF0000;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
     }
 
-    header p {
-        font-size: 1.2em;
-        margin-top: 10px;
-        color: #FF0000;
+    /* Content Wrapper */
+    main {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+      flex-grow: 1;
     }
 
-    /* Navigation */
-    nav {
-        margin-top: 15px;
+    section {
+      margin-bottom: 60px;
+      text-align: left;
     }
 
-    nav a {
-        color: #FF0000;
-        text-decoration: none;
-        font-size: 1.2em;
-        margin: 0 15px;
-        transition: color 0.3s ease;
+    section h2 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #FF0000;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-align: center;
     }
 
-    nav a:hover {
-        color: #ff4444;
+    /* Experiment Cards Grid */
+    .experiments-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
     }
 
-    /* Content Section */
-    .content {
-        max-width: 1100px;
-        margin: 40px auto;
-        padding: 0 20px;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 20px;
-    }
-
-    .content h2 {
-        width: 100%;
-        font-size: 2.5em;
-        margin-bottom: 20px;
-        color: #FF0000;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
-
-    /* Experiment Cards */
     .experiment-link {
-        text-decoration: none;
-        flex: 1;
-        min-width: 300px;
-        max-width: 400px;
+      text-decoration: none;
+      flex: 1 1 300px;
+      max-width: 400px;
+      display: block;
     }
 
     .experiment {
-        background-color: rgba(0, 0, 0, 0.85);
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        overflow: hidden;
-        padding: 10px;
-        text-align: center;
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+      background-color: rgba(0, 0, 0, 0.85);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      padding: 20px 15px;
+      text-align: center;
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+      color: #FF0000;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 1.4em;
+      user-select: none;
     }
 
     .experiment:hover {
-        transform: scale(1.05);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
-    }
-
-    .experiment img {
-        width: 100%;
-        height: auto;
-        max-width: 300px;
-        border-bottom: 5px solid #FF0000;
-        transition: opacity 0.3s ease;
-    }
-
-    .experiment img:hover {
-        opacity: 0.8;
-    }
-
-    .experiment h3 {
-        font-size: 1.4em;
-        margin: 10px 0;
-        color: #FF0000;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+      transform: scale(1.05);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+      cursor: pointer;
     }
 
     /* Footer Section */
     footer {
-        background-color: rgba(0, 0, 0, 0.9);
-        color: #FF0000;
-        text-align: center;
-        padding: 20px 0;
-        position: relative;
-        bottom: 0;
-        width: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      color: #FF0000;
+      text-align: center;
+      padding: 20px 0;
+      box-shadow: inset 0 1px 0 rgba(255,0,0,0.2);
     }
 
     footer p {
-        font-size: 1.1em;
-        letter-spacing: 1px;
+      font-size: 1.1em;
+      letter-spacing: 1px;
+      margin: 0;
     }
 
-    /* Media Queries for Mobile */
+    /* Responsive Design */
     @media (max-width: 768px) {
-        header h1 {
-            font-size: 2.5em;
-        }
+      header h1 {
+        font-size: 2.5em;
+      }
 
-        .content {
-            flex-direction: column;
-            align-items: center;
-        }
+      section h2 {
+        font-size: 2em;
+      }
 
-        .experiment-link {
-            width: 100%;
-        }
+      .experiment {
+        font-size: 1.2em;
+        padding: 15px 10px;
+      }
 
-        .experiment h3 {
-            font-size: 1.5em;
-        }
-
-        .experiment img {
-            max-width: 250px;
-        }
+      .experiment-link {
+        max-width: 100%;
+        flex: 1 1 100%;
+      }
     }
   </style>
 </head>
@@ -166,112 +138,67 @@
     <h1>Dumb Things</h1>
   </header>
 
-  <div class="content"> <!--Experiments page explains why this is here.--->
-    <h2>Pranks: (May crash)</h2>
+  <main>
+    <section>
+      <h2>Pranks: (May crash)</h2>
+      <div class="experiments-grid">
+        <a href="/dumb-things/notavirus" class="experiment-link">
+          <div class="experiment">Notavirus</div>
+        </a>
+        <a href="/dumb-things/urded" class="experiment-link">
+          <div class="experiment">Urded</div>
+        </a>
+        <a href="/dumb-things/freeluck" class="experiment-link">
+          <div class="experiment">FreeLuck</div>
+        </a>
+        <a href="/dumb-things/freerobux" class="experiment-link">
+          <div class="experiment">FreeRobux</div>
+        </a>
+        <a href="/dumb-things/redz-rng" class="experiment-link">
+          <div class="experiment">Redz' RNG</div>
+        </a>
+        <a href="/dumb-things/freemoney" class="experiment-link">
+          <div class="experiment">FreeMoney</div>
+        </a>
+      </div>
+    </section>
 
-    <a href="/dumb-things/notavirus" class="experiment-link">
-      <div class="experiment">
-        <h3>Notavirus</h3>
+    <section>
+      <h2>Harmless:</h2>
+      <div class="experiments-grid">
+        <a href="/dumb-things/gun-gambling" class="experiment-link">
+          <div class="experiment">Gun Gambling</div>
+        </a>
+        <a href="/dumb-things/lumi-os" class="experiment-link">
+          <div class="experiment">Lumi OS (not made by me)</div>
+        </a>
+        <a href="/dumb-things/notes-app" class="experiment-link">
+          <div class="experiment">Notes App</div>
+        </a>
+        <a href="/dumb-things/quiz-maker" class="experiment-link">
+          <div class="experiment">Quiz Maker</div>
+        </a>
+        <a href="/dumb-things/spin-the-wheel" class="experiment-link">
+          <div class="experiment">Spin The Wheel</div>
+        </a>
+        <a href="/dumb-things/zombie-game" class="experiment-link">
+          <div class="experiment">Zombie Game</div>
+        </a>
+        <a href="/dumb-things/upwardsparkour2d" class="experiment-link">
+          <div class="experiment">Upwards Parkour 2D</div>
+        </a>
+        <a href="/dumb-things/flappyorb" class="experiment-link">
+          <div class="experiment">Flappy Orb</div>
+        </a>
+        <a href="/dumb-things/spacedash" class="experiment-link">
+          <div class="experiment">Space Dash</div>
+        </a>
+        <a href="/dumb-things/wiggleio" class="experiment-link">
+          <div class="experiment">Wiggle.io</div>
+        </a>
       </div>
-    </a>
-
-    <a href="/dumb-things/urded" class="experiment-link">
-      <div class="experiment">
-        <h3>Urded</h3>
-      </div>
-    </a>
-
-    <a href="/dumb-things/freeluck" class="experiment-link">
-      <div class="experiment">
-        <h3>FreeLuck</h3>
-      </div>
-    </a>
-
-    <a href="/dumb-things/freerobux" class="experiment-link">
-      <div class="experiment">
-        <h3>FreeRobux</h3>
-      </div>
-    </a>
-    
-  <a href="/dumb-things/redz-rng" class="experiment-link">
-      <div class="experiment">
-        <h3>Redz' RNG</h3>
-      </div>
-    </a>
-  </div>
-
-  <a href="/dumb-things/freemoney" class="experiment-link">
-      <div class="experiment">
-        <h3>FreeMoney</h3>
-      </div>
-    </a>
-  </div>
-  
- <div class="content">
-    <h2>Harmless:</h2>
-
-    <a href="/dumb-things/gun-gambling" class="experiment-link">
-      <div class="experiment">
-        <h3>Gun Gambling</h3>
-      </div>
-    </a>
-  </div>
-
-  <a href="/dumb-things/lumi-os" class="experiment-link">
-      <div class="experiment">
-        <h3>Lumi OS (not made by me)</h3>
-      </div>
-    </a>
-  </div>
-
-  <a href="/dumb-things/notes-app" class="experiment-link">
-      <div class="experiment">
-        <h3>Notes App</h3>
-      </div>
-    </a>
-  </div>
-
-  <a href="/dumb-things/quiz-maker" class="experiment-link">
-      <div class="experiment">
-        <h3>Quiz Maker</h3>
-      </div>
-    </a>
-  </div>
-
-  <a href="/dumb-things/spin-the-wheel" class="experiment-link">
-      <div class="experiment">
-        <h3>Spin The Wheel</h3>
-      </div>
-    </a>
-  </div>
-
-  <a href="/dumb-things/zombie-game" class="experiment-link">
-      <div class="experiment">
-        <h3>Zombie Game</h3>
-      </div>
-    </a>
-  </div>
-
-  <a href="/dumb-things/upwardsparkour2d" class="experiment-link">
-      <div class="experiment">
-        <h3>Upwards Parkour 2D</h3>
-      </div>
-    </a>
-  </div>
-
-  <a href="/dumb-things/flappyorb" class="experiment-link">
-      <div class="experiment">
-        <h3>Flappy Orb</h3>
-      </div>
-    </a>
-  </div>
-  
-    <a href="/dumb-things/spacedash" class="experiment-link">
-      <div class="experiment">
-        <h3>Space Dash</h3>
-      </div>
-    </a>
-  </div>
+    </section>
+  </main>
 
   <footer>
     <p>&copy; 2025 redz</p>
