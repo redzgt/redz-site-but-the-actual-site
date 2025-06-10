@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <title>Wiggle.io</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Orbitron', sans-serif;
+      background-color: #000;
+      color: #fff;
+    }
+
+    #game {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000;
+      display: block;
+    }
+
+    #menu {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 40px 60px;
+      border: 2px solid #0ff;
+      border-radius: 15px;
+      box-shadow: 0 0 25px #0ff;
+      z-index: 100;
+    }
+
+    #menu h1 {
+      font-size: 3rem;
+      color: #0ff;
+      margin-bottom: 30px;
+      text-shadow: 0 0 15px #0ff;
+    }
+
+    #playBtn {
+      padding: 15px 40px;
+      font-size: 1.3rem;
+      border: none;
+      border-radius: 10px;
+      background: #0ff;
+      color: #000;
+      cursor: pointer;
+      transition: 0.2s;
+      font-weight: bold;
+      text-shadow: none;
+    }
+
+    #playBtn:hover {
+      background: #0cc;
+      box-shadow: 0 0 20px #0ff;
+    }
+
+    #scoreboard {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 15px 20px;
+      border: 2px solid #0ff;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #0ff;
+      z-index: 50;
+      font-size: 1rem;
+    }
+
+    #scoreboard h2 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+      color: #0ff;
+    }
+
+    #scoreList {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #scoreList li {
+      margin: 3px 0;
+      color: #fff;
+    }
+
+    #scoreList li.player {
+      color: #ff0;
+      font-weight: bold;
+    }
+
+    #playerScore {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      padding: 10px 20px;
+      border: 2px solid #0ff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #0ff;
+      font-size: 1.1rem;
+      z-index: 50;
+    }
+
+    @media (max-width: 600px) {
+      #menu {
+        width: 80%;
+        padding: 30px 20px;
+      }
+
+      #menu h1 {
+        font-size: 2rem;
+      }
+
+      #playBtn {
+        padding: 10px 30px;
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="menu">
+    <h1>Wiggle.io</h1>
+    <button id="playBtn">Play</button>
+  </div>
+  <div id="scoreboard" style="display:none;">
+    <h2>Leaderboard</h2>
+    <ul id="scoreList"></ul>
+  </div>
+  <div id="playerScore" style="display:none;">Score: 0</div>
+  <canvas id="game"></canvas>
+</body>
+
+<script>
+(() => {
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
+
+  const menu = document.getElementById("menu");
+  const playBtn = document.getElementById("playBtn");
+  const scoreboard = document.getElementById("scoreboard");
+  const scoreList = document.getElementById("scoreList");
+  const playerScoreDisplay = document.getElementById("playerScore");
+
+  const MAP_SIZE = 5000;
+  const BORDER_THICKNESS = 40;
+  const BORDER_COLOR = "#660000";
+
+  let mouse = { x: width / 2, y: height / 2 };
+  let keys = {};
+  let touchActive = false;
+  let gameRunning = false;
+
+  document.addEventListener("touchstart", e => {
+    touchActive = true;
+    mouse.x = e.touches[0].clientX;
+    mouse.y = e.touches[0].clientY;
+  });
+  document.addEventListener("touchmove", e => {
+    mouse.x = e.touches[0].clientX;
+    mouse.y = e.touches[0].clientY;
+  });
+  document.addEventListener("mousemove", e => {
+    if (!touchActive) {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    }
+  });
+  document.addEventListener("keydown", e => keys[e.key.toLowerCase()] = true);
+  document.addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
+
+  class Food {
+    constructor() {
+      this.x = Math.random() * (MAP_SIZE - BORDER_THICKNESS*2) - (MAP_SIZE/2 - BORDER_THICKNESS);
+      this.y = Math.random() * (MAP_SIZE - BORDER_THICKNESS*2) - (MAP_SIZE/2 - BORDER_THICKNESS);
+      this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+      this.radius = 4 + Math.random() * 4;
+    }
+    draw(offsetX, offsetY) {
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x - offsetX, this.y - offsetY, this.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  class Snake {
+    constructor(isAI = false) {
+      this.x = Math.random() * (MAP_SIZE/2 - BORDER_THICKNESS*4) - (MAP_SIZE/4 - BORDER_THICKNESS*2);
+      this.y = Math.random() * (MAP_SIZE/2 - BORDER_THICKNESS*4) - (MAP_SIZE/4 - BORDER_THICKNESS*2);
+      this.segments = [];
+      this.length = 80;
+      this.speed = 2;
+      this.angle = Math.random() * Math.PI * 2;
+      this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+      this.isAI = isAI;
+      this.turnTimer = 0;
+    }
+
+    update(targetX, targetY) {
+      if (!gameRunning) return;
+
+      if (this.isAI) {
+        if (this.turnTimer <= 0) {
+          let dx = Math.random() * 200 - 100;
+          let dy = Math.random() * 200 - 100;
+          this.angle = Math.atan2(dy, dx);
+          this.turnTimer = 60 + Math.random() * 60;
+        } else {
+          this.turnTimer--;
+        }
+      } else {
+        let dx = 0;
+        let dy = 0;
+        if (keys['w'] || keys['arrowup']) dy -= 1;
+        if (keys['s'] || keys['arrowdown']) dy += 1;
+        if (keys['a'] || keys['arrowleft']) dx -= 1;
+        if (keys['d'] || keys['arrowright']) dx += 1;
+
+        if (dx !== 0 || dy !== 0) {
+          this.angle = Math.atan2(dy, dx);
+        } else {
+          let mx = targetX - width / 2;
+          let my = targetY - height / 2;
+          this.angle = Math.atan2(my, mx);
+        }
+      }
+
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+
+      if (
+        this.x < -MAP_SIZE/2 + BORDER_THICKNESS ||
+        this.x > MAP_SIZE/2 - BORDER_THICKNESS ||
+        this.y < -MAP_SIZE/2 + BORDER_THICKNESS ||
+        this.y > MAP_SIZE/2 - BORDER_THICKNESS
+      ) {
+        if (!this.isAI) die();
+        else resetAISnake(this);
+        return;
+      }
+
+      this.segments.unshift({ x: this.x, y: this.y });
+      if (this.segments.length > this.length) this.segments.pop();
+    }
+
+draw(offsetX, offsetY) {
+  const radius = 12;  // bigger circles
+  ctx.strokeStyle = "#000";  // black outline for contrast
+  ctx.lineWidth = 3;
+  
+  // Draw every 6th segment to get big gaps
+  for (let i = 0; i < this.segments.length; i += 6) {
+    let seg = this.segments[i];
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(seg.x - offsetX, seg.y - offsetY, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
+}
+
+
+
+    grow() {
+      this.length += 10;
+    }
+
+    checkCollisionWithFood(foodList) {
+      for (let i = foodList.length - 1; i >= 0; i--) {
+        let f = foodList[i];
+        let dx = this.x - f.x;
+        let dy = this.y - f.y;
+        if (Math.sqrt(dx * dx + dy * dy) < 12) {
+          foodList.splice(i, 1);
+          this.grow();
+          foodList.push(new Food());
+        }
+      }
+    }
+
+    checkSelfCollision() {
+      // Removed death on self-collision for the player and bots
+      // (No action here)
+    }
+
+    getScore() {
+      return this.length;
+    }
+  }
+
+  let player;
+  let aiSnakes;
+  let foods;
+
+  function resetAISnake(snake) {
+    snake.x = Math.random() * (MAP_SIZE/2 - BORDER_THICKNESS*4) - (MAP_SIZE/4 - BORDER_THICKNESS*2);
+    snake.y = Math.random() * (MAP_SIZE/2 - BORDER_THICKNESS*4) - (MAP_SIZE/4 - BORDER_THICKNESS*2);
+    snake.segments = [];
+    snake.length = 80;
+    snake.angle = Math.random() * Math.PI * 2;
+    snake.turnTimer = 0;
+  }
+
+  function initGame() {
+    player = new Snake(false);
+    aiSnakes = Array.from({ length: 5 }, () => new Snake(true));
+    foods = Array.from({ length: 400 }, () => new Food());
+    gameRunning = true;
+    scoreboard.style.display = "block";
+    playerScoreDisplay.style.display = "block";
+  }
+
+  function die() {
+    gameRunning = false;
+    menu.style.display = "block";
+    scoreboard.style.display = "none";
+    playerScoreDisplay.style.display = "none";
+  }
+
+  function drawMapBounds(offsetX, offsetY) {
+    const half = MAP_SIZE / 2;
+    ctx.lineWidth = BORDER_THICKNESS;
+    ctx.strokeStyle = BORDER_COLOR;
+    ctx.strokeRect(
+      -half - offsetX + BORDER_THICKNESS/2,
+      -half - offsetY + BORDER_THICKNESS/2,
+      MAP_SIZE - BORDER_THICKNESS,
+      MAP_SIZE - BORDER_THICKNESS
+    );
+  }
+
+  function drawRadar(x, y, allSnakes) {
+    const size = 150;
+    const radarX = width - size - 10;
+    const radarY = 10;
+
+    ctx.fillStyle = "#222";
+    ctx.fillRect(radarX, radarY, size, size);
+
+    ctx.lineWidth = BORDER_THICKNESS / 3;
+    ctx.strokeStyle = BORDER_COLOR;
+    ctx.strokeRect(radarX + BORDER_THICKNESS/6, radarY + BORDER_THICKNESS/6,
+      size - BORDER_THICKNESS/3, size - BORDER_THICKNESS/3);
+
+    const scale = size / MAP_SIZE;
+    const centerX = radarX + size / 2;
+    const centerY = radarY + size / 2;
+
+    for (let s of allSnakes) {
+      ctx.fillStyle = s.color;
+      ctx.beginPath();
+      ctx.arc(centerX + s.x * scale, centerY + s.y * scale, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function updateScoreboard() {
+    const allSnakes = [player, ...aiSnakes];
+    allSnakes.sort((a, b) => b.length - a.length);
+    scoreList.innerHTML = "";
+    for (let i = 0; i < allSnakes.length; i++) {
+      const snake = allSnakes[i];
+      const li = document.createElement("li");
+      li.textContent = `#${i + 1}`;
+      const scoreSpan = document.createElement("span");
+      scoreSpan.textContent = Math.floor(snake.length);
+      li.appendChild(scoreSpan);
+
+      if (snake === player) {
+        li.classList.add("player");
+        li.textContent = `You (#${i + 1})`;
+        li.appendChild(scoreSpan);
+      }
+
+      scoreList.appendChild(li);
+    }
+    playerScoreDisplay.textContent = `Score: ${Math.floor(player.length)}`;
+  }
+
+  function gameLoop() {
+    if (!gameRunning) return;
+
+    ctx.clearRect(0, 0, width, height);
+
+    const offsetX = player.x - width / 2;
+    const offsetY = player.y - height / 2;
+
+    drawMapBounds(offsetX, offsetY);
+
+    for (let f of foods) f.draw(offsetX, offsetY);
+
+    for (let ai of aiSnakes) {
+      ai.update();
+      ai.checkCollisionWithFood(foods);
+      ai.checkSelfCollision();
+      ai.draw(offsetX, offsetY);
+    }
+
+    player.update(mouse.x, mouse.y);
+    player.checkCollisionWithFood(foods);
+    player.checkSelfCollision();
+    player.draw(offsetX, offsetY);
+
+    drawRadar(player.x, player.y, [player, ...aiSnakes]);
+
+    updateScoreboard();
+
+    requestAnimationFrame(gameLoop);
+  }
+
+  window.addEventListener("resize", () => {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+  });
+
+  playBtn.addEventListener("click", () => {
+    menu.style.display = "none";
+    initGame();
+    gameLoop();
+  });
+
+})();
+</script>
+</body>
+</html>
