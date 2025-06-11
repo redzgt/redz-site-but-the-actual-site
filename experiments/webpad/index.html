@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Webpad</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: #f4f4f4;
+    }
+
+    .menu-bar {
+      display: flex;
+      background: #e0e0e0;
+      border-bottom: 1px solid #ccc;
+      user-select: none;
+    }
+
+    .menu {
+      position: relative;
+    }
+
+    .menu > button {
+      padding: 6px 16px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .menu > button:hover {
+      background: #d0d0d0;
+    }
+
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: #ffffff;
+      border: 1px solid #ccc;
+      display: none;
+      min-width: 160px;
+      z-index: 100;
+    }
+
+    .menu:hover .dropdown {
+      display: block;
+    }
+
+    .dropdown button {
+      width: 100%;
+      padding: 6px 12px;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .dropdown button:hover {
+      background: #eeeeee;
+    }
+
+    /* Submenu */
+    .submenu-container {
+      position: relative;
+    }
+
+    .submenu {
+      position: absolute;
+      top: 0;
+      left: 100%;
+      background: #ffffff;
+      border: 1px solid #ccc;
+      display: none;
+      min-width: 160px;
+      z-index: 200;
+    }
+
+    .submenu-container:hover .submenu {
+      display: block;
+    }
+
+    #editor-container {
+      position: relative;
+    }
+
+    #placeholder {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      color: #aaa;
+      pointer-events: none;
+      user-select: none;
+      font-size: 16px;
+    }
+
+    #editor {
+      width: 100%;
+      height: calc(100vh - 32px);
+      padding: 12px;
+      outline: none;
+      overflow-y: auto;
+      background: white;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="menu-bar">
+    <div class="menu">
+      <button>File</button>
+      <div class="dropdown">
+        <div class="submenu-container">
+          <button>Save ▶</button>
+          <div class="submenu">
+            <button onclick="saveText('html')">Save as HTML</button>
+            <button onclick="saveText('txt')">Save as TXT</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="menu">
+      <button>Edit</button>
+      <div class="dropdown">
+        <button onclick="execCmd('undo')">Undo</button>
+        <button onclick="execCmd('redo')">Redo</button>
+        <button onclick="execCmd('cut')">Cut</button>
+        <button onclick="execCmd('copy')">Copy</button>
+        <button onclick="execCmd('paste')">Paste</button>
+      </div>
+    </div>
+    <div class="menu">
+      <button>Format</button>
+      <div class="dropdown">
+        <button onclick="execCmd('bold')">Bold</button>
+        <button onclick="execCmd('italic')">Italic</button>
+        <button onclick="execCmd('underline')">Underline</button>
+        <hr />
+        <label style="padding: 6px 12px; display: block;">
+          Font:
+          <select onchange="execCmd('fontName', this.value)">
+            <option value="Arial">Arial</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Verdana">Verdana</option>
+          </select>
+        </label>
+        <label style="padding: 6px 12px; display: block;">
+          Size:
+          <select onchange="execCmd('fontSize', this.value)">
+            <option value="1">8pt</option>
+            <option value="2">10pt</option>
+            <option value="3" selected>12pt</option>
+            <option value="4">14pt</option>
+            <option value="5">18pt</option>
+            <option value="6">24pt</option>
+            <option value="7">36pt</option>
+          </select>
+        </label>
+        <label style="padding: 6px 12px; display: block;">
+          Color:
+          <input type="color" onchange="execCmd('foreColor', this.value)" />
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div id="editor-container">
+    <div id="placeholder">Start typing here...</div>
+    <div id="editor" contenteditable="true"></div>
+  </div>
+
+  <script>
+    const editor = document.getElementById("editor");
+    const placeholder = document.getElementById("placeholder");
+
+    function updatePlaceholder() {
+      placeholder.style.display = editor.innerText.trim() === "" ? "block" : "none";
+    }
+
+    editor.addEventListener("input", updatePlaceholder);
+    editor.addEventListener("focus", updatePlaceholder);
+    editor.addEventListener("blur", updatePlaceholder);
+
+    function execCmd(cmd, val = null) {
+      document.execCommand(cmd, false, val);
+      updatePlaceholder();
+    }
+
+    function saveText(type) {
+      let data, filename, mime;
+      if (type === "html") {
+        data = editor.innerHTML;
+        filename = "note.html";
+        mime = "text/html";
+      } else if (type === "txt") {
+        data = editor.innerText;
+        filename = "note.txt";
+        mime = "text/plain";
+      }
+
+      const blob = new Blob([data], { type: mime });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+    }
+
+    updatePlaceholder();
+  </script>
+</body>
+</html>
