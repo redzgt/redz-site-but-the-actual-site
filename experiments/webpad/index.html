@@ -9,18 +9,15 @@
       font-family: system-ui, sans-serif;
       background: #f4f4f4;
     }
-
     .menu-bar {
       display: flex;
       background: #e0e0e0;
       border-bottom: 1px solid #ccc;
       user-select: none;
     }
-
     .menu {
       position: relative;
     }
-
     .menu > button {
       padding: 6px 16px;
       background: none;
@@ -28,11 +25,9 @@
       cursor: pointer;
       font-size: 14px;
     }
-
     .menu > button:hover {
       background: #d0d0d0;
     }
-
     .dropdown {
       position: absolute;
       top: 100%;
@@ -43,11 +38,9 @@
       min-width: 160px;
       z-index: 100;
     }
-
     .menu:hover .dropdown {
       display: block;
     }
-
     .dropdown button {
       width: 100%;
       padding: 6px 12px;
@@ -57,16 +50,13 @@
       font-size: 14px;
       cursor: pointer;
     }
-
     .dropdown button:hover {
       background: #eeeeee;
     }
-
     /* Submenu */
     .submenu-container {
       position: relative;
     }
-
     .submenu {
       position: absolute;
       top: 0;
@@ -77,15 +67,12 @@
       min-width: 160px;
       z-index: 200;
     }
-
     .submenu-container:hover .submenu {
       display: block;
     }
-
     #editor-container {
       position: relative;
     }
-
     #placeholder {
       position: absolute;
       top: 12px;
@@ -95,7 +82,6 @@
       user-select: none;
       font-size: 16px;
     }
-
     #editor {
       width: 100%;
       height: calc(100vh - 32px);
@@ -117,11 +103,6 @@
           <div class="submenu">
             <button onclick="saveText('html')">Save as HTML</button>
             <button onclick="saveText('txt')">Save as TXT</button>
-            <button onclick="saveText('cpp')">Save as C++ (.cpp)</button>
-            <button onclick="saveText('cs')">Save as C# (.cs)</button>
-            <button onclick="saveText('js')">Save as JavaScript (.js)</button>
-            <button onclick="saveText('css')">Save as CSS (.css)</button>
-            <button onclick="saveText('go')">Save as Go (.go)</button>
           </div>
         </div>
       </div>
@@ -196,22 +177,24 @@
     }
 
     function saveText(type) {
-  const data = editor.innerText;
-  const mime = "text/plain";
-  const filename = `note.${type}`;
-
-  const blob = new Blob([data], { type: mime });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-}
-
+      let data, filename, mime;
+      if (type === "html") {
+        data = editor.innerHTML;
+        filename = "note.html";
+        mime = "text/html";
+      } else if (type === "txt") {
+        data = editor.innerText;
+        filename = "note.txt";
+        mime = "text/plain";
+      }
       const blob = new Blob([data], { type: mime });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
       a.download = filename;
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
     }
 
     updatePlaceholder();
