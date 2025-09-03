@@ -103,6 +103,12 @@
           <div class="submenu">
             <button onclick="saveText('html')">Save as HTML</button>
             <button onclick="saveText('txt')">Save as TXT</button>
+            <button onclick="saveText('py')">Save as Python</button>
+            <button onclick="saveText('js')">Save as JavaScript</button>
+            <button onclick="saveText('css')">Save as CSS</button>
+            <button onclick="saveText('cpp')">Save as C++</button>
+            <button onclick="saveText('java')">Save as Java</button>
+            <button onclick="saveText('cs')">Save as C#</button>
           </div>
         </div>
       </div>
@@ -177,16 +183,39 @@
     }
 
     function saveText(type) {
-      let data, filename, mime;
-      if (type === "html") {
-        data = editor.innerHTML;
-        filename = "note.html";
-        mime = "text/html";
-      } else if (type === "txt") {
-        data = editor.innerText;
-        filename = "note.txt";
-        mime = "text/plain";
+      let data = editor.innerText;
+      let filename = "note";
+      let mime = "text/plain";
+
+      switch (type) {
+        case "html":
+          data = editor.innerHTML;
+          filename += ".html";
+          mime = "text/html";
+          break;
+        case "txt":
+          filename += ".txt";
+          break;
+        case "py":
+          filename += ".py";
+          break;
+        case "js":
+          filename += ".js";
+          break;
+        case "css":
+          filename += ".css";
+          break;
+        case "cpp":
+          filename += ".cpp";
+          break;
+        case "java":
+          filename += ".java";
+          break;
+        case "cs":
+          filename += ".cs";
+          break;
       }
+
       const blob = new Blob([data], { type: mime });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
