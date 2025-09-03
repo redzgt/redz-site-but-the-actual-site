@@ -117,6 +117,11 @@
           <div class="submenu">
             <button onclick="saveText('html')">Save as HTML</button>
             <button onclick="saveText('txt')">Save as TXT</button>
+            <button onclick="saveText('cpp')">Save as C++ (.cpp)</button>
+            <button onclick="saveText('cs')">Save as C# (.cs)</button>
+            <button onclick="saveText('js')">Save as JavaScript (.js)</button>
+            <button onclick="saveText('css')">Save as CSS (.css)</button>
+            <button onclick="saveText('go')">Save as Go (.go)</button>
           </div>
         </div>
       </div>
@@ -191,16 +196,16 @@
     }
 
     function saveText(type) {
-      let data, filename, mime;
-      if (type === "html") {
-        data = editor.innerHTML;
-        filename = "note.html";
-        mime = "text/html";
-      } else if (type === "txt") {
-        data = editor.innerText;
-        filename = "note.txt";
-        mime = "text/plain";
-      }
+  const data = editor.innerText;
+  const mime = "text/plain";
+  const filename = `note.${type}`;
+
+  const blob = new Blob([data], { type: mime });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+}
 
       const blob = new Blob([data], { type: mime });
       const a = document.createElement("a");
