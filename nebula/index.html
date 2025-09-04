@@ -145,5 +145,34 @@
     © 2025 Nebula IDE. All rights reserved.
   </footer>
 
+  <script>
+    function createSnowflake() {
+            const snowflake = document.createElement("div");
+            const size = Math.random() * 5 + 2;
+            const startLeft = Math.random() * window.innerWidth;
+            const duration = Math.random() * 3 + 2;
+
+            snowflake.style.position = "absolute";
+            snowflake.style.top = "-10px";
+            snowflake.style.left = `${startLeft}px`;
+            snowflake.style.width = `${size}px`;
+            snowflake.style.height = `${size}px`;
+            snowflake.style.borderRadius = "50%";
+            snowflake.style.opacity = Math.random().toFixed(2);
+            snowflake.style.backgroundColor = prefersDark() ? "white" : "#aaa";
+            snowflake.style.animation = `fall ${duration}s linear forwards`;
+
+            snowContainer.appendChild(snowflake);
+
+            snowflake.addEventListener("animationend", () => {
+                snowflake.remove();
+            });
+        }
+
+        setInterval(() => {
+            createSnowflake();
+        }, 100);
+  </script>
+
 </body>
 </html>
