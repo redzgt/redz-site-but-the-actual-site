@@ -5,30 +5,101 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>New Tab</title>
   <style>
-    :root {
-      --bg-color: #fff;
-      --text-color: #000;
-      --input-bg: #f0f0f0;
-      --input-color: #000;
-    }
-    body.dark {
-      --bg-color: #121212;
-      --text-color: #fff;
-      --input-bg: #1f1f1f;
-      --input-color: #fff;
-    }
+    /* Reset and base styles */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      padding: 0;
-      background: var(--bg-color);
-      color: var(--text-color);
-      font-family: sans-serif;
+:root {
+  --bg-color: #fff;
+  --text-color: #000;
+  --input-bg: #f0f0f0;
+  --input-color: #000;
+}
+
+body.dark {
+  --bg-color: #121212;
+  --text-color: #fff;
+  --input-bg: #1f1f1f;
+  --input-color: #fff;
+}
+
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Particle container and animation */
+.container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: rgb(41, 37, 37);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.particle-container .particle {
+  position: absolute;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background: radial-gradient(rgb(255, 245, 153) 40%, rgb(247, 211, 51), orange, rgb(255, 81, 0));
+  box-shadow: 3px 5px 10px rgba(255, 255, 255, 0.514);
+}
+
+/* Example particle positions */
+.particle-container .particle:nth-child(1) { top: 12%; left: 42%; animation: particle-motion 1s linear infinite; }
+/* Repeat for all 20 particles... */
+
+/* Particle animation */
+@keyframes particle-motion {
+  0% { transform: translate(0); opacity: 1; }
+  20% { transform: translate(5px, -20px); opacity: 0.8; }
+  40% { transform: translate(-10px, -30px); opacity: 0.7; }
+  60% { transform: translate(15px, -40px); opacity: 0.5; }
+  80% { transform: translate(-20px, -60px); opacity: 0.2; }
+  100% { transform: translate(40px, -100px); opacity: 0; }
+}
+
+/* Centered glowing text */
+    .text-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      text-align: center;
+      color: rgb(255, 193, 59);
+      text-shadow: 2px 1px 5px crimson;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+      letter-spacing: 2px;
+    }
+
+    .text-content h1 {
+      font-size: 4rem;
+    }
+
+    .text-content p {
+      font-size: 1.2rem;
+      font-style: italic;
+      font-weight: lighter;
+      width: 80%;
     }
 
     .search-container {
