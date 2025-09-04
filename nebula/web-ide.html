@@ -261,17 +261,7 @@
         alert('Project already exists!');
         return;
       }
-      localStorage.setItem(`project:${name}`, '<!DOCTYPE html>/n
-<html lang="en">/n
-<head>/n
-	<meta charset="UTF-8">/n
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">/n
-	<title></title>/n
-</head>/n
-<body>/n
-	/n
-</body>/n
-</html>');
+      localStorage.setItem(`project:${name}`, '<!DOCTYPE html>\n<html>\n  <head><title></title></head>\n  <body></body>\n</html>');
       projectNameInput.value = '';
       loadProjects();
     }
