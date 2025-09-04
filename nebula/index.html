@@ -110,7 +110,21 @@
       p, .feature {
         font-size: 1rem;
       }
+      #snowContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(100vh);
     }
+}
   </style>
 </head>
 <body>
@@ -145,33 +159,37 @@
     © 2025 Nebula IDE. All rights reserved.
   </footer>
 
+  <div id="snowContainer"></div>
+  
+  // trying to make an effect here
   <script>
-    function createSnowflake() {
-            const snowflake = document.createElement("div");
-            const size = Math.random() * 5 + 2;
-            const startLeft = Math.random() * window.innerWidth;
-            const duration = Math.random() * 3 + 2;
+    const snowContainer = document.getElementById("snowContainer");
 
-            snowflake.style.position = "absolute";
-            snowflake.style.top = "-10px";
-            snowflake.style.left = `${startLeft}px`;
-            snowflake.style.width = `${size}px`;
-            snowflake.style.height = `${size}px`;
-            snowflake.style.borderRadius = "50%";
-            snowflake.style.opacity = Math.random().toFixed(2);
-            snowflake.style.backgroundColor = prefersDark() ? "white" : "#aaa";
-            snowflake.style.animation = `fall ${duration}s linear forwards`;
+  function createSnowflake() {
+    const snowflake = document.createElement("div");
+    const size = Math.random() * 5 + 2;
+    const startLeft = Math.random() * window.innerWidth;
+    const duration = Math.random() * 3 + 2;
 
-            snowContainer.appendChild(snowflake);
+    snowflake.style.position = "absolute";
+    snowflake.style.top = "-10px";
+    snowflake.style.left = `${startLeft}px`;
+    snowflake.style.width = `${size}px`;
+    snowflake.style.height = `${size}px`;
+    snowflake.style.borderRadius = "50%";
+    snowflake.style.opacity = Math.random().toFixed(2);
+    snowflake.style.backgroundColor = "#fff";
+    snowflake.style.animation = `fall ${duration}s linear forwards`;
 
-            snowflake.addEventListener("animationend", () => {
-                snowflake.remove();
-            });
-        }
+    snowContainer.appendChild(snowflake);
 
-        setInterval(() => {
-            createSnowflake();
-        }, 100);
+    snowflake.addEventListener("animationend", () => {
+    snowflake.remove();
+  });
+}
+
+  setInterval(createSnowflake, 100);
+
   </script>
 
 </body>
