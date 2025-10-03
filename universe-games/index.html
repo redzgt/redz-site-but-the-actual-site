@@ -381,9 +381,11 @@
 
   <div id="settings" class="tab-content">
   <h2>Settings</h2>
-  <button onclick="setLightTheme()">Light Theme</button>
-  <button onclick="setDarkTheme()">Dark Theme</button>
-  <button onclick="toggleAboutBlank()">Toggle About:Blank Mode</button>
+  <div class="button-container" style="justify-content: center;">
+    <button onclick="setLightTheme()">Light Theme</button>
+    <button onclick="setDarkTheme()">Dark Theme</button>
+    <button onclick="toggleAboutBlank()" id="toggleBtn">Open in about:blank: OFF</button>
+  </div>
 </div>
 
 <div id="home" class="tab-content active">
@@ -730,14 +732,7 @@
     </div>
     <footer>
     <p>&copy; 2025 Universe Games</p>
-        <p><b>Settings:</b></p>
 </footer>
-<!--Theme Buttons!-->
-<div class="button-container" style="justify-content: center; margin-bottom: 40px;">
-    <button onclick="setLightTheme()">Light Theme</button>
-    <button onclick="setDarkTheme()">Dark Theme</button>
-</div>
-
 
 <script>
     function setLightTheme() {
@@ -762,10 +757,7 @@
     };
 </script>
 
-<!-- Toggle for About:Blank Game Loading -->
-<div class="button-container" style="justify-content: center; margin-bottom: 20px;">
-    <button onclick="toggleAboutBlank()" id="toggleBtn">Open in about:blank: OFF</button>
-</div>
+
 <!-- Random Text Section -->
 <p><b></b></p>
 </div>
