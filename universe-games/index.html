@@ -125,44 +125,61 @@
             background-color: #1e1e1e;
             color: white;
         }
-        
+       
         .dark-theme .update-log {
             background-color: #333;
             color: white;
         }
-        
+       
         .dark-theme button {
             background-color: #444;
             color: white;
         }
-        
+       
         .dark-theme .game,
         .dark-theme .big-game {
             background-color: #333;
         }
-        
+       
         /* Light theme styles */
         .light-theme {
             background-color: #dbc2ff;
             color: black;
         }
-        
+       
         .light-theme .update-log {
             background-color: white;
             color: #333;
         }
-        
+       
         .light-theme button {
             background-color: white;
             color: black;
         }
-        
+       
         .light-theme .game,
         .light-theme .big-game {
             background-color: white;
         }
 
-				/* Topbar */
+        .light-theme .tab-button {
+            background-color: transparent;
+            color: #555555;
+        }
+
+        .light-theme .tab-button.active {
+            color: #555555;
+        }
+
+        .light-theme .tab-underline {
+            background-color: #555555;
+        }
+
+        .dark-theme .tab-button {
+            background-color: transparent;
+        }
+
+/* Topbar */
         .topbar {
           position: fixed;
           top: 20px;
@@ -237,8 +254,51 @@
 .dropdown:hover .dropdown-content {
   display: block;
 }
+.tab-bar {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin: 0; /* remove extra spacing */
+  padding: 0;
+  border-bottom: none;
+}
+
+.tab-button {
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 15px 30px;
+  font-size: 16px;
+  font-weight: bold;
+  color: transparent;
+}
+
+.tab-button.active {
+  color: #5e2ca5; /* purple theme */
+}
 
 
+.tab-underline {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background-color: #5e2ca5;
+  transition: all 0.3s ease;
+}
+
+.tab-content {
+  display: none;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.4s ease;
+}
+
+.tab-content.active {
+  display: block;
+  opacity: 1;
+  transform: translateX(0);
+}
 
     </style>
     <script>
@@ -313,6 +373,20 @@
 </script>
 
 <body>
+<div class="tab-bar">
+  <button class="tab-button active" onclick="showTab('home', event)">Home</button>
+  <button class="tab-button" onclick="showTab('settings', event)">Settings</button>
+  <div class="tab-underline"></div>
+</div>
+
+  <div id="settings" class="tab-content">
+  <h2>Settings</h2>
+  <button onclick="setLightTheme()">Light Theme</button>
+  <button onclick="setDarkTheme()">Dark Theme</button>
+  <button onclick="toggleAboutBlank()">Toggle About:Blank Mode</button>
+</div>
+
+<div id="home" class="tab-content active">
   <nav class="topbar">
     <ul class="topbar-menu">
       <!-- Shooters -->
@@ -354,7 +428,7 @@
           <li><a href="game/cs-surf-go.html">CS Surf Go</a></li>
           <li><a href="game/hitbox-io.html">Hitbox.io</a></li>
           <li><a href="game/lolbeans-io.html">LOLBeans.io</a></li>
-		  <li><a href="game/spike-switch">Spike Switch</a></li>
+ <li><a href="game/spike-switch">Spike Switch</a></li>
         </ul>
       </li>
 
@@ -403,7 +477,7 @@
           <li><a href="game/territorial-io.html">Territorial.io</a></li>
           <li><a href="game/mope-io.html">Mope.io</a></li>
           <li><a href="game/diep-io.html">Diep.io</a></li>
-		<li><a href="game/openfront.html">OpenFront</a></li>
+<li><a href="game/openfront.html">OpenFront</a></li>
         </ul>
       </li>
 
@@ -418,7 +492,7 @@
         </ul>
       </li>
 
-		<!-- Universe Exclusives -->
+<!-- Universe Exclusives -->
       <li class="dropdown">
         <a href="#">Universe Exclusives</a>
         <ul class="dropdown-content">
@@ -429,19 +503,19 @@
         </ul>
       </li>
 
-		<!-- Sandbox -->
+<!-- Sandbox -->
       <li class="dropdown">
         <a href="#">Sandbox</a>
         <ul class="dropdown-content">
           <li><a href="game/minecraft.html">Minecraft</a></li>
           <li><a href="game/minefun-io.html">MineFun.io</a></li>
           <li><a href="game/ragdoll-playground">Ragdoll Playground</a></li>
-			<li><a href="game/paper-minecraft">Paper Minecraft</a></li>
-			<li><a href="game/ragdoll-hit">Ragdoll Hit</a></li>
-			<li><a href="game/ragdoll-archers">Ragdoll Archers</a></li>
+<li><a href="game/paper-minecraft">Paper Minecraft</a></li>
+<li><a href="game/ragdoll-hit">Ragdoll Hit</a></li>
+<li><a href="game/ragdoll-archers">Ragdoll Archers</a></li>
         </ul>
       </li>
-		
+
     </ul>
   </nav>
 
@@ -454,7 +528,7 @@
     <div class="update-log-container">
         <div class="update-log">
             <h3>Update Log</h3>
-			      <p>Oct 3: Fixed some Logos.</p>
+     <p>Oct 3: Fixed some Logos.</p>
         </div>
         <div class="button-container">
             <a href="byp/universe-bypasser-lite" target="_blank">
@@ -572,85 +646,85 @@
         <div class="game" data-title="Wacky Flip" onclick="openGame('game/wacky-flip')">
             <img src="https://1games.io/data/image/game/wacky-flip/banner/wacky-flip-512x512_logo.png" alt="Wacky Flip">
         </div>
-	<div class="game" data-title="Upwards Parkour 2D" onclick="openGame('game/upwards-parkour-2d.html')">
+<div class="game" data-title="Upwards Parkour 2D" onclick="openGame('game/upwards-parkour-2d.html')">
             <img src="images/upward-2d-logo.png" alt="Upwards Parkour 2D">
         </div>
-	<div class="game" data-title="Basket Random" onclick="openGame('game/basket-random')">
+<div class="game" data-title="Basket Random" onclick="openGame('game/basket-random')">
             <img src="https://www.basketballlegends.club/upload/images-big/basket-random.jpg" alt="Basket Random">
         </div>
-	<div class="game" data-title="Soccer Random" onclick="openGame('game/soccer-random')">
+<div class="game" data-title="Soccer Random" onclick="openGame('game/soccer-random')">
             <img src="https://www.basketballlegends.club/upload/images-big/soccer-random.jpg" alt="Soccer Random">
         </div>
-	<div class="game" data-title="Boxing Random" onclick="openGame('game/boxing-random')">
+<div class="game" data-title="Boxing Random" onclick="openGame('game/boxing-random')">
             <img src="https://www.basketballlegends.club/upload/images-big/boxing-random.jpg" alt="Boxing Random">
         </div>
-	<div class="game" data-title="Volley Random" onclick="openGame('game/volley-random')">
+<div class="game" data-title="Volley Random" onclick="openGame('game/volley-random')">
             <img src="https://www.basketballlegends.club/upload/images-big/volley-random.jpg" alt="Volley Random">
         </div>
-	<div class="game" data-title="Flappy Orb" onclick="openGame('game/flappy-orb')">
+<div class="game" data-title="Flappy Orb" onclick="openGame('game/flappy-orb')">
             <img src="images/flappy-orb.png" alt="Flappy Orb">
         </div>
-	<div class="game" data-title="Space Dash" onclick="openGame('game/space-dash')">
+<div class="game" data-title="Space Dash" onclick="openGame('game/space-dash')">
             <img src="images/space-dash-logo.png" alt="Space Dash">
         </div>
-	<div class="game" data-title="Wiggle.io" onclick="openGame('game/wiggle-io')">
+<div class="game" data-title="Wiggle.io" onclick="openGame('game/wiggle-io')">
             <img src="images/wiggle.io-logo.png" alt="Wiggle.io">
         </div>
-	<div class="game" data-title="Cookie Clicker" onclick="openGame('game/cookie-clicker')">
+<div class="game" data-title="Cookie Clicker" onclick="openGame('game/cookie-clicker')">
             <img src="https://play-lh.googleusercontent.com/Z1MOuuiD05ZN5LkVmMEvKF0mqAc-FknaQ2j8s4dZiO-LSPQX4EEA3RVJdlQEtxe96ok" alt="Cookie Clicker">
         </div>
-	<div class="game" data-title="Ragdoll Playground" onclick="openGame('game/ragdoll-playground')">
+<div class="game" data-title="Ragdoll Playground" onclick="openGame('game/ragdoll-playground')">
             <img src="https://1games.io/data/image/game/ragdoll-playground/banner/ragdoll-playground-1200x1200.png" alt="Ragdoll Playground">
         </div>
-	<div class="game" data-title="KourStrike.io" onclick="openGame('game/kourstrike-io')">
+<div class="game" data-title="KourStrike.io" onclick="openGame('game/kourstrike-io')">
             <img src="https://th.bing.com/th/id/OIP.MvAnwOT99da8aGevErSSGwAAAA?r=0&cb=thvnextc1&rs=1&pid=ImgDetMain" alt="KourStrike.io">
         </div>
-	<div class="game" data-title="Drive Mad S" onclick="openGame('game/drive-mad-s')">
+<div class="game" data-title="Drive Mad S" onclick="openGame('game/drive-mad-s')">
             <img src="https://snowrider3d.com/data/image/drive-mad-s.png" alt="Drive Mad S">
         </div>
-		<div class="game" data-title="Drift.io" onclick="openGame('game/drift-io')">
+<div class="game" data-title="Drift.io" onclick="openGame('game/drift-io')">
             <img src="https://www.kizgame.com/thumbs/drift-io_small.webp" alt="Drift.io">
         </div>
-		<div class="game" data-title="Hitbox.io" onclick="openGame('game/hitbox-io')">
+<div class="game" data-title="Hitbox.io" onclick="openGame('game/hitbox-io')">
             <img src="https://multiplayer.gg/physics/graphics/tt/hitboxicon2x.png" alt="Hitbox.io">
         </div>
-		<div class="game" data-title="OpenFront" onclick="openGame('game/openfront')">
+<div class="game" data-title="OpenFront" onclick="openGame('game/openfront')">
             <img src="https://www.speedrun.com/static/game/369wkjld/cover.png?v=fdcc88f" alt="OpenFront">
         </div>
-		<div class="game" data-title="Paper.io" onclick="openGame('game/paper-io')">
+<div class="game" data-title="Paper.io" onclick="openGame('game/paper-io')">
             <img src="https://th.bing.com/th/id/R.55f277a158f6ab7ee4a03837ea36be07?rik=zjUolsE2Wd8KDQ&pid=ImgRaw&r=0" alt="Paper.io">
         </div>
-		<div class="game" data-title="Territorial.io" onclick="openGame('game/territorial-io')">
+<div class="game" data-title="Territorial.io" onclick="openGame('game/territorial-io')">
             <img src="https://img.itch.zone/aW1nLzIxNjg5Mjg5LnBuZw==/original/87FmTE.png" alt="Territorial.io">
         </div>
-		<div class="game" data-title="BumpyBall.io" onclick="openGame('game/bumpyball')">
+<div class="game" data-title="BumpyBall.io" onclick="openGame('game/bumpyball')">
             <img src="https://rocketgames.imgix.net/uploads/games/p/pocket-league-3d/pocket-league-3d.jpg?auto=format" alt="BumpyBall.io">
         </div>
-		<div class="game" data-title="Survev.io" onclick="openGame('game/survev-io')">
+<div class="game" data-title="Survev.io" onclick="openGame('game/survev-io')">
             <img src="https://cdn.blipzi.com/su/rv/survev-io-d.jpg" alt="Survev.io">
         </div>
-		<div class="game" data-title="Shell Shockers" onclick="openGame('game/shellshockers')">
+<div class="game" data-title="Shell Shockers" onclick="openGame('game/shellshockers')">
             <img src="https://e0.pxfuel.com/wallpapers/151/682/desktop-wallpaper-shell-shockers-shellshock-io-100.jpg" alt="Shell Shockers">
         </div>
-		<div class="game" data-title="Diep.io" onclick="openGame('game/diep-io')">
+<div class="game" data-title="Diep.io" onclick="openGame('game/diep-io')">
             <img src="https://www.speldome.com/wp-content/uploads/thumbs/custom/D/diep-io-400x400-1.jpg" alt="Diep.io">
         </div>
-		<div class="game" data-title="Mope.io" onclick="openGame('game/mope-io')">
+<div class="game" data-title="Mope.io" onclick="openGame('game/mope-io')">
             <img src="https://cdn.mobygames.com/971c6400-ac06-11ed-b206-02420a000131.webp" alt="Mope.io">
         </div>
-		<div class="game" data-title="ZombsRoyale" onclick="openGame('game/zombsroyale')">
+<div class="game" data-title="ZombsRoyale" onclick="openGame('game/zombsroyale')">
             <img src="https://th.bing.com/th/id/R.4dca47b2494562aebe3d49563a2609b2?rik=POuBDWBbDjLxjA&pid=ImgRaw&r=0" alt="ZombsRoyale">
         </div>
-		<div class="game" data-title="Spike Switch" onclick="openGame('game/spike-switch')">
+<div class="game" data-title="Spike Switch" onclick="openGame('game/spike-switch')">
             <img src="https://uploads.scratch.mit.edu/get_image/project/1182932887_480x360.png" alt="Spike Switch">
         </div>
-		<div class="game" data-title="Paper Minecraft" onclick="openGame('game/paper-minecraft')">
+<div class="game" data-title="Paper Minecraft" onclick="openGame('game/paper-minecraft')">
             <img src="https://azgames.io/upload/imgs/paperminecraft.png" alt="Paper Minecraft">
         </div>
-		<div class="game" data-title="Ragdoll Hit" onclick="openGame('game/ragdoll-hit')">
+<div class="game" data-title="Ragdoll Hit" onclick="openGame('game/ragdoll-hit')">
             <img src="https://img.poki.com/cdn-cgi/image/quality=78,width=1200,height=1200,fit=cover,f=png/3c892779be9dabb3589586c83ad3eeed.png" alt="Ragdoll Hit">
         </div>
-		<div class="game" data-title="Ragdoll Archers" onclick="openGame('game/ragdoll-archers')">
+<div class="game" data-title="Ragdoll Archers" onclick="openGame('game/ragdoll-archers')">
             <img src="https://imgs.crazygames.com/ragdoll-archers_1x1/20250711092020/ragdoll-archers_1x1-cover?format=auto&quality=100&metadata=none&width=1200" alt="Ragdoll Archers">
         </div>
     </div>
@@ -692,9 +766,9 @@
 <div class="button-container" style="justify-content: center; margin-bottom: 20px;">
     <button onclick="toggleAboutBlank()" id="toggleBtn">Open in about:blank: OFF</button>
 </div>
-		<!-- Random Text Section -->
-	<p><b></b></p>
-
+<!-- Random Text Section -->
+<p><b></b></p>
+</div>
 <script>
     let useAboutBlank = localStorage.getItem('aboutBlankMode') === 'true';
 
@@ -745,3 +819,36 @@
     index = (index + 1) % titles.length;
   }, 2000); // Change every 2 seconds
 </script>
+  <script>
+function showTab(tabId, evt) {
+  // Hide all tabs
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  // Remove active state from buttons
+  document.querySelectorAll('.tab-button').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  // Show selected tab
+  document.getElementById(tabId).classList.add('active');
+
+  // Highlight the clicked button
+  evt.target.classList.add('active');
+
+  // Move underline
+  const underline = document.querySelector('.tab-underline');
+  underline.style.width = evt.target.offsetWidth + "px";
+  underline.style.left = evt.target.offsetLeft + "px";
+}
+
+// Initialize underline on page load
+window.addEventListener("load", () => {
+  const activeBtn = document.querySelector(".tab-button.active");
+  const underline = document.querySelector(".tab-underline");
+  underline.style.width = activeBtn.offsetWidth + "px";
+  underline.style.left = activeBtn.offsetLeft + "px";
+});
+
+  </script>
