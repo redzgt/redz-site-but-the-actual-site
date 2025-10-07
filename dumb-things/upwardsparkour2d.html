@@ -190,7 +190,7 @@
       keys.right = true;
       if (!started) started = true;
     }
-    if (e.code === "Space" || e.code === "ArrowUp") {
+    if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW") {
       keys.jump = true;
       if (!started) started = true;
     }
@@ -202,7 +202,7 @@
   window.addEventListener("keyup", (e) => {
     if (e.code === "ArrowLeft" || e.code === "KeyA") keys.left = false;
     if (e.code === "ArrowRight" || e.code === "KeyD") keys.right = false;
-    if (e.code === "Space" || e.code === "ArrowUp") keys.jump = false;
+    if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW" ) keys.jump = false;
   });
 
   // Update function
