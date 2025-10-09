@@ -129,23 +129,26 @@
       gap: 30px;
     }
 
-    .game {
-      background: #1a1a1a;
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-      overflow: hidden;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
+.game {
+  background: #1a1a1a;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  max-width: 280px;   /* 👈 smaller width */
+  margin: 0 auto;     /* center it */
+
 
     .game:hover {
       transform: translateY(-8px);
       box-shadow: 0 12px 30px rgba(0,0,0,0.8);
     }
 
-    .game img {
-      width: 100%;
-      border-bottom: 4px solid #ff3333;
-    }
+}
+.game img {
+  max-height: 160px;  /* 👈 shrink image */
+  object-fit: cover;
+}
 
     .game h3 {
       font-size: 1.4em;
