@@ -59,24 +59,20 @@
       flex-direction: column;
       overflow: hidden;
     }
-    
     #editors > div {
       display: none;
       flex: 1;
       overflow: hidden;
     }
-    
     #editors > div.active {
       display: block;
       flex: 1;
       overflow: hidden;
     }
-    
     .CodeMirror {
       height: 100% !important;
       overflow: auto;
     }
-
     #resizer {
       width: 5px;
       cursor: ew-resize;
@@ -112,6 +108,16 @@
       margin-bottom: 0.5rem;
       padding: 0.5rem;
       border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #project-list button {
+      background: #e53935;
+      border: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      color: white;
       cursor: pointer;
     }
     #new-project-form input {
@@ -141,11 +147,13 @@
     </header>
     <div id="tabs">
       <button class="tab-btn active" onclick="switchTab('html')">HTML</button>
+      <button class="tab-btn" onclick="switchTab('css')">Styles</button>
     </div>
     <main>
       <div id="editor-panel">
         <div id="editors">
           <div id="html" class="active"><textarea id="html-code"></textarea></div>
+          <div id="css"><textarea id="css-code"></textarea></div>
         </div>
       </div>
       <div id="resizer"></div>
@@ -155,9 +163,10 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/htmlmixed/htmlmixed.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/css/css.min.js"></script>
   <script>
     let currentProject = null;
+
     const htmlEditor = CodeMirror.fromTextArea(document.getElementById("html-code"), {
       mode: "htmlmixed",
       theme: "material-darker",
@@ -166,19 +175,51 @@
       lineWrapping: true
     });
 
+    const cssEditor = CodeMirror.fromTextArea(document.getElementById("css-code"), {
+      mode: "css",
+      theme: "material-darker",
+      lineNumbers: true,
+      tabSize: 2,
+      lineWrapping: true
+    });
+
     function updatePreview() {
       const html = htmlEditor.getValue();
-      document.getElementById("preview").srcdoc = html;
+      const css = cssEditor.getValue();
+      const combined = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <style>${css}</style>
+          </head>
+          <body>
+            ${html}
+          </body>
+        </html>`;
+      document.getElementById("preview").srcdoc = combined;
       if (currentProject) {
-        localStorage.setItem(`project:${currentProject}`, html);
+        localStorage.setItem(`project:${currentProject}:html`, html);
+        localStorage.setItem(`project:${currentProject}:css`, css);
       }
     }
 
     htmlEditor.on("change", updatePreview);
+    cssEditor.on("change", updatePreview);
 
     function saveFile() {
       const html = htmlEditor.getValue();
-      const blob = new Blob([html], { type: "text/html" });
+      const css = cssEditor.getValue();
+      const combined = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <style>${css}</style>
+          </head>
+          <body>
+            ${html}
+          </body>
+        </html>`;
+      const blob = new Blob([combined], { type: "text/html" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
       a.download = `${currentProject || 'index'}.html`;
@@ -188,8 +229,19 @@
 
     function openFullScreenPreview() {
       const html = htmlEditor.getValue();
+      const css = cssEditor.getValue();
+      const combined = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <style>${css}</style>
+          </head>
+          <body>
+            ${html}
+          </body>
+        </html>`;
       const newTab = window.open();
-      newTab.document.write(html);
+      newTab.document.write(combined);
       newTab.document.title = "Preview";
       newTab.document.close();
     }
@@ -216,58 +268,3 @@
     });
     window.addEventListener("mouseup", () => {
       isResizing = false;
-      document.body.style.cursor = "default";
-    });
-
-    // Project management
-    const projectList = document.getElementById('project-list');
-    const projectForm = document.getElementById('new-project-form');
-    const projectNameInput = document.getElementById('project-name');
-
-    function loadProjects() {
-      projectList.innerHTML = '';
-      Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('project:')) {
-          const name = key.split(':')[1];
-          const li = document.createElement('li');
-          li.textContent = name;
-          li.onclick = () => loadProject(name);
-          projectList.appendChild(li);
-        }
-      });
-    }
-
-    function loadProject(name) {
-      currentProject = name;
-      const code = localStorage.getItem(`project:${name}`) || '<!DOCTYPE html>\n<html>\n  <head><title></title></head>\n  <body></body>\n</html>';
-      document.getElementById('home-screen').style.display = 'none';
-      document.getElementById('ide').style.display = 'flex';
-      document.getElementById('project-title').textContent = name;
-      htmlEditor.setValue(code);
-      updatePreview();
-    }
-
-    function goHome() {
-      document.getElementById('ide').style.display = 'none';
-      document.getElementById('home-screen').style.display = 'block';
-      loadProjects();
-    }
-
-    projectForm.onsubmit = e => {
-      e.preventDefault();
-      const name = projectNameInput.value.trim();
-      if (!name) return;
-      if (localStorage.getItem(`project:${name}`)) {
-        alert('Project already exists!');
-        return;
-      }
-      localStorage.setItem(`project:${name}`, '<!DOCTYPE html>\n<html>\n  <head><title></title></head>\n  <body></body>\n</html>');
-      projectNameInput.value = '';
-      loadProjects();
-    }
-
-    // Initial
-    loadProjects();
-  </script>
-</body>
-</html>
