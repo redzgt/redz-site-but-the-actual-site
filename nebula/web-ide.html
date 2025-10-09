@@ -220,55 +220,54 @@
     });
 
     // Project management
-const projectList = document.getElementById('project-list');
-const projectForm = document.getElementById('new-project-form');
-const projectNameInput = document.getElementById('project-name');
+    const projectList = document.getElementById('project-list');
+    const projectForm = document.getElementById('new-project-form');
+    const projectNameInput = document.getElementById('project-name');
 
-function loadProjects() {
-  projectList.innerHTML = '';
-  Object.keys(localStorage).forEach(key => {
-    if (key.startsWith('project:')) {
-      const name = key.split(':')[1];
-      const li = document.createElement('li');
-      li.textContent = name;
-      li.onclick = () => loadProject(name);
-      projectList.appendChild(li);
+    function loadProjects() {
+      projectList.innerHTML = '';
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('project:')) {
+          const name = key.split(':')[1];
+          const li = document.createElement('li');
+          li.textContent = name;
+          li.onclick = () => loadProject(name);
+          projectList.appendChild(li);
+        }
+      });
     }
-  });
-}
 
-function loadProject(name) {
-  currentProject = name;
-  const code = localStorage.getItem(`project:${name}`) || '<!DOCTYPE html>\n<html>\n  <head><title></title></head>\n  <body></body>\n</html>';
-  document.getElementById('home-screen').style.display = 'none';
-  document.getElementById('ide').style.display = 'flex';
-  document.getElementById('project-title').textContent = name;
-  htmlEditor.setValue(code);
-  updatePreview();
-}
+    function loadProject(name) {
+      currentProject = name;
+      const code = localStorage.getItem(`project:${name}`) || '<!DOCTYPE html>\n<html>\n  <head><title></title></head>\n  <body></body>\n</html>';
+      document.getElementById('home-screen').style.display = 'none';
+      document.getElementById('ide').style.display = 'flex';
+      document.getElementById('project-title').textContent = name;
+      htmlEditor.setValue(code);
+      updatePreview();
+    }
 
-function goHome() {
-  document.getElementById('ide').style.display = 'none';
-  document.getElementById('home-screen').style.display = 'block';
-  loadProjects();
-}
+    function goHome() {
+      document.getElementById('ide').style.display = 'none';
+      document.getElementById('home-screen').style.display = 'block';
+      loadProjects();
+    }
 
-projectForm.onsubmit = e => {
-  e.preventDefault();
-  const name = projectNameInput.value.trim();
-  if (!name) return;
-  if (localStorage.getItem(`project:${name}`)) {
-    alert('Project already exists!');
-    return;
-  }
-  localStorage.setItem(`project:${name}`, '<!DOCTYPE html>\n<html>\n  <head><title></title></head>\n  <body></body>\n</html>');
-  projectNameInput.value = '';
-  loadProjects();
-}
+    projectForm.onsubmit = e => {
+      e.preventDefault();
+      const name = projectNameInput.value.trim();
+      if (!name) return;
+      if (localStorage.getItem(`project:${name}`)) {
+        alert('Project already exists!');
+        return;
+      }
+      localStorage.setItem(`project:${name}`, '<!DOCTYPE html>\n<html>\n  <head><title></title></head>\n  <body></body>\n</html>');
+      projectNameInput.value = '';
+      loadProjects();
+    }
 
-// Initial
-loadProjects();
-
+    // Initial
+    loadProjects();
   </script>
 </body>
 </html>
