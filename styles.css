@@ -1,0 +1,171 @@
+/* Global */
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      color: #eee;
+      background: #0d0d0d;
+      overflow-x: hidden;
+    }
+
+    canvas#bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+      background: radial-gradient(circle at center, #111 0%, #000 100%);
+    }
+
+    /* Topbar (kept from your idea) */
+    .topbar {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(20, 20, 20, 0.85);
+      padding: 12px 30px;
+      border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar-menu {
+      display: flex;
+      gap: 30px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .topbar-menu a {
+      color: #ff3333;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1em;
+      transition: color 0.3s ease;
+    }
+
+    .topbar-menu a:hover {
+      color: #ff6666;
+    }
+
+    /* Hero */
+    header {
+      padding: 160px 20px 80px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 4em;
+      color: #ff3333;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+
+    header p {
+      font-size: 1.3em;
+      margin-top: 15px;
+      color: #ccc;
+    }
+
+    /* Sections */
+    section.scroll-section {
+      max-width: 1100px;
+      margin: 80px auto;
+      padding: 40px;
+      background: rgba(25,25,25,0.9);
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+      text-align: center;
+    }
+
+    section.scroll-section h2 {
+      font-size: 2.5em;
+      color: #ff3333;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    section.scroll-section p {
+      font-size: 1.1em;
+      color: #ccc;
+      max-width: 700px;
+      margin: 0 auto 20px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      font-size: 1em;
+      font-weight: bold;
+      text-decoration: none;
+      background-color: #ff3333;
+      color: #fff;
+      border-radius: 999px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn:hover {
+      background-color: #ff6666;
+      transform: translateY(-2px);
+    }
+
+    /* Project Cards */
+    .content {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+.game {
+  background: #1a1a1a;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  max-width: 380px;   /* 👈 smaller width */
+  margin: 0 auto;     /* center it */
+
+
+    .game:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.8);
+    }
+
+}
+.game img {
+  max-height: 300px;  /* 👈 shrink image */
+  object-fit: cover;
+}
+
+    .game h3 {
+      font-size: 1.4em;
+      margin: 15px;
+      color: #ff3333;
+    }
+
+    .game p {
+      font-size: 0.95em;
+      color: #bbb;
+      margin: 0 15px 20px;
+      text-align: justify;
+    }
+
+    footer {
+      background: #111;
+      color: #ff3333;
+      text-align: center;
+      padding: 20px 0;
+      margin-top: 60px;
+    }
+    canvas#bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: -1;
+  background: radial-gradient(circle at center, #111 0%, #000 100%);
+}
