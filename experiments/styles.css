@@ -152,3 +152,11 @@ footer p {
         max-width: 250px;
     }
 }
+
+canvas#bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: -1;
+  background: radial-gradient(circle at center, #111 0%, #000 100%);
+}
